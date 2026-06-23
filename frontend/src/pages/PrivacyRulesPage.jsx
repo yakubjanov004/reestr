@@ -6,9 +6,10 @@ import {
   Layers,
   ListChecks,
   LockKeyhole,
-  ShieldAlert,
-  ShieldCheck,
-  ShieldOff
+  XCircle,
+  AlertCircle,
+  CheckCircle2,
+  ShieldCheck
 } from "lucide-react";
 
 import PageHero from "../components/PageHero.jsx";
@@ -17,9 +18,9 @@ import { useI18n } from "../localization/i18n.jsx";
 import { PRIVACY_RULES, countByTone } from "../utils/privacyRules.js";
 
 const TONE_ICONS = {
-  RED: ShieldOff,
-  YELLOW: ShieldAlert,
-  WHITE: ShieldCheck
+  RED: XCircle,
+  YELLOW: AlertCircle,
+  WHITE: CheckCircle2
 };
 
 function ToneCard({ tone, count, t }) {

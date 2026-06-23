@@ -1,6 +1,7 @@
 import {
   Database,
   BookOpenText,
+  Building2,
   History,
   LayoutDashboard,
   LogOut,
@@ -66,10 +67,10 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`} aria-hidden={!mobileOpen && undefined}>
       <div className="brand">
         <span className="brand-mark">
-          <Signal size={16} />
+          <Building2 size={20} strokeWidth={1.5} />
         </span>
         <span className="brand-text">
-          Reestr<span className="brand-accent">Telecom</span>
+          ReestrTelecom
         </span>
         <button className="mobile-close" aria-label={t.common.close} onClick={onClose}>
           <X size={16} />
@@ -91,7 +92,7 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
               const Icon = item.icon;
               return (
                 <NavLink key={item.to} to={item.to} end={item.to === "/"} title={item.label}>
-                  <Icon size={18} />
+                  <Icon size={20} strokeWidth={1.5} />
                   <span className="nav-label-full">{item.label}</span>
                   <span className="nav-label-short">{item.mobileLabel}</span>
                 </NavLink>
@@ -115,10 +116,10 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
             <strong>{user?.full_name || user?.username}</strong>
             <small>{user?.role === "manager" ? t.roles.managerLong : t.roles.operator}</small>
           </span>
-          <UserRound className="profile-summary-icon" size={15} />
+          <UserRound className="profile-summary-icon" size={18} strokeWidth={1.5} />
         </button>
         <button className="logout-button" type="button" onClick={handleLogout} title={t.layout.logout}>
-          <LogOut size={16} />
+          <LogOut size={20} strokeWidth={1.5} />
           <span>{t.layout.logoutFull}</span>
         </button>
       </div>

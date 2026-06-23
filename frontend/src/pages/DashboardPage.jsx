@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import api from "../api/client.js";
+import { useAuth } from "../auth/AuthContext.jsx";
 import PageHero from "../components/PageHero.jsx";
 import StatCard from "../components/StatCard.jsx";
 import { useI18n } from "../localization/i18n.jsx";
@@ -20,6 +21,7 @@ import { formatDateTime } from "../utils/format.js";
 
 export default function DashboardPage() {
   const { t } = useI18n();
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -108,8 +110,10 @@ export default function DashboardPage() {
       <div className="dashboard-frame dashboard-board">
         <header className="dashboard-header">
           <div>
-            <p className="eyebrow dashboard-eyebrow">Reestr Telecom</p>
-            <h2>{t.dashboard.introTitle}</h2>
+            <h2 className="dashboard-welcome">
+              {t.dashboard.introTitle},{" "}
+              <span className="dashboard-welcome-name">{user?.full_name || user?.username || "User"}</span>
+            </h2>
             <p className="dashboard-intro">
               {t.dashboard.intro}
             </p>
@@ -245,7 +249,6 @@ export default function DashboardPage() {
                   <p className="panel-kicker">{t.dashboard.source}</p>
                   <h2>{t.dashboard.sourceSummary}</h2>
                 </div>
-                <Sparkles size={18} />
               </div>
               <div className="source-overview">
                 <div className="source-total">
