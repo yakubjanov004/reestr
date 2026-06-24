@@ -48,7 +48,7 @@ export default function LoginPage() {
                 <Signal size={26} strokeWidth={2.5} />
               </span>
               <span className="login-brand-text">
-                Reestr<span className="login-brand-accent">Telecom</span>
+                Da<span className="login-brand-accent">tan</span>
               </span>
             </div>
 

@@ -1,0 +1,590 @@
+﻿/* Guide page and previews */
+
+/* ═══════════════════════════════════════════════════════
+   GUIDE PAGE
+   ═══════════════════════════════════════════════════════ */
+
+.guide-page {
+  gap: 22px;
+}
+
+.guide-overview {
+  overflow: hidden;
+}
+
+.guide-role-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.guide-role-tabs button {
+  min-height: 34px;
+  border-color: #bfdbfe;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.guide-role-tabs button.active {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+}
+
+.guide-overview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+  gap: 22px;
+  padding: 20px;
+}
+
+.main-content {
+  background: transparent;
+}
+
+.page-stack {
+  gap: 18px;
+}
+
+/* Dashboard welcome header - Crextio style */
+.dashboard-welcome {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.dashboard-welcome-name {
+  color: var(--blue);
+}
+
+.guide-system-list {
+  display: grid;
+  gap: 12px;
+}
+
+.guide-system-list div {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #f8faff;
+  padding: 12px 14px;
+  color: var(--ink);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.panel,
+.dashboard-panel,
+.upload-panel,
+.upload-result-panel,
+.operator-create-panel,
+.profile-form-panel,
+.profile-language-panel,
+.privacy-toolbar,
+.privacy-page .policy-overview-card,
+.privacy-page .rule-card,
+.guide-role-intro,
+.guide-step-card,
+.guide-checklist {
+  border-color: var(--glass-border);
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.05);
+}
+
+.guide-system-list svg {
+  flex-shrink: 0;
+  color: var(--blue);
+  margin-top: 2px;
+}
+
+.guide-checklist {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg-2);
+  padding: 18px 20px;
+}
+
+.guide-checklist h3 {
+  margin: 0 0 12px;
+  color: var(--ink);
+  font-size: 17px;
+}
+
+.guide-checklist ol {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 20px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+}
+
+.guide-checklist li::marker {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.guide-role-note {
+  margin: 14px 0 0;
+  border-radius: 10px;
+  background: var(--amber-soft);
+  color: var(--amber);
+  padding: 10px 12px;
+  font-weight: 700;
+}
+
+.guide-role-intro {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--bg-2);
+  padding: 18px 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.guide-role-icon,
+.guide-step-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: var(--blue-soft);
+  color: var(--blue-light);
+  border: 1px solid var(--blue-glow);
+}
+
+.guide-role-intro h2,
+.guide-step-copy h3 {
+  margin: 0;
+}
+
+.guide-role-intro p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.guide-step-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.guide-step-card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(280px, 1.08fr);
+  gap: 16px;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--bg-2);
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.guide-step-copy {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.guide-step-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.guide-shot {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg-1, var(--bg));
+  min-height: 232px;
+}
+
+.guide-shot-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  border-bottom: 1px solid var(--line);
+  background: var(--blue-soft);
+  padding: 0 11px;
+}
+
+.guide-shot-bar span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+
+.guide-shot-bar span:first-child { background: #ef4444; }
+.guide-shot-bar span:nth-child(2) { background: #f59e0b; }
+.guide-shot-bar span:nth-child(3) { background: #22c55e; }
+
+@media (max-width: 700px) {
+  .page-stack {
+    gap: 16px;
+  }
+
+  .upload-page {
+    padding-bottom: 18px;
+  }
+}
+
+/* ── Dark theme mobile bottom nav ── */
+[data-theme="dark"] .sidebar {
+  background: rgba(10, 16, 32, 0.85);
+}
+
+@media (max-width: 700px) {
+  [data-theme="dark"] .sidebar {
+    background: rgba(10, 16, 32, 0.92);
+    border-top-color: rgba(148, 163, 184, 0.10);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  [data-theme="dark"] .topbar {
+    background: rgba(10, 16, 32, 0.80);
+    border-bottom-color: rgba(148, 163, 184, 0.08);
+  }
+
+  /* Dark theme modal */
+  [data-theme="dark"] .modal-backdrop {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* ── Mobile touch interaction enhancements ── */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable hover effects on touch devices */
+  .stat-card:hover,
+  .type-panel:hover,
+  .panel:hover,
+  .detail-item:hover,
+  .live-metric:hover,
+  .rule-card:hover,
+  .policy-overview-card:hover {
+    transform: none;
+    box-shadow: inherit;
+  }
+
+  /* Active state for touch */
+  .stat-card:active,
+  .sidebar a:active,
+  button:active:not(:disabled) {
+    transform: scale(0.97);
+    transition-duration: 0.1s;
+  }
+
+  /* Larger tap targets */
+  .search-box input { min-height: 44px; }
+  .pagination button { min-height: 44px; }
+  td button { min-height: 38px; min-width: 38px; }
+}
+
+/* ── Autofill Fix for Dark Mode ── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--bg-1, var(--bg)) inset !important;
+    -webkit-text-fill-color: var(--ink) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.guide-shot-bar strong {
+  min-width: 0;
+  overflow: hidden;
+  margin-left: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guide-shot-body {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.guide-shot-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.guide-shot-heading strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.guide-shot-heading small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.guide-pill-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.guide-pill-row span,
+.guide-shot-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.guide-pill-row span.active,
+.guide-shot-button {
+  background: var(--blue);
+  color: #fff;
+}
+
+.guide-drop-preview {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  min-height: 88px;
+  border: 2px dashed #bfdbfe;
+  border-radius: 12px;
+  background: #f8faff;
+  color: var(--muted);
+  padding: 12px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.guide-drop-preview svg {
+  color: var(--blue);
+}
+
+.guide-metric-grid,
+.guide-card-grid,
+.guide-rule-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.guide-metric-grid span,
+.guide-card-grid span,
+.guide-rule-grid span {
+  display: grid;
+  gap: 3px;
+  min-height: 64px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg-1, var(--bg));
+
+  padding: 10px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.guide-metric-grid strong,
+.guide-card-grid strong {
+  color: var(--blue);
+  font-size: 23px;
+  line-height: 1;
+}
+
+.guide-search-preview {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg-1, var(--bg));
+
+  color: #94a3b8;
+  padding: 9px 12px;
+  font-size: 12px;
+}
+
+.guide-table-preview {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.guide-table-preview div {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.guide-table-preview.compact div {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.guide-table-preview div:first-child {
+  background: var(--blue-soft);
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.guide-table-preview span {
+  min-width: 0;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  padding: 8px;
+  color: var(--ink);
+  font-size: 10.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guide-rule-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.guide-rule-grid span {
+  align-content: center;
+  min-height: 72px;
+  text-align: center;
+}
+
+.guide-rule-grid .red {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: var(--danger-soft);
+  color: #dc2626;
+}
+
+.guide-rule-grid .yellow {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.1);
+  color: #b45309;
+}
+
+.guide-rule-grid .white {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: var(--green-soft);
+  color: #15803d;
+}
+
+.guide-rule-lines,
+.guide-bars-preview {
+  display: grid;
+  gap: 8px;
+}
+
+.guide-rule-lines span,
+.guide-bars-preview span {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.guide-rule-lines span:nth-child(2) { width: 72%; }
+.guide-rule-lines span:nth-child(3) { width: 48%; }
+
+.guide-bars-preview span {
+  background: linear-gradient(90deg, #93c5fd, #2563eb);
+}
+
+.guide-users-preview {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 12px;
+}
+
+.guide-users-preview div {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg-1, var(--bg));
+
+  padding: 12px;
+}
+
+.guide-users-preview strong {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.guide-users-preview span {
+  height: 12px;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.guide-users-preview .button {
+  height: 28px;
+  background: var(--blue);
+}
+
+@media (max-width: 1200px) {
+  .guide-step-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 780px) {
+  .guide-overview-grid,
+  .guide-step-card {
+    grid-template-columns: 1fr;
+  }
+
+  .guide-overview-grid {
+    padding: 16px;
+  }
+
+  .guide-role-intro {
+    align-items: flex-start;
+  }
+
+  .guide-shot {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .guide-role-tabs,
+  .guide-pill-row,
+  .guide-metric-grid,
+  .guide-card-grid,
+  .guide-rule-grid,
+  .guide-users-preview {
+    grid-template-columns: 1fr;
+  }
+
+  .guide-role-tabs {
+    display: grid;
+    width: 100%;
+  }
+
+  .guide-shot-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+

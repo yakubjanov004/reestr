@@ -1,0 +1,594 @@
+/* Final color harmony layer */
+
+/* ═══════════════════════════════════════════════════════
+   COLOR HARMONY PASS
+   Cohesive neutral surfaces with indigo, teal, amber and rose states.
+   ═══════════════════════════════════════════════════════ */
+
+body {
+  background: var(--page-bg);
+}
+
+.main-content,
+.login-screen {
+  background: var(--page-gradient);
+}
+
+.login-screen::before {
+  background-image:
+    linear-gradient(rgba(31, 48, 76, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31, 48, 76, 0.035) 1px, transparent 1px);
+  opacity: 0.55;
+}
+
+[data-theme="dark"] .login-screen::before {
+  opacity: 0.35;
+}
+
+button:not(:disabled):hover {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+  box-shadow: 0 8px 20px var(--blue-glow);
+}
+
+input:focus,
+select:focus,
+.login-field input:focus {
+  background: var(--bg-1);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+input::placeholder,
+.guide-search-preview {
+  color: var(--muted);
+}
+
+th,
+.guide-table-preview div:first-child {
+  background: var(--heading-bg);
+  border-bottom-color: var(--line-strong);
+  color: var(--blue-deep);
+}
+
+.topbar {
+  background: var(--topbar-bg);
+  border-bottom-color: var(--line);
+}
+
+.brand-mark,
+.login-brand-icon,
+.primary-button,
+.login-submit,
+.btn-save,
+.pagination button.active,
+.pagination button[aria-current="page"],
+.language-switcher button.active,
+.language-switcher button[aria-pressed="true"] {
+  border-color: transparent;
+  background: var(--brand-gradient);
+  color: #ffffff;
+  box-shadow: 0 8px 22px var(--blue-glow);
+}
+
+.brand:hover .brand-mark,
+.primary-button:hover:not(:disabled),
+.login-submit:hover:not(:disabled),
+.btn-save:hover:not(:disabled) {
+  background: var(--brand-gradient);
+  box-shadow: 0 12px 28px var(--blue-glow);
+}
+
+.sidebar {
+  background: var(--sidebar);
+  border-right-color: var(--line);
+}
+
+.nav-section-title {
+  color: var(--muted);
+}
+
+.sidebar-footer,
+.nav-section + .nav-section {
+  border-color: var(--line);
+}
+
+.sidebar a {
+  color: var(--sidebar-ink);
+}
+
+@media (min-width: 701px) {
+  .sidebar a {
+    box-shadow: inset 0 0 0 1px rgba(198, 211, 226, 0.18);
+  }
+
+  .sidebar a:hover {
+    background: rgba(37, 99, 235, 0.06);
+  }
+}
+
+[data-theme="dark"] .sidebar a {
+  background: linear-gradient(90deg, rgba(122, 162, 255, 0.10) 0%, rgba(45, 212, 191, 0.045) 100%);
+}
+
+[data-theme="dark"] .sidebar a:hover {
+  background: linear-gradient(90deg, rgba(122, 162, 255, 0.18) 0%, rgba(45, 212, 191, 0.08) 100%);
+}
+
+[data-theme="dark"] .sidebar a.active {
+  background: linear-gradient(90deg, rgba(122, 162, 255, 0.24) 0%, rgba(45, 212, 191, 0.12) 100%);
+}
+
+/* Logout Button — Danger Style */
+.logout-button {
+  color: var(--danger);
+}
+
+@media (min-width: 701px) {
+  .logout-button {
+    background: linear-gradient(90deg, var(--danger-soft) 0%, transparent 100%);
+    box-shadow: inset 0 0 0 1px var(--danger-glow);
+  }
+
+  .logout-button:hover {
+    background: linear-gradient(90deg, rgba(214, 69, 80, 0.18) 0%, transparent 100%);
+    color: var(--danger);
+  }
+}
+
+[data-theme="dark"] .logout-button {
+  background: linear-gradient(90deg, var(--danger-soft) 0%, transparent 100%);
+}
+
+[data-theme="dark"] .logout-button:hover {
+  background: linear-gradient(90deg, rgba(251, 113, 133, 0.22) 0%, transparent 100%);
+  color: var(--danger);
+}
+
+.profile-summary,
+.user-summary {
+  background: var(--bg-2);
+  border-color: var(--line);
+}
+
+.profile-summary:hover {
+  background: var(--blue-soft);
+  border-color: var(--blue-glow);
+}
+
+.user-avatar {
+  background: var(--teal-soft);
+  border-color: var(--emerald-glow);
+  color: var(--teal);
+}
+
+.language-switcher {
+  color: var(--muted);
+}
+
+.language-switcher button,
+.login-language-wrapper .language-switcher button {
+  border-color: var(--line);
+  background: var(--bg-3);
+  color: var(--ink-dim);
+}
+
+.language-switcher button:hover:not(:disabled),
+.login-language-wrapper .language-switcher button:hover:not(:disabled) {
+  border-color: var(--blue-glow);
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.panel,
+.dashboard-frame,
+.upload-panel,
+.upload-result-panel,
+.operator-create-panel,
+.profile-form-panel,
+.profile-language-panel,
+.privacy-toolbar,
+.privacy-page .policy-overview-card,
+.privacy-page .rule-card,
+.guide-role-intro,
+.guide-step-card,
+.guide-checklist,
+.login-panel {
+  border-color: var(--glass-border);
+  background: var(--panel);
+  box-shadow: var(--shadow-soft);
+}
+
+.dashboard-panel,
+.source-panel,
+.split-panel,
+.live-panel {
+  border-color: var(--glass-border) !important;
+  background: var(--panel) !important;
+  box-shadow: var(--shadow-soft);
+}
+
+.panel-heading,
+.upload-panel .panel-heading,
+.upload-panel .upload-panel-heading,
+.operator-create-panel .panel-heading,
+.profile-form-panel .panel-heading,
+.profile-language-panel .panel-heading,
+.live-panel .panel-heading,
+.privacy-page .rule-card-heading,
+.rule-card-header {
+  border-bottom-color: var(--line);
+  background: var(--heading-bg);
+}
+
+.page-hero,
+.privacy-hero,
+.upload-brief {
+  border-color: var(--glass-border);
+  background: var(--section-gradient);
+  box-shadow: var(--shadow-soft);
+}
+
+.page-hero {
+  border-left-color: var(--blue);
+}
+
+.page-hero-kicker,
+.privacy-hero-kicker,
+.upload-brief-kicker,
+.panel-badge.secondary,
+.privacy-active-pill,
+.file-drop-action,
+.btn-password,
+.guide-role-tabs button,
+.guide-pill-row span,
+.guide-shot-button {
+  border-color: var(--blue-glow);
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.guide-role-tabs button.active,
+.guide-pill-row span.active,
+.guide-shot-button,
+.source-tabs button.active {
+  background: var(--brand-gradient);
+  color: #ffffff;
+}
+
+.page-hero-stat,
+.privacy-hero-stat,
+.source-total,
+.upload-source-summary,
+.upload-step,
+.dashboard-bars,
+.pagination,
+.upload-result-grid > div,
+.privacy-active-summary div,
+.guide-system-list div,
+.guide-shot,
+.guide-metric-grid span,
+.guide-card-grid span,
+.guide-rule-grid span,
+.guide-users-preview div {
+  border-color: var(--line);
+  background: var(--bg-3);
+  color: var(--ink-dim);
+}
+
+.page-hero-stat-icon,
+.upload-step-icon {
+  background: var(--teal-soft);
+  border-color: var(--emerald-glow);
+  color: var(--teal);
+}
+
+.page-hero-stat strong,
+.privacy-hero-stat strong,
+.summary-row strong,
+.issue-row strong,
+.live-metric strong,
+.dashboard-welcome-name {
+  color: var(--blue);
+}
+
+.dashboard-alert {
+  background: var(--amber-soft);
+  border-color: var(--amber-glow);
+  border-left-color: var(--amber);
+}
+
+.dashboard-alert .alert-panel-title svg {
+  color: var(--amber);
+}
+
+.alert-panel span {
+  border-color: var(--blue-glow);
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.stat-card {
+  border-color: var(--glass-border);
+  background: var(--panel);
+  box-shadow: var(--shadow-tight);
+}
+
+.stat-card:hover,
+.live-metric:hover,
+.rule-card:hover,
+.policy-overview-card:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-soft);
+}
+
+.stat-card.teal {
+  border-left-color: var(--teal);
+}
+
+.stat-card.amber {
+  border-left-color: var(--amber);
+}
+
+.stat-card.green {
+  border-left-color: var(--emerald);
+}
+
+.stat-icon,
+.stat-card.teal .stat-icon {
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.stat-card.amber .stat-icon {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.stat-card.green .stat-icon {
+  background: var(--emerald-soft);
+  color: var(--emerald);
+}
+
+.type-panel,
+.dashboard-type-grid .type-panel {
+  border-color: var(--line) !important;
+  background: var(--bg-3) !important;
+  box-shadow: var(--shadow-tight);
+}
+
+.type-panel:hover,
+.dashboard-type-grid .type-panel:hover {
+  border-color: var(--line-strong);
+  background: var(--panel) !important;
+  box-shadow: var(--shadow-soft);
+}
+
+.dashboard-type-grid .type-panel.mobile {
+  border-left-color: var(--blue);
+}
+
+.dashboard-type-grid .type-panel.internet {
+  border-left-color: var(--teal);
+}
+
+.dashboard-type-grid .type-panel.mobile h2 {
+  color: var(--blue);
+}
+
+.dashboard-type-grid .type-panel.internet h2 {
+  color: var(--teal);
+}
+
+.bar-track div,
+.dashboard-bars .bar-track div,
+.source-track div,
+.guide-bars-preview span {
+  background: linear-gradient(90deg, var(--blue) 0%, var(--teal) 100%);
+}
+
+.source-total strong {
+  color: var(--emerald-light);
+}
+
+.source-meta span {
+  border-color: var(--emerald-glow);
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.upload-title-icon {
+  background: linear-gradient(135deg, var(--blue-soft) 0%, var(--teal-soft) 100%);
+  color: var(--blue);
+  box-shadow: inset 0 0 0 1px var(--blue-glow);
+}
+
+.upload-step-index {
+  background: var(--brand-gradient);
+}
+
+.file-drop,
+.guide-drop-preview {
+  border-color: var(--blue-glow);
+  background: var(--bg-3);
+}
+
+.file-drop:hover,
+.file-drop.has-file {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+}
+
+.panel .result-success-banner,
+.upload-result-panel .result-success-banner,
+.form-message.success {
+  background: var(--emerald-soft);
+  border-color: var(--emerald-glow);
+  color: var(--emerald-light);
+}
+
+.form-error,
+.upload-error,
+.operator-error,
+.form-message.error,
+.login-error {
+  border-color: var(--danger-glow);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.login-error span {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.upload-note,
+.guide-role-note {
+  border-color: var(--amber-glow);
+  background: var(--amber-soft);
+  color: var(--amber-dark);
+}
+
+.policy-overview-card--red,
+.privacy-page .policy-overview-card--red {
+  border-top-color: var(--danger);
+}
+
+.policy-overview-card--yellow,
+.privacy-page .policy-overview-card--yellow {
+  border-top-color: var(--amber);
+}
+
+.policy-overview-card--white,
+.privacy-page .policy-overview-card--white {
+  border-top-color: var(--emerald);
+}
+
+.policy-overview-card--red .policy-card-icon,
+.policy-overview-card--red .verdict-value,
+.summary-pill--red strong,
+.rule-badge--red svg {
+  color: var(--danger);
+}
+
+.policy-overview-card--yellow .policy-card-icon,
+.policy-overview-card--yellow .verdict-value,
+.summary-pill--yellow strong,
+.rule-badge--yellow svg {
+  color: var(--amber);
+}
+
+.policy-overview-card--white .policy-card-icon,
+.policy-overview-card--white .verdict-value,
+.summary-pill--white strong,
+.rule-badge--white svg {
+  color: var(--emerald);
+}
+
+.summary-pill {
+  border-color: var(--line);
+  background: var(--bg-3);
+}
+
+.privacy-hero-stat--blue > span {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.privacy-hero-stat--red > span,
+.guide-rule-grid .red {
+  border-color: var(--danger-glow);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.privacy-hero-stat--yellow > span,
+.guide-rule-grid .yellow {
+  border-color: var(--amber-glow);
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.privacy-hero-stat--green > span,
+.guide-rule-grid .white {
+  border-color: var(--emerald-glow);
+  background: var(--emerald-soft);
+  color: var(--emerald);
+}
+
+.source-pill.mobile {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.source-pill.internet {
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.badge-active {
+  background: var(--emerald-soft);
+  color: var(--emerald);
+}
+
+.badge-blocked {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.badge-manager {
+  background: var(--violet-soft);
+  color: var(--violet);
+}
+
+.badge-operator {
+  background: var(--bg-3);
+  color: var(--ink-dim);
+}
+
+.badge-active .status-dot {
+  background: var(--emerald);
+}
+
+.badge-blocked .status-dot {
+  background: var(--danger);
+}
+
+.btn-block,
+.btn-cancel:hover {
+  border-color: var(--danger-glow);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.btn-activate {
+  border-color: var(--emerald-glow);
+  background: var(--emerald-soft);
+  color: var(--emerald);
+}
+
+.btn-block:hover:not(:disabled) {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+  box-shadow: 0 4px 12px var(--danger-glow);
+}
+
+.btn-activate:hover:not(:disabled) {
+  border-color: var(--emerald);
+  background: var(--emerald-soft);
+  box-shadow: 0 4px 12px var(--emerald-glow);
+}
+
+.btn-password:hover:not(:disabled) {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+  box-shadow: 0 4px 12px var(--blue-glow);
+}
+
+.pagination {
+  background: var(--heading-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--line-strong);
+}

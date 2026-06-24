@@ -213,18 +213,6 @@ export default function GuidePage() {
       <section className="panel guide-overview">
         <div className="panel-heading split">
           <h2>{copy.whatSystemDoes.title}</h2>
-          <div className="guide-role-tabs" role="tablist">
-            {["operator", "manager"].map((role) => (
-              <button
-                key={role}
-                type="button"
-                className={activeRole === role ? "active" : ""}
-                onClick={() => setActiveRole(role)}
-              >
-                {copy.tabs[role]}
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className="guide-overview-grid">

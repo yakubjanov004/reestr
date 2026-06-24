@@ -1,6 +1,6 @@
 from datetime import datetime, time, timedelta
 
-from django.db.models import Count, Q
+from django.db.models import Count, Max, Q, Sum
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from rest_framework import filters, generics, status
@@ -114,6 +114,12 @@ class StatsView(ScopedQuerysetMixin, APIView):
     def get(self, request):
         records = self.scope_queryset(RegistryRecord.objects.all())
         batches = self.scope_queryset(UploadBatch.objects.all())
+
+        uploaded_by = request.query_params.get("uploaded_by")
+        if request.user.is_manager and uploaded_by and uploaded_by.isdigit():
+            records = records.filter(uploaded_by_id=uploaded_by)
+            batches = batches.filter(uploaded_by_id=uploaded_by)
+
         now = timezone.localtime()
         month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         last_7_start = now - timedelta(days=7)
@@ -133,6 +139,14 @@ class StatsView(ScopedQuerysetMixin, APIView):
             .annotate(count=Count("id"))
             .order_by("day")
         )
+        last_180_start = now - timedelta(days=180)
+        by_day_180 = (
+            records.filter(created_at__gte=last_180_start)
+            .annotate(day=TruncDate("created_at"))
+            .values("day")
+            .annotate(count=Count("id"))
+            .order_by("day")
+        )
         region_summary = (
             records.exclude(region="")
             .values("region")
@@ -145,6 +159,13 @@ class StatsView(ScopedQuerysetMixin, APIView):
             .annotate(count=Count("id"))
             .order_by("-count", "status")[:10]
         )
+        batch_totals = batches.aggregate(
+            total_rows_in_files=Sum("rows_in_file"),
+            total_imported_rows=Sum("imported_count"),
+            total_duplicate_rows=Sum("duplicate_count"),
+            total_skipped_rows=Sum("skipped_count"),
+            last_upload_at=Max("created_at"),
+        )
 
         recent_batches = batches.select_related("uploaded_by")[:8]
         source_summary = {}
@@ -154,15 +175,48 @@ class StatsView(ScopedQuerysetMixin, APIView):
         ):
             source_records = records.filter(source_type=source_type)
             source_batches = batches.filter(source_type=source_type)
+            source_batch_totals = source_batches.aggregate(
+                imported_rows=Sum("imported_count"),
+                duplicate_rows=Sum("duplicate_count"),
+                skipped_rows=Sum("skipped_count"),
+                rows_in_files=Sum("rows_in_file"),
+            )
             source_summary[source_type] = {
                 "label": label,
                 "records": source_records.count(),
                 "uploads": source_batches.count(),
                 "imported_this_month": source_records.filter(created_at__gte=month_start).count(),
+                "imported_rows": source_batch_totals["imported_rows"] or 0,
+                "duplicate_rows": source_batch_totals["duplicate_rows"] or 0,
+                "skipped_rows": source_batch_totals["skipped_rows"] or 0,
+                "rows_in_files": source_batch_totals["rows_in_files"] or 0,
             }
+        total_revenue = records.aggregate(total=Sum("payment_amount"))["total"] or 0
+        if request.user.is_manager:
+            total_operators = User.objects.filter(role=User.Role.OPERATOR).count()
+            active_operators = User.objects.filter(role=User.Role.OPERATOR, is_active=True).count()
+        else:
+            total_operators = 1
+            active_operators = 1 if request.user.is_active else 0
+
         data = {
             "total_records": records.count(),
             "total_uploads": batches.count(),
+            "uploads_this_month": batches.filter(created_at__gte=month_start).count(),
+            "uploads_last_7": batches.filter(created_at__gte=last_7_start).count(),
+            "uploads_last_30": batches.filter(created_at__gte=last_30_start).count(),
+            "total_revenue": total_revenue,
+            "total_rows_in_files": batch_totals["total_rows_in_files"] or 0,
+            "total_imported_rows": batch_totals["total_imported_rows"] or 0,
+            "total_duplicate_rows": batch_totals["total_duplicate_rows"] or 0,
+            "total_skipped_rows": batch_totals["total_skipped_rows"] or 0,
+            "last_upload_at": (
+                batch_totals["last_upload_at"].isoformat()
+                if batch_totals["last_upload_at"]
+                else None
+            ),
+            "total_operators": total_operators,
+            "active_operators": active_operators,
             "imported_this_month": records.filter(created_at__gte=month_start).count(),
             "records_last_7": records.filter(created_at__gte=last_7_start).count(),
             "records_last_30": records.filter(created_at__gte=last_30_start).count(),
@@ -171,6 +225,9 @@ class StatsView(ScopedQuerysetMixin, APIView):
             ],
             "records_by_day_30": [
                 {"date": item["day"].isoformat(), "count": item["count"]} for item in by_day_30
+            ],
+            "records_by_day_180": [
+                {"date": item["day"].isoformat(), "count": item["count"]} for item in by_day_180
             ],
             "region_summary": list(region_summary),
             "status_summary": list(status_summary),
@@ -193,6 +250,7 @@ class StatsView(ScopedQuerysetMixin, APIView):
                         "upload_batches",
                         distinct=True,
                     ),
+                    total_revenue=Sum("registry_records__payment_amount"),
                 )
                 .order_by("username")
             )
@@ -203,6 +261,7 @@ class StatsView(ScopedQuerysetMixin, APIView):
                     "full_name": operator.get_full_name() or operator.username,
                     "records_count": operator.records_count,
                     "uploads_count": operator.uploads_count,
+                    "total_revenue": operator.total_revenue or 0,
                     "is_active": operator.is_active,
                 }
                 for operator in operator_rows
@@ -239,6 +298,10 @@ class StatsView(ScopedQuerysetMixin, APIView):
                         filter=Q(upload_batches__created_at__gte=last_30_start),
                         distinct=True,
                     ),
+                    total_revenue=Sum(
+                        "registry_records__payment_amount",
+                        filter=Q(registry_records__created_at__gte=last_30_start),
+                    ),
                 )
                 .order_by("-records_count", "username")[:10]
             )
@@ -249,6 +312,7 @@ class StatsView(ScopedQuerysetMixin, APIView):
                     "full_name": operator.get_full_name() or operator.username,
                     "records_count": operator.records_count,
                     "uploads_count": operator.uploads_count,
+                    "total_revenue": operator.total_revenue or 0,
                 }
                 for operator in ranking_rows
             ]

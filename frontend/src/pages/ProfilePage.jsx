@@ -3,8 +3,6 @@ import { KeyRound, Languages, Monitor, Save, UserRound } from "lucide-react";
 
 import api from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
-import LanguageSwitcher from "../components/LanguageSwitcher.jsx";
-import ThemeSwitcher from "../components/ThemeSwitcher.jsx";
 import { useI18n } from "../localization/i18n.jsx";
 
 const emptyPasswordForm = {
@@ -123,30 +121,6 @@ export default function ProfilePage() {
                 <p>@{user?.username}</p>
                 <span className="profile-email">{user?.email || t.common.notEntered}</span>
               </div>
-            </div>
-          </section>
-
-          <section className="panel profile-language-panel">
-            <div className="panel-heading">
-              <div className="panel-title-with-icon">
-                <Languages size={18} />
-                <h2>{t.login.languagePickerLabel}</h2>
-              </div>
-            </div>
-            <div className="profile-language-body">
-              <LanguageSwitcher />
-            </div>
-          </section>
-
-          <section className="panel profile-language-panel">
-            <div className="panel-heading">
-              <div className="panel-title-with-icon">
-                <Monitor size={18} />
-                <h2>Tizim ko'rinishi</h2>
-              </div>
-            </div>
-            <div className="profile-language-body">
-              <ThemeSwitcher />
             </div>
           </section>
         </div>

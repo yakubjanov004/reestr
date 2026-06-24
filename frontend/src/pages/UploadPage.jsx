@@ -4,16 +4,13 @@ import {
   AlertTriangle,
   CheckCircle2,
   Database,
-  FileCheck2,
   FileSpreadsheet,
   Info,
   ListChecks,
-  Loader2,
   UploadCloud
 } from "lucide-react";
 
 import api from "../api/client.js";
-import PageHero from "../components/PageHero.jsx";
 import SourceTypeTabs from "../components/SourceTypeTabs.jsx";
 import { useI18n } from "../localization/i18n.jsx";
 import { formatDateTime } from "../utils/format.js";
@@ -94,26 +91,9 @@ export default function UploadPage() {
   }));
 
   return (
-    <section className={`page-stack upload-page${result ? " has-result" : ""}`}>
-      <PageHero
-        kicker={t.upload.heroKicker}
-        title={t.upload.heroTitle}
-        description={t.upload.heroDescription}
-        icon={UploadCloud}
-        stats={[
-          { label: t.source.registryType, value: "2", icon: ListChecks },
-          { label: t.upload.format, value: "2", icon: FileSpreadsheet },
-          { label: t.upload.selectedFile, value: file ? "1" : "0", icon: FileCheck2 },
-          { label: t.upload.status, value: uploading ? "..." : t.common.ok, icon: Database }
-        ]}
-      />
-
+    <section className={`upload-page${result ? " has-result" : ""}`}>
       <div className="upload-shell">
         <aside className="upload-brief">
-          <div className="upload-brief-kicker">
-            <FileCheck2 size={18} />
-            {t.upload.heroKicker}
-          </div>
           <h2>{t.upload.briefTitle}</h2>
           <p>
             {t.upload.briefText}
@@ -146,29 +126,12 @@ export default function UploadPage() {
         </aside>
 
         <section className="panel upload-panel">
-          <div className="panel-heading upload-panel-heading">
-            <div className="upload-title">
-              <span className="upload-title-icon">
-                <UploadCloud size={22} />
-              </span>
-              <div>
-                <h2>{t.upload.newImport}</h2>
-                <p>{fmt(t.upload.chooseExcelFor, { source: sourceTypeLabels[sourceType] })}</p>
-              </div>
-            </div>
-          </div>
-
           <form className="upload-form" onSubmit={handleSubmit}>
-            <div className="upload-form-grid">
-              <div className="form-block upload-source-block">
-                <span className="field-title">{t.source.registryType}</span>
-                <SourceTypeTabs value={sourceType} onChange={setSourceType} />
+            <div className="form-block upload-source-block">
+              <div className="source-block-header">
+                <span className="field-title">REESTR TURI</span>
               </div>
-
-              <div className="upload-source-summary">
-                <span>{t.source.selectedSource}</span>
-                <strong>{sourceTypeLabels[sourceType]}</strong>
-              </div>
+              <SourceTypeTabs value={sourceType} onChange={setSourceType} />
             </div>
 
             <label
@@ -177,17 +140,16 @@ export default function UploadPage() {
               onDrop={handleDrop}
             >
               <span className="file-drop-icon">
-                <UploadCloud size={32} />
+                <UploadCloud size={28} />
               </span>
               <div className="file-info">
-                <span>{file ? file.name : t.upload.chooseFile}</span>
+                <span>{file ? file.name : "Excel faylini shu yerga tashlang yoki bosing"}</span>
                 <small>
                   {file
                     ? `${(file.size / 1024).toFixed(1)} KB`
-                    : t.upload.allowedFormats}
+                    : "Ruxsat etilgan formatlar: .xlsx, .xlsm"}
                 </small>
               </div>
-              <span className="file-drop-action">{file ? t.common.replace : t.common.select}</span>
               <input
                 type="file"
                 accept=".xlsx,.xlsm"
@@ -203,8 +165,8 @@ export default function UploadPage() {
             )}
 
             <button className="primary-button upload-submit" type="submit" disabled={uploading}>
-              {uploading ? <Loader2 className="button-spinner" size={18} /> : <Database size={18} />}
-              <span>{uploading ? t.upload.uploading : t.upload.uploadToDb}</span>
+              <Database size={18} />
+              <span>{uploading ? t.upload.uploading : "Bazaga yuklash"}</span>
             </button>
           </form>
         </section>

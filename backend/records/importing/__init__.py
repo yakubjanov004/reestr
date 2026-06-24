@@ -1,10 +1,4 @@
-"""Compatibility facade for registry import helpers.
-
-The implementation lives in ``records.importing``; this module keeps existing
-imports such as ``from records.services import import_excel_file`` stable.
-"""
-
-from .importing import (
+from .constants import (
     DATE_FIELDS,
     DATETIME_FIELDS,
     DECIMAL_FIELDS,
@@ -14,34 +8,29 @@ from .importing import (
     PART_MASK_FIELDS,
     RED_FIELDS,
     SUFFIX_DIGIT_MASK_FIELDS,
-    add_import_error,
-    apply_privacy_rules,
-    build_dedupe_key,
-    build_record_kwargs,
-    detect_source_type,
+)
+from .import_service import add_import_error, import_excel_file, resolve_source_type, source_type_label
+from .normalizers import (
     ensure_aware,
-    field_for_header,
-    find_header_row,
-    import_excel_file,
-    is_empty_row,
-    map_row,
-    mask_digit_suffix,
-    mask_field_value,
-    mask_parts,
-    mask_value,
     normalize_header,
     normalize_text,
     parse_date,
     parse_datetime,
     parse_decimal,
-    parse_period,
+    serialize_cell,
+)
+from .privacy import (
+    apply_privacy_rules,
+    mask_digit_suffix,
+    mask_field_value,
+    mask_parts,
+    mask_value,
     remask_existing_part,
     remask_existing_value,
-    resolve_source_type,
     sanitize_record_instance,
-    serialize_cell,
-    source_type_label,
 )
+from .record_builder import build_dedupe_key, build_record_kwargs
+from .workbook import detect_source_type, field_for_header, find_header_row, is_empty_row, map_row, parse_period
 
 __all__ = [
     "DATE_FIELDS",

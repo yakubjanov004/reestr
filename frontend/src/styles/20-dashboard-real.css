@@ -1,0 +1,203 @@
+/* DB-backed statistics dashboard */
+
+.dashboard-page .page-hero {
+  display: none;
+}
+
+.dashboard-page .dashboard-frame {
+  border: 0;
+  border-radius: 20px;
+  background: #f3f8ff;
+  box-shadow: none;
+}
+
+.dashboard-page .dashboard-header {
+  margin-bottom: 2px;
+}
+
+.dashboard-real-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  margin: 4px 0 16px;
+}
+
+.dashboard-real-card {
+  display: grid;
+  gap: 10px;
+  min-height: 132px;
+  border: 1px solid #dce8f6;
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 16px;
+  box-shadow: 0 8px 18px rgba(15, 35, 70, 0.04);
+}
+
+.dashboard-real-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #7d8ba1;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dashboard-real-card-top svg {
+  flex-shrink: 0;
+}
+
+.dashboard-real-card strong {
+  color: #14213a;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.dashboard-real-card small {
+  color: #7d8ba1;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.dashboard-real-card.blue .dashboard-real-card-top svg { color: #2f6eea; }
+.dashboard-real-card.green .dashboard-real-card-top svg { color: #0f9f6e; }
+.dashboard-real-card.cyan .dashboard-real-card-top svg { color: #0891b2; }
+.dashboard-real-card.violet .dashboard-real-card-top svg { color: #7c3aed; }
+.dashboard-real-card.amber .dashboard-real-card-top svg { color: #d97706; }
+.dashboard-real-card.slate .dashboard-real-card-top svg { color: #64748b; }
+
+.dashboard-real-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.dashboard-real-grid-two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dashboard-page .dashboard-panel {
+  border-color: #dce8f6 !important;
+  border-radius: 16px;
+  background: #ffffff !important;
+  box-shadow: 0 8px 18px rgba(15, 35, 70, 0.04);
+}
+
+.dashboard-page .panel-heading {
+  background: #f7fbff;
+  border-bottom-color: #dce8f6;
+}
+
+.dashboard-page .panel-kicker {
+  color: #7d8ba1;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.dashboard-page .panel-heading h2 {
+  color: #14213a;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.dashboard-page .panel-badge.secondary,
+.dashboard-page .panel-badge {
+  border-color: #d3e2f3;
+  background: #eef6ff;
+  color: #2f6eea;
+}
+
+.dashboard-page .dashboard-bars {
+  background: #ffffff;
+}
+
+.dashboard-page .bar-row {
+  grid-template-columns: 92px minmax(0, 1fr) 60px;
+}
+
+.dashboard-page .bar-track,
+.dashboard-breakdown-track {
+  height: 7px;
+  border-radius: 999px;
+  background: #e7eff8;
+  overflow: hidden;
+}
+
+.dashboard-page .bar-track div,
+.dashboard-breakdown-track div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2f6eea 0%, #4ba3ff 100%);
+}
+
+.dashboard-breakdown-list {
+  display: grid;
+  gap: 13px;
+  padding: 14px 16px 16px;
+}
+
+.dashboard-breakdown-row {
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-breakdown-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dashboard-breakdown-row-head span {
+  min-width: 0;
+  overflow: hidden;
+  color: #344056;
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-breakdown-row-head strong {
+  color: #2f6eea;
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-page .source-total {
+  border-color: #dce8f6;
+  background: #f7fbff;
+}
+
+.dashboard-page .source-total strong,
+.dashboard-page .summary-row strong {
+  color: #2f6eea;
+}
+
+.dashboard-page .source-meta span {
+  border-color: #d3e2f3;
+  background: #eef6ff;
+  color: #3f6ea8;
+}
+
+@media (max-width: 1180px) {
+  .dashboard-real-grid,
+  .dashboard-real-grid-two {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-real-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-page .bar-row {
+    grid-template-columns: 78px minmax(0, 1fr) 48px;
+  }
+}

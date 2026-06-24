@@ -1,0 +1,92 @@
+﻿/* Dashboard refinements */
+
+/* ═══════════════════════════════════════════════════════
+   FORM ERROR — Global re-style
+   ═══════════════════════════════════════════════════════ */
+
+.form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 10px;
+  background: var(--blue-soft);
+  padding: 10px 14px;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════
+   DASHBOARD — Additional enhancements
+   ═══════════════════════════════════════════════════════ */
+
+/* Trend chart container */
+.dashboard-bars {
+  background: linear-gradient(180deg, #fafcff 0%, #f0f4ff 100%);
+}
+
+/* Bar row label */
+.bar-row span {
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-row strong {
+  color: var(--blue-mid);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Source track enhanced */
+.source-track {
+  border-radius: 999px;
+  background: var(--blue-soft);
+}
+
+/* Live metrics panel heading */
+/* Gradient removed to use theme variable */
+
+/* Ranking rows */
+.ranking-row {
+  font-size: 13.5px;
+}
+
+.ranking-row span {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.ranking-row strong {
+  background: var(--blue-soft);
+  color: var(--blue);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Panel badge enhanced */
+.panel-badge {
+  background: var(--blue-soft);
+  color: var(--blue-deep);
+  border: 1px solid var(--blue-glow);
+  letter-spacing: 0.01em;
+}
+
+/* Dashboard alert — missing operators */
+.dashboard-alert {
+  border-left: 4px solid var(--amber);
+}
+
+.dashboard-alert .alert-panel-title h2 {
+  font-size: 15px;
+  color: var(--ink);
+}
+

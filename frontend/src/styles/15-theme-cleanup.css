@@ -1,0 +1,145 @@
+﻿/* Theme cleanup overrides */
+
+/* ═══════════════════════════════════════════════════════
+   DARK SURFACE CLEANUP
+   Keeps late light-theme overrides from creating large white areas.
+   ═══════════════════════════════════════════════════════ */
+
+.main-content {
+  background:
+    radial-gradient(ellipse at 82% 0%, rgba(59, 130, 246, 0.06) 0%, transparent 34%),
+    var(--bg);
+}
+
+.page-stack {
+  gap: 18px;
+}
+
+.upload-page {
+  min-height: auto;
+  align-items: start;
+  padding: 0 0 24px;
+}
+
+.panel,
+.dashboard-panel,
+.upload-panel,
+.upload-result-panel,
+.operator-create-panel,
+.profile-form-panel,
+.profile-language-panel,
+.privacy-toolbar,
+.privacy-page .policy-overview-card,
+.privacy-page .rule-card,
+.guide-role-intro,
+.guide-step-card,
+.guide-checklist {
+  border-color: var(--line);
+  background: var(--bg-2);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+.panel-heading,
+.upload-panel .upload-panel-heading,
+.operator-create-panel .panel-heading,
+.profile-form-panel .panel-heading,
+.profile-language-panel .panel-heading,
+.live-panel .panel-heading,
+.privacy-page .rule-card-heading {
+  border-bottom-color: var(--line);
+  background: var(--blue-hover);
+}
+
+.dashboard-bars,
+.pagination,
+.upload-result-grid > div,
+.privacy-active-summary div,
+.guide-system-list div,
+.guide-shot,
+.guide-metric-grid span,
+.guide-card-grid span,
+.guide-rule-grid span,
+.guide-search-preview,
+.guide-users-preview div {
+  border-color: var(--line);
+  background: var(--bg-3);
+  color: var(--ink-dim);
+}
+
+.type-panel,
+.dashboard-type-grid .type-panel {
+  border-color: var(--line);
+  background: var(--bg-3) !important;
+}
+
+.type-panel:hover,
+.dashboard-type-grid .type-panel:hover {
+  border-color: var(--line-strong);
+  background: var(--bg-2) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+}
+
+.file-drop-action,
+.btn-password,
+.privacy-active-pill,
+.guide-role-tabs button,
+.guide-pill-row span,
+.guide-shot-button {
+  border-color: rgba(59, 130, 246, 0.24);
+  background: var(--blue-soft);
+  color: var(--blue-light);
+}
+
+.guide-role-tabs button.active,
+.guide-pill-row span.active,
+.guide-shot-button {
+  background: var(--blue-mid);
+  color: #fff;
+}
+
+.guide-shot-bar,
+.guide-table-preview div:first-child {
+  border-color: var(--line);
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--ink-dim);
+}
+
+.guide-system-list div,
+.guide-checklist ol,
+.guide-role-intro p,
+.guide-step-copy p,
+.guide-shot-bar strong,
+.guide-table-preview span,
+.guide-users-preview strong {
+  color: var(--ink-dim);
+}
+
+.guide-checklist h3,
+.guide-shot-heading strong,
+.privacy-active-summary strong,
+.type-panel strong {
+  color: var(--ink);
+}
+
+.pagination {
+  border-top: 1px solid var(--line);
+}
+
+.upload-result-panel .result-success-banner {
+  background: var(--emerald-soft);
+  border-bottom-color: var(--emerald-glow);
+}
+
+.upload-result-panel .issue-row,
+.guide-rule-grid .red,
+.guide-rule-grid .yellow,
+.guide-rule-grid .white {
+  border-color: var(--line);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.form-message.success {
+  background: var(--blue-soft);
+  color: var(--blue-light);
+}
+

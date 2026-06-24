@@ -13,6 +13,7 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import PrivacyRulesPage from "./pages/PrivacyRulesPage.jsx";
 import RecordsPage from "./pages/RecordsPage.jsx";
 import UploadPage from "./pages/UploadPage.jsx";
+import SettingsPage from "./pages/SettingsPage.jsx";
 import { useI18n } from "./localization/i18n.jsx";
 
 function ProtectedRoute({ children }) {
@@ -78,6 +79,7 @@ export default function App() {
         <Route path="privacy" element={<PrivacyRulesPage />} />
         <Route path="guide" element={<GuidePage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="settings" element={<SettingsPage />} />
         <Route
           path="operators"
           element={

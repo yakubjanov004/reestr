@@ -7,10 +7,10 @@ from .models import AuditLog, User
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
-        ("Reestr Telecom", {"fields": ("role", "created_by")}),
+        ("Datan", {"fields": ("role", "created_by")}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
-        ("Reestr Telecom", {"fields": ("role", "created_by")}),
+        ("Datan", {"fields": ("role", "created_by")}),
     )
     list_display = ("username", "email", "first_name", "last_name", "role", "is_active")
     list_filter = ("role", "is_active", "is_staff")
