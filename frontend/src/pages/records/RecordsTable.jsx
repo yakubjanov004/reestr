@@ -10,6 +10,8 @@ export default function RecordsTable({ t, records, loading, onOpenDetail }) {
             <th>ID</th>
             <th>{t.records.client}</th>
             <th>{t.common.type}</th>
+            <th>{t.common.region}</th>
+            <th>{t.common.branch}</th>
             <th>{t.records.region}</th>
             <th>{t.records.dealer}</th>
             <th>{t.records.phoneLogin}</th>
@@ -49,6 +51,8 @@ export default function RecordsTable({ t, records, loading, onOpenDetail }) {
                 <td>{record.id}</td>
                 <td>{record.client_name}</td>
                 <td>{sourceLabel(record.source_type, t)}</td>
+                <td>{record.assigned_region_name || "-"}</td>
+                <td>{record.assigned_branch_name || "-"}</td>
                 <td>{record.region}</td>
                 <td>{record.dealer}</td>
                 <td>{record.phone_number || record.internet_login}</td>

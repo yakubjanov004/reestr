@@ -35,11 +35,13 @@
   border-bottom: 1px solid var(--sidebar-reference-line);
   color: #17213a;
   letter-spacing: 0;
+  display: flex;
+  align-items: center;
 }
 
 .brand-logo {
   display: block;
-  width: 126px;
+  width: 175px;
   height: auto;
 }
 
@@ -122,27 +124,17 @@
   stroke-width: 2;
 }
 
-.sidebar a:hover {
+.sidebar a:hover,
+.logout-button:hover {
   background: var(--sidebar-reference-hover) !important;
   box-shadow: none !important;
-  color: #536175;
+  color: #536175 !important;
 }
 
-.logout-button:hover {
-  background: #fef2f2 !important;
-  box-shadow: none !important;
-  color: #dc2626 !important;
-}
-
-.sidebar a:hover svg {
-  animation: none;
-  color: #7d8799;
-  opacity: 1;
-}
-
+.sidebar a:hover svg,
 .logout-button:hover svg {
   animation: none;
-  color: #dc2626 !important;
+  color: #7d8799 !important;
   opacity: 1;
 }
 

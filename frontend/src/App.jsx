@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useEffect } from "react";
 
 import { useAuth } from "./auth/AuthContext.jsx";
+import { canManageUsers, isOperator } from "./auth/roles.js";
 import Layout from "./components/Layout.jsx";
 import AuditLogsPage from "./pages/AuditLogsPage.jsx";
 import BatchesPage from "./pages/BatchesPage.jsx";
@@ -27,14 +28,14 @@ function ProtectedRoute({ children }) {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
-function ManagerRoute({ children }) {
+function ManagementRoute({ children }) {
   const { user } = useAuth();
-  return user?.role === "manager" ? children : <Navigate to="/" replace />;
+  return canManageUsers(user) ? children : <Navigate to="/" replace />;
 }
 
 function HomeRoute() {
   const { user } = useAuth();
-  return user?.role === "operator" ? <Navigate to="/upload" replace /> : <DashboardPage />;
+  return isOperator(user) ? <Navigate to="/upload" replace /> : <DashboardPage />;
 }
 
 export default function App() {
@@ -83,17 +84,17 @@ export default function App() {
         <Route
           path="operators"
           element={
-            <ManagerRoute>
+            <ManagementRoute>
               <OperatorsPage />
-            </ManagerRoute>
+            </ManagementRoute>
           }
         />
         <Route
           path="audit"
           element={
-            <ManagerRoute>
+            <ManagementRoute>
               <AuditLogsPage />
-            </ManagerRoute>
+            </ManagementRoute>
           }
         />
       </Route>

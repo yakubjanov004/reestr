@@ -12,9 +12,9 @@ export const GUIDE_TRANSLATIONS = {
     },
     tabs: {
       operator: "Operator uchun",
-      manager: "Manager uchun"
+      manager: "Supervisor uchun"
     },
-    roleNote: "Manager bo'limidagi amallar faqat manager huquqi bor foydalanuvchilarda ochiladi.",
+    roleNote: "Supervisor bo'limidagi amallar faqat supervisor huquqi bor foydalanuvchilarda ochiladi.",
     whatSystemDoes: {
       title: "Sayt nima ish qiladi?",
       items: [
@@ -70,14 +70,14 @@ export const GUIDE_TRANSLATIONS = {
         ]
       },
       manager: {
-        title: "Manager qo'llanmasi",
+        title: "Supervisor qo'llanmasi",
         intro:
-          "Manager operator ish jarayonini kuzatadi, foydalanuvchilarni boshqaradi, audit loglarni ko'radi va statistikani nazorat qiladi.",
-        checklistTitle: "Manager ketma-ketligi",
+          "Supervisor operator ish jarayonini kuzatadi, foydalanuvchilarni boshqaradi, audit loglarni ko'radi va statistikani nazorat qiladi.",
+        checklistTitle: "Supervisor ketma-ketligi",
         checklist: [
           "Dashboard orqali umumiy import holatini va operator faolligini tekshiring.",
           "Kecha fayl yuklamagan operatorlar ro'yxatini nazorat qiling.",
-          "Foydalanuvchilar sahifasida operator yoki manager yarating.",
+          "Foydalanuvchilar sahifasida operator yarating yoki filialga biriktiring.",
           "Kerak bo'lsa foydalanuvchini bloklang, aktivlang yoki parolini yangilang.",
           "Audit log orqali login, upload va foydalanuvchi amallarini tekshiring.",
           "Yuklashlar tarixi va reestr sahifalarida import tafsilotlarini tekshiring."
@@ -94,7 +94,7 @@ export const GUIDE_TRANSLATIONS = {
             icon: "users",
             title: "2. Foydalanuvchilarni boshqarish",
             text:
-              "Yangi operator yoki manager yarating. Foydalanuvchi holatini bloklash, aktivlash va parolni almashtirish mumkin.",
+              "Yangi operator yarating va filialga biriktiring. Foydalanuvchi holatini bloklash, aktivlash va parolni almashtirish mumkin.",
             screen: "users"
           },
           {
@@ -174,9 +174,9 @@ export const GUIDE_TRANSLATIONS = {
     },
     tabs: {
       operator: "Оператор учун",
-      manager: "Менежер учун"
+      manager: "Супервизор учун"
     },
-    roleNote: "Менежер бўлимидаги амаллар фақат manager ҳуқуқи бор фойдаланувчиларда очилади.",
+    roleNote: "Супервизор бўлимидаги амаллар фақат supervisor ҳуқуқи бор фойдаланувчиларда очилади.",
     whatSystemDoes: {
       title: "Сайт нима иш қилади?",
       items: [
@@ -232,14 +232,14 @@ export const GUIDE_TRANSLATIONS = {
         ]
       },
       manager: {
-        title: "Менежер қўлланмаси",
+        title: "Супервизор қўлланмаси",
         intro:
-          "Менежер оператор иш жараёнини кузатади, фойдаланувчиларни бошқаради, audit logларни кўради ва статистикани назорат қилади.",
-        checklistTitle: "Менежер кетма-кетлиги",
+          "Супервизор оператор иш жараёнини кузатади, фойдаланувчиларни бошқаради, audit logларни кўради ва статистикани назорат қилади.",
+        checklistTitle: "Супервизор кетма-кетлиги",
         checklist: [
           "Dashboard орқали умумий импорт ҳолатини ва оператор фаоллигини текширинг.",
           "Кеча файл юкламаган операторлар рўйхатини назорат қилинг.",
-          "Фойдаланувчилар саҳифасида оператор ёки manager яратинг.",
+          "Фойдаланувчилар саҳифасида оператор яратинг ёки филиалга бириктиринг.",
           "Керак бўлса фойдаланувчини блокланг, активланг ёки паролини янгиланг.",
           "Audit log орқали login, upload ва фойдаланувчи амалларини текширинг.",
           "Юклашлар тарихи ва реестр саҳифаларида импорт тафсилотларини текширинг."
@@ -256,7 +256,7 @@ export const GUIDE_TRANSLATIONS = {
             icon: "users",
             title: "2. Фойдаланувчиларни бошқариш",
             text:
-              "Янги оператор ёки manager яратинг. Фойдаланувчи ҳолатини блоклаш, активлаш ва паролни алмаштириш мумкин.",
+              "Янги оператор яратинг ва филиалга бириктиринг. Фойдаланувчи ҳолатини блоклаш, активлаш ва паролни алмаштириш мумкин.",
             screen: "users"
           },
           {
@@ -336,9 +336,9 @@ export const GUIDE_TRANSLATIONS = {
     },
     tabs: {
       operator: "Для оператора",
-      manager: "Для менеджера"
+      manager: "Для супервизора"
     },
-    roleNote: "Действия из раздела менеджера доступны только пользователям с правами manager.",
+    roleNote: "Действия из раздела супервизора доступны только пользователям с правами supervisor.",
     whatSystemDoes: {
       title: "Что делает сайт?",
       items: [
@@ -394,14 +394,14 @@ export const GUIDE_TRANSLATIONS = {
         ]
       },
       manager: {
-        title: "Инструкция менеджера",
+        title: "Инструкция супервизора",
         intro:
-          "Менеджер контролирует работу операторов, управляет пользователями, просматривает audit log и следит за статистикой.",
-        checklistTitle: "Последовательность менеджера",
+          "Супервизор контролирует работу операторов, управляет пользователями, просматривает audit log и следит за статистикой.",
+        checklistTitle: "Последовательность супервизора",
         checklist: [
           "Проверьте общий импорт и активность операторов на Dashboard.",
           "Контролируйте список операторов, которые вчера не загрузили файл.",
-          "Создавайте операторов или менеджеров на странице пользователей.",
+          "Создавайте операторов и привязывайте их к филиалам на странице пользователей.",
           "При необходимости блокируйте, активируйте пользователя или обновляйте пароль.",
           "Проверяйте входы, загрузки и действия пользователей через Audit log.",
           "Смотрите детали импорта в истории загрузок и реестре."
@@ -418,7 +418,7 @@ export const GUIDE_TRANSLATIONS = {
             icon: "users",
             title: "2. Управление пользователями",
             text:
-              "Создавайте операторов и менеджеров. Можно блокировать, активировать пользователя и менять пароль.",
+              "Создавайте операторов и привязывайте их к филиалам. Можно блокировать, активировать пользователя и менять пароль.",
             screen: "users"
           },
           {

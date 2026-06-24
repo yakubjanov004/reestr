@@ -1,6 +1,6 @@
 # Datan
 
-Datan - Django REST API va React/Vite frontenddan iborat Excel reestr import qilish va boshqarish tizimi. Tizim operatorlar yuklagan GSM va SHPD Excel fayllarini tekshiradi, maxfiylik qoidalarini qo'llaydi, yozuvlarni PostgreSQL bazasiga saqlaydi va manager uchun statistik/audit panel beradi.
+Datan - Django REST API va React/Vite frontenddan iborat Excel reestr import qilish va boshqarish tizimi. Tizim operatorlar yuklagan GSM va SHPD Excel fayllarini tekshiradi, maxfiylik qoidalarini qo'llaydi, yozuvlarni PostgreSQL bazasiga saqlaydi va supervisor uchun statistik/audit panel beradi.
 
 ## Asosiy imkoniyatlar
 
@@ -8,7 +8,7 @@ Datan - Django REST API va React/Vite frontenddan iborat Excel reestr import qil
 - Ikki manba turi: `Mobil raqam` va `Internet ulanish`.
 - Deduplikatsiya: eski yozuvlar qayta bazaga yozilmaydi.
 - Maxfiylik qoidalari: qizil ustunlar saqlanmaydi, sariq ustunlar maskalanadi, ochiq ustunlar asl holida saqlanadi.
-- Rollar: manager barcha ma'lumotlarni boshqaradi, operator faqat o'z importlarini ko'radi.
+- Rollar: operator faqat o'z importlarini ko'radi, supervisor o'z viloyatini boshqaradi, manager barcha viloyatlarni ko'radi.
 - Dashboard: reestr, upload, operator va oxirgi import statistikasi.
 - Audit log: login, upload va foydalanuvchi boshqaruvi amallari bazaga yoziladi.
 
@@ -56,7 +56,7 @@ pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-`backend/.env` ichida PostgreSQL va boshlang'ich manager qiymatlarini sozlang:
+`backend/.env` ichida PostgreSQL va boshlang'ich supervisor qiymatlarini sozlang:
 
 ```env
 POSTGRES_DB=reestr_telecom
@@ -69,7 +69,7 @@ MANAGER_USERNAME=manager
 MANAGER_PASSWORD=manager12345
 ```
 
-Database yaratish, migration va manager yaratish:
+Database yaratish, migration va supervisor yaratish:
 
 ```powershell
 python scripts\create_database.py
@@ -114,12 +114,18 @@ npm run build
 
 ## Rollar
 
-`manager`:
+`supervisor`:
 
-- operator va manager akkauntlarini yaratadi;
-- barcha upload va reestr yozuvlarini ko'radi;
+- o'z viloyatidagi operator akkauntlarini yaratadi;
+- o'z viloyatidagi upload va reestr yozuvlarini ko'radi;
 - audit log va tizim statistikalarini ko'radi;
 - foydalanuvchi holatini va parolini boshqaradi.
+
+`manager`:
+
+- barcha viloyat va filiallar bo'yicha ma'lumotlarni ko'radi;
+- supervisor va operator akkauntlarini boshqaradi;
+- umumiy statistika, audit va import tarixini nazorat qiladi.
 
 `operator`:
 
@@ -137,7 +143,7 @@ npm run build
 - `/operators` - foydalanuvchilar boshqaruvi
 - `/audit` - audit log
 
-`/operators` va `/audit` faqat manager uchun ochiq.
+`/operators` va `/audit` supervisor, manager va admin uchun ochiq.
 
 ## Asosiy API endpointlar
 

@@ -140,7 +140,7 @@ export default function UploadPage() {
               onDrop={handleDrop}
             >
               <span className="file-drop-icon">
-                <UploadCloud size={28} />
+                <UploadCloud size={80} />
               </span>
               <div className="file-info">
                 <span>{file ? file.name : "Excel faylini shu yerga tashlang yoki bosing"}</span>

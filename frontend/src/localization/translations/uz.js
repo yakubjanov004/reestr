@@ -32,7 +32,11 @@ export const uz = {
     type: "Tur",
     operator: "Operator",
     operators: "Operatorlar",
+    supervisor: "Supervisor",
     manager: "Manager",
+    admin: "Admin",
+    region: "Viloyat",
+    branch: "Filial",
     role: "Rol",
     active: "Aktiv",
     blocked: "Bloklangan",
@@ -51,9 +55,15 @@ export const uz = {
     permissionLevel: "Ruxsat darajasi"
   },
   roles: {
-    manager: "Manager",
     operator: "Operator",
-    managerLong: "Tizim Administratori",
+    supervisor: "Supervisor",
+    manager: "Manager",
+    admin: "Admin",
+    operatorLong: "Operator",
+    supervisorLong: "Supervisor",
+    managerLong: "Manager",
+    adminLong: "Admin",
+    supervisorRights: "Supervisor huquqlari",
     managerRights: "Manager huquqlari",
     operatorRights: "Operator huquqlari"
   },
@@ -69,15 +79,19 @@ export const uz = {
   },
   layout: {
     menu: "Menyu",
+    supervisorPanel: "Supervisor paneli",
     managerPanel: "Manager paneli",
+    adminPanel: "Admin paneli",
     operatorPanel: "Operator paneli",
     profile: "Profil",
     logout: "Chiqish",
     logoutFull: "Chiqish",
     sections: {
       operations: "Asosiy",
-      data: "Operatorlarga",
-      system: "Menejerlarga"
+      data: "Ma'lumotlar",
+      supervision: "Supervisor",
+      management: "Boshqaruv",
+      system: "Supervisor"
     },
     nav: {
       dashboard: "Statistika",
@@ -258,9 +272,15 @@ export const uz = {
   operators: {
     heroKicker: "Tizim boshqaruvi",
     title: "Foydalanuvchilar",
-    description: "Manager va operator akkauntlarini yaratish, holatini boshqarish va parollarni yangilash bo'limi.",
+    description: "Supervisor va operator akkauntlarini yaratish, holatini boshqarish va parollarni yangilash bo'limi.",
     totalUsers: "Jami foydalanuvchi",
     createUser: "Foydalanuvchi yaratish",
+    selectRegion: "Viloyatni tanlang",
+    selectBranch: "Filialni tanlang",
+    newRegion: "Yangi viloyat",
+    newBranch: "Yangi filial",
+    newRegionPlaceholder: "Masalan: Toshkent viloyati",
+    newBranchPlaceholder: "Masalan: Chirchiq filiali",
     usernamePlaceholder: "foydalanuvchi_nomi",
     minPassword: "Kamida 8 belgi",
     createError: "Foydalanuvchi yaratishda xatolik bor.",

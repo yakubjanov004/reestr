@@ -9,6 +9,8 @@ export function useRecordsData() {
   const [sourceType, setSourceType] = useState("");
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [filterOptions, setFilterOptions] = useState({
+    organization_regions: [],
+    branches: [],
     regions: [],
     dealers: [],
     statuses: [],
@@ -49,6 +51,8 @@ export function useRecordsData() {
   useEffect(() => {
     api.get("/records/filter-options/").then((response) => {
       setFilterOptions({
+        organization_regions: response.data.organization_regions || [],
+        branches: response.data.branches || [],
         regions: response.data.regions || [],
         dealers: response.data.dealers || [],
         statuses: response.data.statuses || [],
@@ -93,7 +97,11 @@ export function useRecordsData() {
   }
 
   function handleFilter(field, value) {
-    setFilters((current) => ({ ...current, [field]: value }));
+    setFilters((current) => ({
+      ...current,
+      [field]: value,
+      ...(field === "assigned_region" ? { assigned_branch: "" } : {})
+    }));
     setPage(1);
   }
 

@@ -3,11 +3,37 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .audit import log_audit_event
-from .models import AuditLog, User
+from .models import AuditLog, Branch, Region, User
+
+
+class RegionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Region
+        fields = ("id", "name")
+        read_only_fields = fields
+
+
+class BranchSerializer(serializers.ModelSerializer):
+    region_name = serializers.CharField(source="region.name", read_only=True)
+
+    class Meta:
+        model = Branch
+        fields = ("id", "name", "code", "is_active", "region", "region_name")
+        read_only_fields = fields
+
+
+def normalize_location_name(value):
+    return " ".join((value or "").strip().split())
+
+
+def role_label(role):
+    return dict(User.Role.choices).get(role, role)
 
 
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
+    region = RegionSerializer(read_only=True)
+    branch = BranchSerializer(read_only=True)
 
     class Meta:
         model = User
@@ -19,10 +45,14 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "full_name",
             "role",
+            "region",
+            "branch",
             "is_active",
+            "is_staff",
+            "is_superuser",
             "date_joined",
         )
-        read_only_fields = ("id", "role", "date_joined", "full_name")
+        read_only_fields = fields
 
     def get_full_name(self, obj):
         return obj.get_full_name() or obj.username
@@ -30,6 +60,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class SelfProfileSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
+    region = RegionSerializer(read_only=True)
+    branch = BranchSerializer(read_only=True)
 
     class Meta:
         model = User
@@ -41,7 +73,11 @@ class SelfProfileSerializer(serializers.ModelSerializer):
             "last_name",
             "full_name",
             "role",
+            "region",
+            "branch",
             "is_active",
+            "is_staff",
+            "is_superuser",
             "date_joined",
         )
         read_only_fields = (
@@ -49,7 +85,11 @@ class SelfProfileSerializer(serializers.ModelSerializer):
             "username",
             "full_name",
             "role",
+            "region",
+            "branch",
             "is_active",
+            "is_staff",
+            "is_superuser",
             "date_joined",
         )
 
@@ -106,6 +146,22 @@ class AuditLogSerializer(serializers.ModelSerializer):
 class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False, min_length=8)
     role = serializers.ChoiceField(choices=User.Role.choices, required=False)
+    region_id = serializers.PrimaryKeyRelatedField(
+        queryset=Region.objects.all(),
+        source="region",
+        required=False,
+        allow_null=True,
+        write_only=True,
+    )
+    branch_id = serializers.PrimaryKeyRelatedField(
+        queryset=Branch.objects.select_related("region").all(),
+        source="branch",
+        required=False,
+        allow_null=True,
+        write_only=True,
+    )
+    region_name = serializers.CharField(required=False, allow_blank=True, write_only=True)
+    branch_name = serializers.CharField(required=False, allow_blank=True, write_only=True)
 
     class Meta:
         model = User
@@ -117,6 +173,10 @@ class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "role",
+            "region_id",
+            "branch_id",
+            "region_name",
+            "branch_name",
             "is_active",
         )
         read_only_fields = ("id",)
@@ -126,9 +186,77 @@ class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
+        request = self.context["request"]
+        actor = request.user
         if self.instance is None and not attrs.get("password"):
             raise serializers.ValidationError({"password": "Password is required."})
+
+        role_was_submitted = "role" in attrs
+        location_was_submitted = any(
+            key in attrs for key in ("region", "branch", "region_name", "branch_name")
+        )
+        role = attrs.get("role") or (self.instance.role if self.instance else User.Role.OPERATOR)
+        self._validate_actor_can_assign_role(actor, role)
+
+        region = attrs.pop("region", None)
+        branch = attrs.pop("branch", None)
+        region_name = normalize_location_name(attrs.pop("region_name", ""))
+        branch_name = normalize_location_name(attrs.pop("branch_name", ""))
+
+        if self.instance is not None:
+            region = region if region is not None else self.instance.region
+            branch = branch if branch is not None else self.instance.branch
+
+        if actor.is_supervisor:
+            if not actor.region_id:
+                raise serializers.ValidationError({"region": "Supervisor viloyatga biriktirilmagan."})
+            region = actor.region
+
+        if region_name:
+            if actor.is_supervisor:
+                raise serializers.ValidationError({"region_name": "Supervisor yangi viloyat yarata olmaydi."})
+            region, _ = Region.objects.get_or_create(name=region_name)
+
+        if branch_name:
+            if branch and not region:
+                region = branch.region
+            if not region:
+                raise serializers.ValidationError({"region": "Filial yaratish uchun viloyat tanlang."})
+            branch, _ = Branch.objects.get_or_create(region=region, name=branch_name)
+
+        if branch:
+            if region and branch.region_id != region.id:
+                raise serializers.ValidationError({"branch": "Filial tanlangan viloyatga tegishli emas."})
+            region = branch.region
+
+        if actor.is_supervisor and branch and branch.region_id != actor.region_id:
+            raise serializers.ValidationError({"branch": "Supervisor faqat o'z viloyatidagi filialni tanlay oladi."})
+
+        if role == User.Role.OPERATOR:
+            if not branch and (self.instance is None or role_was_submitted or location_was_submitted):
+                raise serializers.ValidationError({"branch": "Operator uchun filial majburiy."})
+            if branch:
+                region = branch.region
+        elif role == User.Role.SUPERVISOR:
+            if not region and (self.instance is None or role_was_submitted or location_was_submitted):
+                raise serializers.ValidationError({"region": "Supervisor uchun viloyat majburiy."})
+            branch = None
+        elif role in {User.Role.MANAGER, User.Role.ADMIN}:
+            region = None
+            branch = None
+
+        attrs["region"] = region
+        attrs["branch"] = branch
         return attrs
+
+    def _validate_actor_can_assign_role(self, actor, role):
+        if actor.is_admin_role:
+            return
+        if actor.role == User.Role.MANAGER and role in {User.Role.OPERATOR, User.Role.SUPERVISOR}:
+            return
+        if actor.role == User.Role.SUPERVISOR and role == User.Role.OPERATOR:
+            return
+        raise serializers.ValidationError({"role": f"{role_label(role)} rolini berishga ruxsat yo'q."})
 
     def create(self, validated_data):
         password = validated_data.pop("password")

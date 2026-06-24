@@ -244,8 +244,8 @@
 }
 
 .file-drop-icon {
-  width: 64px;
-  height: 64px;
+  width: 96px;
+  height: 96px;
   border-radius: 16px;
   background: transparent;
   color: #4da2ff;
@@ -255,9 +255,9 @@
 }
 
 .file-drop-icon svg {
-  width: 48px;
-  height: 48px;
-  stroke-width: 1.5;
+  width: 80px;
+  height: 80px;
+  stroke-width: 1.2;
 }
 
 .file-drop .file-info {

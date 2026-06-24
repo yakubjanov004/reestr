@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext.jsx";
+import { isOperator } from "../auth/roles.js";
 import LanguageSwitcher from "../components/LanguageSwitcher.jsx";
 import { useI18n } from "../localization/i18n.jsx";
 
@@ -17,7 +18,7 @@ export default function LoginPage() {
   const [focused, setFocused] = useState("");
 
   if (isAuthenticated) {
-    return <Navigate to={user?.role === "operator" ? "/upload" : "/"} replace />;
+    return <Navigate to={isOperator(user) ? "/upload" : "/"} replace />;
   }
 
   async function handleSubmit(event) {
@@ -26,7 +27,7 @@ export default function LoginPage() {
     setError("");
     try {
       const loggedInUser = await login(form.username, form.password);
-      navigate(loggedInUser?.role === "operator" ? "/upload" : "/");
+      navigate(isOperator(loggedInUser) ? "/upload" : "/");
     } catch {
       setError(text.invalidCredentials);
     } finally {

@@ -2,6 +2,7 @@ import { LogOut, Menu, UserRound } from "lucide-react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext.jsx";
+import { panelTitle, roleLabel } from "../auth/roles.js";
 import Sidebar from "./Sidebar.jsx";
 import { useState } from "react";
 import { useI18n } from "../localization/i18n.jsx";
@@ -27,12 +28,12 @@ export default function Layout() {
             </button>
             <div>
               <p className="eyebrow">Datan</p>
-              <h1>{user?.role === "manager" ? t.layout.managerPanel : t.layout.operatorPanel}</h1>
+              <h1>{panelTitle(t, user)}</h1>
             </div>
           </div>
           <div className="user-chip">
             <span>{user?.full_name || user?.username}</span>
-            <strong>{user?.role === "manager" ? t.roles.manager : t.roles.operator}</strong>
+            <strong>{roleLabel(t, user?.role)}</strong>
             <button
               className="chip-profile-button"
               type="button"

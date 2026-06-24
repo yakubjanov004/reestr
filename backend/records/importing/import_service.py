@@ -22,10 +22,14 @@ def import_excel_file(*, file_obj, uploaded_by, expected_source_type=None):
     detected_source_type = detect_source_type(headers, worksheet)
     source_type = resolve_source_type(detected_source_type, expected_source_type)
     period_start, period_end = parse_period(worksheet)
+    assigned_region = uploaded_by.branch.region if uploaded_by.branch_id else uploaded_by.region
+    assigned_branch = uploaded_by.branch
 
     with transaction.atomic():
         batch = UploadBatch.objects.create(
             uploaded_by=uploaded_by,
+            assigned_region=assigned_region,
+            assigned_branch=assigned_branch,
             file=file_obj,
             original_filename=getattr(file_obj, "name", "upload.xlsx"),
             source_type=source_type,

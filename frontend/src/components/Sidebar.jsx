@@ -16,6 +16,7 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext.jsx";
+import { canManageUsers, canViewAllData, roleLongLabel } from "../auth/roles.js";
 import { useI18n } from "../localization/i18n.jsx";
 
 export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
@@ -42,16 +43,16 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
       ]
     }
   ];
-  const managerSection = {
+  const managementSection = {
     key: "system",
-    title: t.layout.sections.system,
+    title: canViewAllData(user) ? t.layout.sections.management : t.layout.sections.supervision,
     links: [
       { to: "/operators", label: t.layout.nav.operators, mobileLabel: t.layout.nav.operatorsShort, icon: Users },
       { to: "/audit", label: t.layout.nav.audit, mobileLabel: t.layout.nav.audit, icon: ScrollText }
     ]
   };
   const visibleSections =
-    user?.role === "manager" ? [...sections, managerSection] : sections;
+    canManageUsers(user) ? [...sections, managementSection] : sections;
 
   const bottomLinks = [
     { to: "/settings", label: "Sozlamalar", mobileLabel: "Sozlamalar", icon: Settings },
@@ -91,7 +92,14 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
             {section.links.map((item) => {
               const Icon = item.icon;
               return (
-                <NavLink key={item.to} to={item.to} end={item.to === "/"} title={item.label} onClick={onClose}>
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === "/"}
+                  title={item.label}
+                  onClick={onClose}
+                  className={({ isActive }) => isActive ? "active" : undefined}
+                >
                   <Icon size={20} strokeWidth={1.5} />
                   <span className="nav-label-full">{item.label}</span>
                   <span className="nav-label-short">{item.mobileLabel}</span>
@@ -105,7 +113,14 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
           {bottomLinks.map((item) => {
             const Icon = item.icon;
             return (
-              <NavLink key={item.to} to={item.to} end={item.to === "/"} title={item.label} onClick={onClose}>
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === "/"}
+                title={item.label}
+                onClick={onClose}
+                className={({ isActive }) => isActive ? "active" : undefined}
+              >
                 <Icon size={20} strokeWidth={1.5} />
                 <span className="nav-label-full">{item.label}</span>
                 <span className="nav-label-short">{item.mobileLabel}</span>
@@ -124,7 +139,7 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
         >
           <span className="user-summary-text">
             <strong>{user?.full_name || user?.username}</strong>
-            <small>{user?.role === "manager" ? t.roles.managerLong : t.roles.operator}</small>
+            <small>{roleLongLabel(t, user)}</small>
           </span>
           <UserRound className="profile-summary-icon" size={18} strokeWidth={1.5} />
         </button>

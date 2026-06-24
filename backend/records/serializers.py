@@ -5,6 +5,8 @@ from .models import RegistryRecord, UploadBatch
 
 class UploadBatchSerializer(serializers.ModelSerializer):
     uploaded_by_username = serializers.CharField(source="uploaded_by.username", read_only=True)
+    assigned_region_name = serializers.CharField(source="assigned_region.name", read_only=True, default="")
+    assigned_branch_name = serializers.CharField(source="assigned_branch.name", read_only=True, default="")
     import_error_count = serializers.SerializerMethodField()
 
     def get_import_error_count(self, obj):
@@ -16,6 +18,10 @@ class UploadBatchSerializer(serializers.ModelSerializer):
             "id",
             "uploaded_by",
             "uploaded_by_username",
+            "assigned_region",
+            "assigned_region_name",
+            "assigned_branch",
+            "assigned_branch_name",
             "original_filename",
             "source_type",
             "period_start",
@@ -33,6 +39,8 @@ class UploadBatchSerializer(serializers.ModelSerializer):
 
 class RegistryRecordSerializer(serializers.ModelSerializer):
     uploaded_by_username = serializers.CharField(source="uploaded_by.username", read_only=True)
+    assigned_region_name = serializers.CharField(source="assigned_region.name", read_only=True, default="")
+    assigned_branch_name = serializers.CharField(source="assigned_branch.name", read_only=True, default="")
 
     class Meta:
         model = RegistryRecord
@@ -40,6 +48,10 @@ class RegistryRecordSerializer(serializers.ModelSerializer):
             "id",
             "source_type",
             "uploaded_by_username",
+            "assigned_region",
+            "assigned_region_name",
+            "assigned_branch",
+            "assigned_branch_name",
             "region",
             "dealer",
             "client_name",
@@ -63,6 +75,8 @@ class RegistryRecordSerializer(serializers.ModelSerializer):
 
 class RegistryRecordDetailSerializer(serializers.ModelSerializer):
     uploaded_by_username = serializers.CharField(source="uploaded_by.username", read_only=True)
+    assigned_region_name = serializers.CharField(source="assigned_region.name", read_only=True, default="")
+    assigned_branch_name = serializers.CharField(source="assigned_branch.name", read_only=True, default="")
     upload_batch_filename = serializers.CharField(source="upload_batch.original_filename", read_only=True)
     upload_batch_created_at = serializers.DateTimeField(source="upload_batch.created_at", read_only=True)
     upload_batch_period_start = serializers.DateTimeField(source="upload_batch.period_start", read_only=True)
@@ -74,6 +88,10 @@ class RegistryRecordDetailSerializer(serializers.ModelSerializer):
             "id",
             "source_type",
             "uploaded_by_username",
+            "assigned_region",
+            "assigned_region_name",
+            "assigned_branch",
+            "assigned_branch_name",
             "upload_batch",
             "upload_batch_filename",
             "upload_batch_created_at",

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "../auth/AuthContext.jsx";
+import { canManageUsers } from "../auth/roles.js";
 import PageHero from "../components/PageHero.jsx";
 import { GUIDE_TRANSLATIONS } from "../localization/guide.js";
 import { useI18n } from "../localization/i18n.jsx";
@@ -186,14 +187,15 @@ export default function GuidePage() {
   const { user } = useAuth();
   const { language, t } = useI18n();
   const copy = GUIDE_TRANSLATIONS[language] || GUIDE_TRANSLATIONS.uz;
-  const defaultRole = user?.role === "manager" ? "manager" : "operator";
+  const hasManagementAccess = canManageUsers(user);
+  const defaultRole = hasManagementAccess ? "manager" : "operator";
   const [activeRole, setActiveRole] = useState(defaultRole);
   const guide = copy.roles[activeRole];
   const isManagerSection = activeRole === "manager";
 
   useEffect(() => {
-    setActiveRole(user?.role === "manager" ? "manager" : "operator");
-  }, [user?.role]);
+    setActiveRole(hasManagementAccess ? "manager" : "operator");
+  }, [hasManagementAccess]);
 
   return (
     <section className="page-stack guide-page">
@@ -231,7 +233,7 @@ export default function GuidePage() {
                 <li key={item}>{item}</li>
               ))}
             </ol>
-            {isManagerSection && user?.role !== "manager" && (
+            {isManagerSection && !hasManagementAccess && (
               <p className="guide-role-note">{copy.roleNote}</p>
             )}
           </div>

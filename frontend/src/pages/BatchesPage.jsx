@@ -10,7 +10,9 @@ import { formatDateTime } from "../utils/format.js";
 const emptyFilters = {
   date_from: "",
   date_to: "",
-  uploaded_by: ""
+  uploaded_by: "",
+  assigned_region: "",
+  assigned_branch: ""
 };
 
 export default function BatchesPage() {
@@ -19,12 +21,16 @@ export default function BatchesPage() {
   const [sourceType, setSourceType] = useState("");
   const [filters, setFilters] = useState(emptyFilters);
   const [operators, setOperators] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const [branches, setBranches] = useState([]);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState({ count: 0, next: null, previous: null });
 
   useEffect(() => {
     api.get("/records/filter-options/").then((response) => {
       setOperators(response.data.operators || []);
+      setRegions(response.data.organization_regions || []);
+      setBranches(response.data.branches || []);
     });
   }, []);
 
@@ -52,9 +58,17 @@ export default function BatchesPage() {
   }
 
   function handleFilter(field, value) {
-    setFilters((current) => ({ ...current, [field]: value }));
+    setFilters((current) => ({
+      ...current,
+      [field]: value,
+      ...(field === "assigned_region" ? { assigned_branch: "" } : {})
+    }));
     setPage(1);
   }
+
+  const branchOptions = branches.filter(
+    (branch) => !filters.assigned_region || String(branch.region) === String(filters.assigned_region)
+  );
 
   return (
     <section className="page-stack">
@@ -110,6 +124,38 @@ export default function BatchesPage() {
               </select>
             </label>
           )}
+          {regions.length > 0 && (
+            <label>
+              {t.common.region}
+              <select
+                value={filters.assigned_region}
+                onChange={(event) => handleFilter("assigned_region", event.target.value)}
+              >
+                <option value="">{t.common.all}</option>
+                {regions.map((region) => (
+                  <option value={region.id} key={region.id}>
+                    {region.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          {branches.length > 0 && (
+            <label>
+              {t.common.branch}
+              <select
+                value={filters.assigned_branch}
+                onChange={(event) => handleFilter("assigned_branch", event.target.value)}
+              >
+                <option value="">{t.common.all}</option>
+                {branchOptions.map((branch) => (
+                  <option value={branch.id} key={branch.id}>
+                    {branch.region_name ? `${branch.region_name} / ${branch.name}` : branch.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <button
             type="button"
             onClick={() => {
@@ -129,6 +175,8 @@ export default function BatchesPage() {
                 <th>{t.common.file}</th>
                 <th>{t.common.type}</th>
                 <th>{t.common.operator}</th>
+                <th>{t.common.region}</th>
+                <th>{t.common.branch}</th>
                 <th>{t.batches.rows}</th>
                 <th>{t.batches.imported}</th>
                 <th>{t.batches.duplicate}</th>
@@ -149,6 +197,8 @@ export default function BatchesPage() {
                     </span>
                   </td>
                   <td style={{ fontWeight: 600 }}>{batch.uploaded_by_username}</td>
+                  <td>{batch.assigned_region_name || "-"}</td>
+                  <td>{batch.assigned_branch_name || "-"}</td>
                   <td style={{ fontVariantNumeric: 'tabular-nums' }}>{batch.rows_in_file}</td>
                   <td>
                     <span style={{ color: 'var(--blue-mid)', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
@@ -171,7 +221,7 @@ export default function BatchesPage() {
               ))}
               {batches.length === 0 && (
                 <tr>
-                  <td colSpan="9">{t.batches.noUploads}</td>
+                  <td colSpan="11">{t.batches.noUploads}</td>
                 </tr>
               )}
             </tbody>

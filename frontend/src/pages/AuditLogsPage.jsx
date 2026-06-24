@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Activity, Filter, ScrollText, ShieldCheck } from "lucide-react";
 
 import api from "../api/client.js";
+import { roleLabel } from "../auth/roles.js";
 import PageHero from "../components/PageHero.jsx";
 import { useI18n } from "../localization/i18n.jsx";
 import { formatDateTime } from "../utils/format.js";
@@ -23,7 +24,7 @@ function metadataText(metadata = {}, t) {
     return metadata.is_active ? t.audit.metadata.activated : t.audit.metadata.blocked;
   }
   if (metadata.role) {
-    return metadata.role === "manager" ? t.roles.manager : t.roles.operator;
+    return roleLabel(t, metadata.role);
   }
   if (metadata.changed_fields?.length) {
     return metadata.changed_fields.join(", ");

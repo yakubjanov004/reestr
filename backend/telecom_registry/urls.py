@@ -10,6 +10,7 @@ from accounts.views import (
     CustomTokenObtainPairView,
     MeView,
     OperatorViewSet,
+    OrganizationOptionsView,
     PasswordChangeView,
 )
 from records.views import (
@@ -30,6 +31,7 @@ urlpatterns = [
     path("api/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/users/me/", MeView.as_view(), name="me"),
     path("api/users/me/password/", PasswordChangeView.as_view(), name="me_password_change"),
+    path("api/organization/options/", OrganizationOptionsView.as_view(), name="organization_options"),
     path("api/audit-logs/", AuditLogListView.as_view(), name="audit_log_list"),
     path("api/", include(router.urls)),
     path("api/records/upload/", UploadExcelView.as_view(), name="upload_excel"),

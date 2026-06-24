@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from accounts.audit import log_audit_event
-from accounts.models import User
+from accounts.models import Branch, Region, User
 from .models import RegistryRecord, UploadBatch
 from .serializers import RegistryRecordDetailSerializer, RegistryRecordSerializer, UploadBatchSerializer
 from .services import import_excel_file
@@ -18,9 +18,71 @@ from .services import import_excel_file
 class ScopedQuerysetMixin:
     def scope_queryset(self, queryset):
         user = self.request.user
-        if user.is_manager:
+        if user.can_view_all_data:
             return queryset
+        if user.is_supervisor and user.region_id:
+            return queryset.filter(
+                Q(assigned_region=user.region)
+                | Q(assigned_region__isnull=True, uploaded_by__region=user.region)
+            )
         return queryset.filter(uploaded_by=user)
+
+
+def scoped_operator_queryset(user):
+    queryset = User.objects.select_related("region", "branch", "branch__region").filter(role=User.Role.OPERATOR)
+    if user.can_view_all_data:
+        return queryset.order_by("username")
+    if user.is_supervisor and user.region_id:
+        return queryset.filter(region=user.region).order_by("username")
+    if user.is_operator:
+        return queryset.filter(id=user.id)
+    return queryset.none()
+
+
+def relation_scope_filter(user, relation_name):
+    if user.can_view_all_data:
+        return Q()
+    if user.is_supervisor and user.region_id:
+        return Q(**{f"{relation_name}__assigned_region": user.region}) | Q(
+            **{
+                f"{relation_name}__assigned_region__isnull": True,
+                f"{relation_name}__uploaded_by__region": user.region,
+            }
+        )
+    return Q(**{f"{relation_name}__uploaded_by": user})
+
+
+def apply_organization_filters(queryset, request):
+    if not request.user.can_manage_users:
+        return queryset
+
+    assigned_region = request.query_params.get("assigned_region")
+    if assigned_region and assigned_region.isdigit():
+        queryset = queryset.filter(assigned_region_id=assigned_region)
+
+    assigned_branch = request.query_params.get("assigned_branch")
+    if assigned_branch and assigned_branch.isdigit():
+        queryset = queryset.filter(assigned_branch_id=assigned_branch)
+
+    return queryset
+
+
+def scoped_regions(user):
+    if user.can_view_all_data:
+        return Region.objects.all()
+    if user.is_supervisor and user.region_id:
+        return Region.objects.filter(id=user.region_id)
+    return Region.objects.none()
+
+
+def scoped_branches(user):
+    if user.can_view_all_data:
+        return Branch.objects.select_related("region").filter(is_active=True)
+    if user.is_supervisor and user.region_id:
+        return Branch.objects.select_related("region").filter(region=user.region, is_active=True)
+    if user.branch_id:
+        return Branch.objects.select_related("region").filter(id=user.branch_id)
+    return Branch.objects.none()
 
 
 def parse_day_param(value, *, end=False):
@@ -56,8 +118,10 @@ def apply_record_filters(queryset, request):
         queryset = queryset.filter(source_type=source_type)
 
     uploaded_by = params.get("uploaded_by")
-    if request.user.is_manager and uploaded_by and uploaded_by.isdigit():
+    if request.user.can_manage_users and uploaded_by and uploaded_by.isdigit():
         queryset = queryset.filter(uploaded_by_id=uploaded_by)
+
+    queryset = apply_organization_filters(queryset, request)
 
     for field_name in ("region", "dealer", "status"):
         value = (params.get(field_name) or "").strip()
@@ -83,6 +147,11 @@ class UploadExcelView(APIView):
             return Response({"detail": "Excel fayl yuborilmadi."}, status=status.HTTP_400_BAD_REQUEST)
         if not upload.name.lower().endswith((".xlsx", ".xlsm")):
             return Response({"detail": "Faqat .xlsx yoki .xlsm fayl qabul qilinadi."}, status=status.HTTP_400_BAD_REQUEST)
+        if request.user.is_operator and not request.user.branch_id:
+            return Response(
+                {"detail": "Operator filialga biriktirilmagan. Avval filial tanlanishi kerak."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
             batch = import_excel_file(
@@ -104,6 +173,8 @@ class UploadExcelView(APIView):
                 "imported_count": batch.imported_count,
                 "duplicate_count": batch.duplicate_count,
                 "skipped_count": batch.skipped_count,
+                "region": batch.assigned_region.name if batch.assigned_region else "",
+                "branch": batch.assigned_branch.name if batch.assigned_branch else "",
             },
         )
 
@@ -116,9 +187,11 @@ class StatsView(ScopedQuerysetMixin, APIView):
         batches = self.scope_queryset(UploadBatch.objects.all())
 
         uploaded_by = request.query_params.get("uploaded_by")
-        if request.user.is_manager and uploaded_by and uploaded_by.isdigit():
+        if request.user.can_manage_users and uploaded_by and uploaded_by.isdigit():
             records = records.filter(uploaded_by_id=uploaded_by)
             batches = batches.filter(uploaded_by_id=uploaded_by)
+        records = apply_organization_filters(records, request)
+        batches = apply_organization_filters(batches, request)
 
         now = timezone.localtime()
         month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -192,9 +265,10 @@ class StatsView(ScopedQuerysetMixin, APIView):
                 "rows_in_files": source_batch_totals["rows_in_files"] or 0,
             }
         total_revenue = records.aggregate(total=Sum("payment_amount"))["total"] or 0
-        if request.user.is_manager:
-            total_operators = User.objects.filter(role=User.Role.OPERATOR).count()
-            active_operators = User.objects.filter(role=User.Role.OPERATOR, is_active=True).count()
+        operator_queryset = scoped_operator_queryset(request.user)
+        if request.user.can_manage_users:
+            total_operators = operator_queryset.count()
+            active_operators = operator_queryset.filter(is_active=True).count()
         else:
             total_operators = 1
             active_operators = 1 if request.user.is_active else 0
@@ -235,22 +309,25 @@ class StatsView(ScopedQuerysetMixin, APIView):
             "recent_batches": UploadBatchSerializer(recent_batches, many=True).data,
         }
 
-        if request.user.is_manager:
+        if request.user.can_manage_users:
             yesterday = timezone.localdate() - timedelta(days=1)
             day_start = timezone.make_aware(
                 datetime.combine(yesterday, time.min),
                 timezone.get_current_timezone(),
             )
             day_end = day_start + timedelta(days=1)
+            record_relation_filter = relation_scope_filter(request.user, "registry_records")
+            batch_relation_filter = relation_scope_filter(request.user, "upload_batches")
             operator_rows = (
-                User.objects.filter(role=User.Role.OPERATOR)
+                operator_queryset
                 .annotate(
-                    records_count=Count("registry_records", distinct=True),
+                    records_count=Count("registry_records", filter=record_relation_filter, distinct=True),
                     uploads_count=Count(
                         "upload_batches",
+                        filter=batch_relation_filter,
                         distinct=True,
                     ),
-                    total_revenue=Sum("registry_records__payment_amount"),
+                    total_revenue=Sum("registry_records__payment_amount", filter=record_relation_filter),
                 )
                 .order_by("username")
             )
@@ -267,7 +344,7 @@ class StatsView(ScopedQuerysetMixin, APIView):
                 for operator in operator_rows
             ]
             missing_yesterday = (
-                User.objects.filter(role=User.Role.OPERATOR, is_active=True)
+                operator_queryset.filter(is_active=True)
                 .exclude(
                     upload_batches__created_at__gte=day_start,
                     upload_batches__created_at__lt=day_end,
@@ -286,21 +363,21 @@ class StatsView(ScopedQuerysetMixin, APIView):
                 ],
             }
             ranking_rows = (
-                User.objects.filter(role=User.Role.OPERATOR)
+                operator_queryset
                 .annotate(
                     records_count=Count(
                         "registry_records",
-                        filter=Q(registry_records__created_at__gte=last_30_start),
+                        filter=record_relation_filter & Q(registry_records__created_at__gte=last_30_start),
                         distinct=True,
                     ),
                     uploads_count=Count(
                         "upload_batches",
-                        filter=Q(upload_batches__created_at__gte=last_30_start),
+                        filter=batch_relation_filter & Q(upload_batches__created_at__gte=last_30_start),
                         distinct=True,
                     ),
                     total_revenue=Sum(
                         "registry_records__payment_amount",
-                        filter=Q(registry_records__created_at__gte=last_30_start),
+                        filter=record_relation_filter & Q(registry_records__created_at__gte=last_30_start),
                     ),
                 )
                 .order_by("-records_count", "username")[:10]
@@ -339,16 +416,29 @@ class RecordFilterOptionsView(ScopedQuerysetMixin, APIView):
             "regions": distinct_values("region"),
             "dealers": distinct_values("dealer"),
             "statuses": distinct_values("status"),
+            "organization_regions": [
+                {"id": region.id, "name": region.name}
+                for region in scoped_regions(request.user)
+            ],
+            "branches": [
+                {
+                    "id": branch.id,
+                    "name": branch.name,
+                    "region": branch.region_id,
+                    "region_name": branch.region.name,
+                }
+                for branch in scoped_branches(request.user)
+            ],
             "operators": [],
         }
-        if request.user.is_manager:
+        if request.user.can_manage_users:
             data["operators"] = [
                 {
                     "id": operator.id,
                     "username": operator.username,
                     "full_name": operator.get_full_name() or operator.username,
                 }
-                for operator in User.objects.filter(role=User.Role.OPERATOR).order_by("username")
+                for operator in scoped_operator_queryset(request.user)
             ]
         return Response(data)
 
@@ -363,9 +453,9 @@ class BatchListView(ScopedQuerysetMixin, generics.ListAPIView):
         if source_type in {UploadBatch.SourceType.MOBILE, UploadBatch.SourceType.INTERNET}:
             queryset = queryset.filter(source_type=source_type)
         uploaded_by = self.request.query_params.get("uploaded_by")
-        if self.request.user.is_manager and uploaded_by and uploaded_by.isdigit():
+        if self.request.user.can_manage_users and uploaded_by and uploaded_by.isdigit():
             queryset = queryset.filter(uploaded_by_id=uploaded_by)
-        return queryset
+        return apply_organization_filters(queryset, self.request)
 
 
 class RecordListView(ScopedQuerysetMixin, generics.ListAPIView):

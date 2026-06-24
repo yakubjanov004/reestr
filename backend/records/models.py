@@ -13,6 +13,20 @@ class UploadBatch(models.Model):
         on_delete=models.PROTECT,
         related_name="upload_batches",
     )
+    assigned_region = models.ForeignKey(
+        "accounts.Region",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="upload_batches",
+    )
+    assigned_branch = models.ForeignKey(
+        "accounts.Branch",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="upload_batches",
+    )
     file = models.FileField(upload_to="uploads/%Y/%m/%d/")
     original_filename = models.CharField(max_length=255)
     source_type = models.CharField(
@@ -46,6 +60,20 @@ class RegistryRecord(models.Model):
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
+        related_name="registry_records",
+    )
+    assigned_region = models.ForeignKey(
+        "accounts.Region",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="registry_records",
+    )
+    assigned_branch = models.ForeignKey(
+        "accounts.Branch",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
         related_name="registry_records",
     )
     dedupe_key = models.CharField(max_length=64, unique=True, db_index=True)
@@ -90,6 +118,8 @@ class RegistryRecord(models.Model):
         indexes = [
             models.Index(fields=["source_type", "created_at"], name="records_reg_source__fd79c1_idx"),
             models.Index(fields=["uploaded_by", "created_at"], name="records_reg_uploade_f79ecd_idx"),
+            models.Index(fields=["assigned_region", "created_at"], name="records_reg_region_72429c_idx"),
+            models.Index(fields=["assigned_branch", "created_at"], name="records_reg_branch_c95de4_idx"),
         ]
 
     def __str__(self):

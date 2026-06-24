@@ -1,11 +1,13 @@
 import { formatDateTime } from "../../utils/format.js";
 
-export const COLUMN_COUNT = 18;
+export const COLUMN_COUNT = 20;
 
 export const EMPTY_FILTERS = {
   date_from: "",
   date_to: "",
   uploaded_by: "",
+  assigned_region: "",
+  assigned_branch: "",
   region: "",
   dealer: "",
   status: ""
@@ -44,6 +46,8 @@ function recordDetailSections(t) {
       fields: [
         ["ID", "id"],
         [t.common.type, "source_type", (value) => sourceLabel(value, t)],
+        [t.common.region, "assigned_region_name"],
+        [t.common.branch, "assigned_branch_name"],
         [t.records.client, "client_name"],
         [t.records.region, "region"],
         [t.records.dealer, "dealer"],

@@ -10,11 +10,14 @@ from .normalizers import normalize_text, parse_date, parse_datetime, parse_decim
 
 
 def build_record_kwargs(row, source_type, batch, uploaded_by, dedupe_row=None):
+    assigned_region = uploaded_by.branch.region if uploaded_by.branch_id else uploaded_by.region
     raw_data = {key: serialize_cell(value) for key, value in row.items()}
     kwargs = {
         "source_type": source_type,
         "upload_batch": batch,
         "uploaded_by": uploaded_by,
+        "assigned_region": assigned_region,
+        "assigned_branch": uploaded_by.branch,
         "raw_data": raw_data,
     }
 

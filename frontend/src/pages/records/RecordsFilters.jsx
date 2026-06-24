@@ -14,6 +14,10 @@ export default function RecordsFilters({
   onFilterChange,
   onClearFilters
 }) {
+  const branchOptions = filterOptions.branches.filter(
+    (branch) => !filters.assigned_region || String(branch.region) === String(filters.assigned_region)
+  );
+
   return (
     <>
       <div className="panel-heading split">
@@ -56,6 +60,31 @@ export default function RecordsFilters({
               onChange={(val) => onFilterChange("uploaded_by", val)}
               placeholder={t.common.all}
               options={filterOptions.operators.map((op) => ({ value: op.id, label: op.full_name }))}
+            />
+          </label>
+        )}
+        {filterOptions.organization_regions.length > 0 && (
+          <label>
+            {t.common.region}
+            <CustomSelect
+              value={filters.assigned_region}
+              onChange={(val) => onFilterChange("assigned_region", val)}
+              placeholder={t.common.all}
+              options={filterOptions.organization_regions.map((region) => ({ value: region.id, label: region.name }))}
+            />
+          </label>
+        )}
+        {filterOptions.branches.length > 0 && (
+          <label>
+            {t.common.branch}
+            <CustomSelect
+              value={filters.assigned_branch}
+              onChange={(val) => onFilterChange("assigned_branch", val)}
+              placeholder={t.common.all}
+              options={branchOptions.map((branch) => ({
+                value: branch.id,
+                label: branch.region_name ? `${branch.region_name} / ${branch.name}` : branch.name
+              }))}
             />
           </label>
         )}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Calendar,
   Database,
@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "../auth/AuthContext.jsx";
+import { canManageUsers } from "../auth/roles.js";
+import api from "../api/client.js";
 import PageHero from "../components/PageHero.jsx";
 import { useI18n } from "../localization/i18n.jsx";
 import BreakdownPanel from "./dashboard/BreakdownPanel.jsx";
@@ -21,22 +23,37 @@ import TrendPanel from "./dashboard/TrendPanel.jsx";
 import OperatorListPanel from "./dashboard/OperatorListPanel.jsx";
 import { createDashboardModel } from "./dashboard/dashboardModel.js";
 import { useDashboardData } from "./dashboard/useDashboardData.js";
-import api from "../api/client.js";
 
 export default function DashboardPage() {
   const { t } = useI18n();
   const { user } = useAuth();
   
-  const [activeTab, setActiveTab] = useState("overview");
   const [selectedOperatorId, setSelectedOperatorId] = useState("");
-  const { stats, loading } = useDashboardData(selectedOperatorId);
+  const [organizationFilters, setOrganizationFilters] = useState({ assigned_region: "", assigned_branch: "" });
+  const [filterOptions, setFilterOptions] = useState({ regions: [], branches: [] });
+  const { stats, loading } = useDashboardData(selectedOperatorId, organizationFilters);
+  const hasManagementAccess = canManageUsers(user);
+
+  useEffect(() => {
+    if (!hasManagementAccess) return;
+    api.get("/records/filter-options/").then((response) => {
+      setFilterOptions({
+        regions: response.data.organization_regions || [],
+        branches: response.data.branches || []
+      });
+    });
+  }, [hasManagementAccess]);
 
   if (loading && !stats) {
     return <div className="screen-message">{t.dashboard.loading}</div>;
   }
 
   const model = createDashboardModel(stats);
-  const isManager = user?.role === "manager" || user?.is_superuser;
+  const dashboardBranchOptions = filterOptions.branches.filter(
+    (branch) =>
+      !organizationFilters.assigned_region
+      || String(branch.region) === String(organizationFilters.assigned_region)
+  );
 
   return (
     <section className="page-stack dashboard-page">
@@ -54,8 +71,8 @@ export default function DashboardPage() {
       />
 
       <div className="dashboard-frame dashboard-board">
-        {isManager && (
-          <div className="premium-tabs-header" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '20px' }}>
+        {hasManagementAccess && (
+          <div className="premium-tabs-header" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
             <div className="operator-filter" style={{ minWidth: '240px' }}>
               <select 
                 className="premium-input" 
@@ -71,6 +88,48 @@ export default function DashboardPage() {
                 ))}
               </select>
             </div>
+            {filterOptions.regions.length > 0 && (
+              <div className="operator-filter" style={{ minWidth: '220px' }}>
+                <select
+                  className="premium-input"
+                  value={organizationFilters.assigned_region}
+                  onChange={(event) =>
+                    setOrganizationFilters({
+                      assigned_region: event.target.value,
+                      assigned_branch: ""
+                    })
+                  }
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--line)', background: '#fff' }}
+                >
+                  <option value="">{t.common.region}: {t.common.all}</option>
+                  {filterOptions.regions.map((region) => (
+                    <option value={region.id} key={region.id}>{region.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {filterOptions.branches.length > 0 && (
+              <div className="operator-filter" style={{ minWidth: '220px' }}>
+                <select
+                  className="premium-input"
+                  value={organizationFilters.assigned_branch}
+                  onChange={(event) =>
+                    setOrganizationFilters((current) => ({
+                      ...current,
+                      assigned_branch: event.target.value
+                    }))
+                  }
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--line)', background: '#fff' }}
+                >
+                  <option value="">{t.common.branch}: {t.common.all}</option>
+                  {dashboardBranchOptions.map((branch) => (
+                    <option value={branch.id} key={branch.id}>
+                      {branch.region_name ? `${branch.region_name} / ${branch.name}` : branch.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         )}
 
@@ -110,7 +169,7 @@ export default function DashboardPage() {
             />
           </div>
 
-          {isManager && (
+          {hasManagementAccess && (
             <>
               <div className="dashboard-real-grid">
                 <LiveMetricsPanel
@@ -134,7 +193,7 @@ export default function DashboardPage() {
             </>
           )}
 
-          {!isManager && (
+          {!hasManagementAccess && (
             <div className="dashboard-panels">
               <RecentUploadsPanel t={t} recentBatches={model.recentBatches} />
             </div>
