@@ -14,6 +14,7 @@ from accounts.views import (
     PasswordChangeView,
 )
 from records.views import (
+    AnnouncementListCreateView,
     BatchListView,
     RecordDetailView,
     RecordFilterOptionsView,
@@ -33,6 +34,7 @@ urlpatterns = [
     path("api/users/me/password/", PasswordChangeView.as_view(), name="me_password_change"),
     path("api/organization/options/", OrganizationOptionsView.as_view(), name="organization_options"),
     path("api/audit-logs/", AuditLogListView.as_view(), name="audit_log_list"),
+    path("api/announcements/", AnnouncementListCreateView.as_view(), name="announcement_list_create"),
     path("api/", include(router.urls)),
     path("api/records/upload/", UploadExcelView.as_view(), name="upload_excel"),
     path("api/records/stats/", StatsView.as_view(), name="records_stats"),

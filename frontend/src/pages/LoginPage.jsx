@@ -1,4 +1,4 @@
-import { LogIn, Signal, User, Lock } from "lucide-react";
+import { LogIn, User, Lock } from "lucide-react";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -42,20 +42,10 @@ export default function LoginPage() {
       </div>
 
       <div className="login-content">
-        <section className="login-panel" aria-labelledby="login-title">
+        <section className="login-panel" aria-label="Datan login">
           <div className="login-panel-inner">
             <div className="login-logo-container">
-              <span className="login-brand-icon">
-                <Signal size={26} strokeWidth={2.5} />
-              </span>
-              <span className="login-brand-text">
-                Da<span className="login-brand-accent">tan</span>
-              </span>
-            </div>
-
-            <div className="login-heading">
-              <h1 id="login-title" className="login-title">{text.title}</h1>
-              <p className="login-subtitle">{text.tagline}</p>
+              <img className="login-brand-logo" src="/logo.svg" alt="Datan" />
             </div>
 
             <form onSubmit={handleSubmit} className="login-form">

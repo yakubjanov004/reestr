@@ -1,16 +1,49 @@
-import { Database, Filter, ListChecks, Search } from "lucide-react";
-
-import PageHero from "../components/PageHero.jsx";
+import { useAuth } from "../auth/AuthContext.jsx";
+import {
+  ROLE_ADMIN,
+  ROLE_MANAGER,
+  ROLE_OPERATOR,
+  ROLE_SUPERVISOR,
+  effectiveRole
+} from "../auth/roles.js";
 import { useI18n } from "../localization/i18n.jsx";
 import RecordDetailModal from "./records/RecordDetailModal.jsx";
 import RecordsFilters from "./records/RecordsFilters.jsx";
 import RecordsPagination from "./records/RecordsPagination.jsx";
 import RecordsTable from "./records/RecordsTable.jsx";
-import { COLUMN_COUNT } from "./records/recordUtils.js";
 import { useRecordsData } from "./records/useRecordsData.js";
 
+function resolveRecordsCopy(t, role) {
+  if (role === ROLE_ADMIN) {
+    return {
+      title: t.records.adminTitle,
+      description: t.records.adminDescription
+    };
+  }
+  if (role === ROLE_MANAGER) {
+    return {
+      title: t.records.managerTitle,
+      description: t.records.managerDescription
+    };
+  }
+  if (role === ROLE_SUPERVISOR) {
+    return {
+      title: t.records.supervisorTitle,
+      description: t.records.supervisorDescription
+    };
+  }
+  return {
+    title: t.records.operatorTitle,
+    description: t.records.operatorDescription
+  };
+}
+
 export default function RecordsPage() {
+  const { user } = useAuth();
   const { t } = useI18n();
+  const currentRole = effectiveRole(user) || ROLE_OPERATOR;
+  const canUseTeamFilters = currentRole !== ROLE_OPERATOR;
+  const pageCopy = resolveRecordsCopy(t, currentRole);
   const {
     records,
     search,
@@ -32,23 +65,12 @@ export default function RecordsPage() {
   } = useRecordsData();
 
   return (
-    <section className="page-stack">
-      <PageHero
-        kicker={t.records.heroKicker}
-        title={t.records.title}
-        description={t.records.description}
-        icon={Database}
-        stats={[
-          { label: t.records.totalRecords, value: meta.count, icon: Database },
-          { label: t.records.currentPage, value: records.length, icon: ListChecks },
-          { label: t.common.operators, value: filterOptions.operators.length, icon: Filter },
-          { label: t.records.columns, value: COLUMN_COUNT, icon: Search }
-        ]}
-      />
-
-      <section className="panel">
+    <section className="page-stack records-page">
+      <section className="panel records-table-panel">
         <RecordsFilters
           t={t}
+          title={pageCopy.title}
+          canUseTeamFilters={canUseTeamFilters}
           search={search}
           sourceType={sourceType}
           filters={filters}
@@ -59,7 +81,13 @@ export default function RecordsPage() {
           onClearFilters={clearFilters}
         />
         <RecordsTable t={t} records={records} loading={loading} onOpenDetail={openDetail} />
-        <RecordsPagination t={t} meta={meta} page={page} onPageChange={setPage} />
+        <RecordsPagination
+          t={t}
+          meta={meta}
+          page={page}
+          itemCount={records.length}
+          onPageChange={setPage}
+        />
       </section>
 
       <RecordDetailModal

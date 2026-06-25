@@ -26,10 +26,11 @@
   position: absolute;
   inset: 0;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.015) 1px, transparent 1px);
+    linear-gradient(rgba(47, 110, 216, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 110, 216, 0.08) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: center;
+  opacity: 0.9;
   pointer-events: none;
   z-index: 0;
 }
@@ -92,7 +93,7 @@
 .login-panel-inner {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 30px;
   padding: 40px;
 }
 
@@ -100,8 +101,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: -4px;
+  min-height: 60px;
+}
+
+.login-brand-logo {
+  display: block;
+  width: 176px;
+  max-width: 82%;
+  height: auto;
 }
 
 .login-brand-icon {
@@ -126,28 +133,6 @@
 
 .login-brand-accent {
   color: var(--blue);
-}
-
-.login-heading {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.login-title {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
-
-.login-subtitle {
-  margin: 0;
-  color: var(--ink-dim);
-  font-size: 14px;
-  line-height: 1.4;
 }
 
 .login-form {
@@ -343,7 +328,11 @@
   }
 
   .login-logo-container {
-    gap: 8px;
+    min-height: 50px;
+  }
+
+  .login-brand-logo {
+    width: 140px;
   }
 
   .login-brand-icon {
@@ -355,12 +344,5 @@
     font-size: 18px;
   }
 
-  .login-title {
-    font-size: 18px;
-  }
-
-  .login-subtitle {
-    font-size: 12px;
-  }
 }
 

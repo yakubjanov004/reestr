@@ -1,15 +1,16 @@
-export default function DashboardWelcome({ t, user }) {
+export default function DashboardWelcome({ t, user, title, intro, scopeLabel }) {
   return (
     <header className="dashboard-header">
       <div>
         <h2 className="dashboard-welcome">
-          {t.dashboard.introTitle},{" "}
+          {title || t.dashboard.introTitle},{" "}
           <span className="dashboard-welcome-name">
             {user?.full_name || user?.username || "User"}
           </span>
         </h2>
-        <p className="dashboard-intro">{t.dashboard.intro}</p>
+        <p className="dashboard-intro">{intro || t.dashboard.intro}</p>
       </div>
+      {scopeLabel && <span className="dashboard-scope-badge">{scopeLabel}</span>}
     </header>
   );
 }

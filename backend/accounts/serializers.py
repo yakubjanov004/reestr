@@ -123,6 +123,8 @@ class PasswordChangeSerializer(serializers.Serializer):
 
 class AuditLogSerializer(serializers.ModelSerializer):
     actor_username = serializers.SerializerMethodField()
+    actor_full_name = serializers.SerializerMethodField()
+    actor_role = serializers.SerializerMethodField()
 
     class Meta:
         model = AuditLog
@@ -130,6 +132,8 @@ class AuditLogSerializer(serializers.ModelSerializer):
             "id",
             "actor",
             "actor_username",
+            "actor_full_name",
+            "actor_role",
             "action",
             "target_type",
             "target_id",
@@ -141,6 +145,12 @@ class AuditLogSerializer(serializers.ModelSerializer):
 
     def get_actor_username(self, obj):
         return obj.actor.username if obj.actor else ""
+
+    def get_actor_full_name(self, obj):
+        return obj.actor.get_full_name() if obj.actor else ""
+
+    def get_actor_role(self, obj):
+        return obj.actor.role if obj.actor else ""
 
 
 class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
@@ -213,16 +223,10 @@ class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
             region = actor.region
 
         if region_name:
-            if actor.is_supervisor:
-                raise serializers.ValidationError({"region_name": "Supervisor yangi viloyat yarata olmaydi."})
-            region, _ = Region.objects.get_or_create(name=region_name)
+            raise serializers.ValidationError({"region_name": "Viloyat oldindan kiritiladi. Ro'yxatdan tanlang."})
 
         if branch_name:
-            if branch and not region:
-                region = branch.region
-            if not region:
-                raise serializers.ValidationError({"region": "Filial yaratish uchun viloyat tanlang."})
-            branch, _ = Branch.objects.get_or_create(region=region, name=branch_name)
+            raise serializers.ValidationError({"branch_name": "Filial oldindan kiritiladi. Ro'yxatdan tanlang."})
 
         if branch:
             if region and branch.region_id != region.id:
@@ -231,6 +235,8 @@ class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
 
         if actor.is_supervisor and branch and branch.region_id != actor.region_id:
             raise serializers.ValidationError({"branch": "Supervisor faqat o'z viloyatidagi filialni tanlay oladi."})
+        if actor.is_supervisor and actor.branch_id and branch and branch.id != actor.branch_id:
+            raise serializers.ValidationError({"branch": "Supervisor faqat o'z filialiga operator qo'sha oladi."})
 
         if role == User.Role.OPERATOR:
             if not branch and (self.instance is None or role_was_submitted or location_was_submitted):
@@ -241,16 +247,18 @@ class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
             if not region and (self.instance is None or role_was_submitted or location_was_submitted):
                 raise serializers.ValidationError({"region": "Supervisor uchun viloyat majburiy."})
             branch = None
-        elif role in {User.Role.MANAGER, User.Role.ADMIN}:
-            region = None
-            branch = None
+        elif role == User.Role.MANAGER:
+            if branch:
+                region = branch.region
+        elif role == User.Role.ADMIN:
+            raise serializers.ValidationError({"role": "Admin foydalanuvchi formadan yaratilmaydi."})
 
         attrs["region"] = region
         attrs["branch"] = branch
         return attrs
 
     def _validate_actor_can_assign_role(self, actor, role):
-        if actor.is_admin_role:
+        if actor.is_admin_role and role == User.Role.MANAGER:
             return
         if actor.role == User.Role.MANAGER and role in {User.Role.OPERATOR, User.Role.SUPERVISOR}:
             return

@@ -2,6 +2,15 @@ export function createDashboardModel(stats) {
   const daySeries = stats.records_by_day_30 || stats.records_by_day || [];
   const operatorRanking = stats.operator_ranking || [];
   const regionSummary = stats.region_summary || [];
+  const organizationRegionSummary = (stats.organization_region_summary || []).map((item) => ({
+    ...item,
+    region: item.region || item.organization_region || "-"
+  }));
+  const organizationBranchSummary = (stats.organization_branch_summary || []).map((item) => ({
+    ...item,
+    region: item.region || item.organization_region || "",
+    branch: item.branch || item.organization_branch || "-"
+  }));
   const statusSummary = stats.status_summary || [];
   const sourceSummary = Object.entries(stats.source_summary || {}).map(([sourceType, item]) => ({
     sourceType,
@@ -17,6 +26,7 @@ export function createDashboardModel(stats) {
 
   return {
     daySeries,
+    heatmapSeries: stats.records_by_day_30 || daySeries,
     maxDay: Math.max(...daySeries.map((item) => item.count), 1),
     mobile: stats.source_summary?.mobile || {},
     internet: stats.source_summary?.internet || {},
@@ -24,6 +34,8 @@ export function createDashboardModel(stats) {
     operatorRanking,
     recentBatches: stats.recent_batches || [],
     regionSummary,
+    organizationRegionSummary: organizationRegionSummary.length ? organizationRegionSummary : regionSummary,
+    organizationBranchSummary,
     statusSummary,
     sourceSummary,
     totalSourceRecords:

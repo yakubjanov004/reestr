@@ -1,6 +1,6 @@
 # Datan
 
-Datan - Django REST API va React/Vite frontenddan iborat Excel reestr import qilish va boshqarish tizimi. Tizim operatorlar yuklagan GSM va SHPD Excel fayllarini tekshiradi, maxfiylik qoidalarini qo'llaydi, yozuvlarni PostgreSQL bazasiga saqlaydi va supervisor uchun statistik/audit panel beradi.
+Datan - Django REST API va React/Vite frontenddan iborat Excel reestr import qilish va boshqarish tizimi. Tizim operatorlar yuklagan GSM va SHPD Excel fayllarini tekshiradi, maxfiylik qoidalarini qo'llaydi, yozuvlarni PostgreSQL bazasiga saqlaydi va rollar bo'yicha statistik/audit panel beradi.
 
 ## Asosiy imkoniyatlar
 
@@ -8,7 +8,7 @@ Datan - Django REST API va React/Vite frontenddan iborat Excel reestr import qil
 - Ikki manba turi: `Mobil raqam` va `Internet ulanish`.
 - Deduplikatsiya: eski yozuvlar qayta bazaga yozilmaydi.
 - Maxfiylik qoidalari: qizil ustunlar saqlanmaydi, sariq ustunlar maskalanadi, ochiq ustunlar asl holida saqlanadi.
-- Rollar: operator faqat o'z importlarini ko'radi, supervisor o'z viloyatini boshqaradi, manager barcha viloyatlarni ko'radi.
+- Rollar: operator < supervisor < manager < admin ierarxiyasi bo'yicha sidebar va sahifalar ochiladi.
 - Dashboard: reestr, upload, operator va oxirgi import statistikasi.
 - Audit log: login, upload va foydalanuvchi boshqaruvi amallari bazaga yoziladi.
 
@@ -28,7 +28,7 @@ datan/
     accounts/           # user, role, audit log
     records/            # upload batch, registry records, import service
     telecom_registry/   # Django settings va URL routing
-    scripts/            # database helper script
+    scripts/            # database va boshlang'ich data helper scriptlari
   data/                 # namunaviy Excel fayllar
   frontend/
     public/             # favicon va public assetlar
@@ -65,18 +65,23 @@ POSTGRES_PASSWORD=reestr_password
 POSTGRES_HOST=127.0.0.1
 POSTGRES_PORT=5432
 
-MANAGER_USERNAME=manager
-MANAGER_PASSWORD=manager12345
+MANAGER_USERNAME=dilshod.rahimov
+MANAGER_PASSWORD=Dilshod2026!
 ```
 
-Database yaratish, migration va supervisor yaratish:
+Database yaratish, migration va boshlang'ich test ma'lumotlarini kiritish:
 
 ```powershell
-python scripts\create_database.py
-python manage.py migrate
-python manage.py create_manager
+python scripts\setup_initial_data.py
 python manage.py runserver 127.0.0.1:8000
 ```
+
+`setup_initial_data.py` quyidagilarni bitta buyruqda bajaradi:
+
+- PostgreSQL database va userni tayyorlaydi;
+- Django migrationlarni qo'llaydi;
+- Toshkent shahri, Novza metro, Sergeli Mediapark filiallarini yaratadi;
+- 4 ta real ismli test userni yaratadi yoki yangilaydi.
 
 Backend URL:
 
@@ -114,24 +119,45 @@ npm run build
 
 ## Rollar
 
-`supervisor`:
+`admin`:
 
-- o'z viloyatidagi operator akkauntlarini yaratadi;
-- o'z viloyatidagi upload va reestr yozuvlarini ko'radi;
-- audit log va tizim statistikalarini ko'radi;
-- foydalanuvchi holatini va parolini boshqaradi.
+- manager akkauntlarini yaratadi va boshqaradi;
+- barcha hududlar, filiallar, uploadlar va audit loglarni ko'radi;
+- frontendda Admin paneli ochiladi.
 
 `manager`:
 
 - barcha viloyat va filiallar bo'yicha ma'lumotlarni ko'radi;
 - supervisor va operator akkauntlarini boshqaradi;
-- umumiy statistika, audit va import tarixini nazorat qiladi.
+- manager akkauntini yarata olmaydi;
+- umumiy statistika, audit va import tarixini nazorat qiladi;
+- frontendda Manager paneli ochiladi.
+
+`supervisor`:
+
+- o'z viloyati yoki biriktirilgan filialidagi operator akkauntlarini yaratadi;
+- supervisor yoki manager yarata olmaydi;
+- o'z scope'idagi upload va reestr yozuvlarini ko'radi;
+- audit log va tizim statistikalarini ko'radi;
+- foydalanuvchi holatini va parolini boshqaradi.
 
 `operator`:
 
 - login/parol bilan kiradi;
 - Excel fayl yuklaydi;
 - faqat o'z uploadlari va yozuvlarini ko'radi.
+- foydalanuvchi qo'sha olmaydi.
+
+## Test Loginlar
+
+`python scripts\setup_initial_data.py` quyidagi test akkauntlarni yaratadi yoki yangilaydi:
+
+```text
+operator:   azizbek.karimov / Azizbek2026! / Novza metro
+supervisor: dilshod.rahimov / Dilshod2026! / Toshkent shahri
+manager:    malika.abdullayeva / Malika2026! / Sergeli Mediapark
+admin:      sardor.yusupov / Sardor2026! / Toshkent shahri
+```
 
 ## Frontend sahifalar
 
@@ -142,8 +168,10 @@ npm run build
 - `/privacy` - maxfiylik qoidalari
 - `/operators` - foydalanuvchilar boshqaruvi
 - `/audit` - audit log
+- `/manager` - manager ish paneli
+- `/admin-panel` - admin ish paneli
 
-`/operators` va `/audit` supervisor, manager va admin uchun ochiq.
+`/operators` va `/audit` supervisor, manager va admin uchun ochiq. `/manager` faqat manager uchun, `/admin-panel` faqat admin uchun ochiq.
 
 ## Asosiy API endpointlar
 

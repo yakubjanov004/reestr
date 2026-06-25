@@ -5,6 +5,8 @@ import SourceTypeTabs from "../../components/SourceTypeTabs.jsx";
 
 export default function RecordsFilters({
   t,
+  title,
+  canUseTeamFilters,
   search,
   sourceType,
   filters,
@@ -20,8 +22,8 @@ export default function RecordsFilters({
 
   return (
     <>
-      <div className="panel-heading split">
-        <h2>{t.records.title}</h2>
+      <div className="panel-heading split records-filter-heading">
+        <h2>{title}</h2>
         <div className="filter-bar">
           <SourceTypeTabs value={sourceType} onChange={onSourceTypeChange} includeAll />
           <label className="search-box">
@@ -35,7 +37,7 @@ export default function RecordsFilters({
         </div>
       </div>
 
-      <div className="advanced-filters">
+      <div className="advanced-filters records-advanced-filters">
         <label>
           {t.records.importFrom}
           <input
@@ -52,7 +54,7 @@ export default function RecordsFilters({
             onChange={(event) => onFilterChange("date_to", event.target.value)}
           />
         </label>
-        {filterOptions.operators.length > 0 && (
+        {canUseTeamFilters && filterOptions.operators.length > 0 && (
           <label>
             {t.common.operator}
             <CustomSelect
@@ -63,7 +65,7 @@ export default function RecordsFilters({
             />
           </label>
         )}
-        {filterOptions.organization_regions.length > 0 && (
+        {canUseTeamFilters && filterOptions.organization_regions.length > 0 && (
           <label>
             {t.common.region}
             <CustomSelect
@@ -74,7 +76,7 @@ export default function RecordsFilters({
             />
           </label>
         )}
-        {filterOptions.branches.length > 0 && (
+        {canUseTeamFilters && filterOptions.branches.length > 0 && (
           <label>
             {t.common.branch}
             <CustomSelect
@@ -115,7 +117,7 @@ export default function RecordsFilters({
             options={filterOptions.statuses.map((s) => ({ value: s, label: s }))}
           />
         </label>
-        <button type="button" onClick={onClearFilters}>
+        <button className="records-clear-filter" type="button" onClick={onClearFilters}>
           {t.common.clear}
         </button>
       </div>

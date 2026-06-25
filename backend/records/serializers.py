@@ -1,6 +1,36 @@
 from rest_framework import serializers
 
-from .models import RegistryRecord, UploadBatch
+from .models import Announcement, RegistryRecord, UploadBatch
+
+
+class AnnouncementSerializer(serializers.ModelSerializer):
+    created_by_name = serializers.SerializerMethodField()
+    created_by_role = serializers.CharField(source="created_by.role", read_only=True)
+    assigned_region_name = serializers.CharField(source="assigned_region.name", read_only=True, default="")
+    assigned_branch_name = serializers.CharField(source="assigned_branch.name", read_only=True, default="")
+
+    def get_created_by_name(self, obj):
+        return obj.created_by.get_full_name() or obj.created_by.username
+
+    class Meta:
+        model = Announcement
+        fields = (
+            "id",
+            "title",
+            "body",
+            "target",
+            "created_by",
+            "created_by_name",
+            "created_by_role",
+            "assigned_region",
+            "assigned_region_name",
+            "assigned_branch",
+            "assigned_branch_name",
+            "is_active",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = fields
 
 
 class UploadBatchSerializer(serializers.ModelSerializer):

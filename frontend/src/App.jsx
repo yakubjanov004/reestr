@@ -2,16 +2,29 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useEffect } from "react";
 
 import { useAuth } from "./auth/AuthContext.jsx";
-import { canManageUsers, isOperator } from "./auth/roles.js";
+import {
+  ROLE_ADMIN,
+  ROLE_MANAGER,
+  ROLE_OPERATOR,
+  ROLE_SUPERVISOR,
+  canAccessDashboard,
+  canUploadRecords,
+  hasAnyRole,
+  hasRoleAtLeast,
+  isOperator
+} from "./auth/roles.js";
 import Layout from "./components/Layout.jsx";
+import AnnouncementsPage from "./pages/AnnouncementsPage.jsx";
 import AuditLogsPage from "./pages/AuditLogsPage.jsx";
 import BatchesPage from "./pages/BatchesPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import GuidePage from "./pages/GuidePage.jsx";
+import HelpPage from "./pages/HelpPage.jsx";
+import KpiPage from "./pages/KpiPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import RoleWorkspacePage from "./pages/management/RoleWorkspacePage.jsx";
 import OperatorsPage from "./pages/OperatorsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
-import PrivacyRulesPage from "./pages/PrivacyRulesPage.jsx";
 import RecordsPage from "./pages/RecordsPage.jsx";
 import UploadPage from "./pages/UploadPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
@@ -30,12 +43,30 @@ function ProtectedRoute({ children }) {
 
 function ManagementRoute({ children }) {
   const { user } = useAuth();
-  return canManageUsers(user) ? children : <Navigate to="/" replace />;
+  return hasRoleAtLeast(user, ROLE_SUPERVISOR) ? children : <Navigate to={isOperator(user) ? "/upload" : "/"} replace />;
+}
+
+function RoleRoute({ minimumRole, children }) {
+  const { user } = useAuth();
+  return hasRoleAtLeast(user, minimumRole) ? children : <Navigate to={isOperator(user) ? "/upload" : "/"} replace />;
+}
+
+function AnyRoleRoute({ roles, children }) {
+  const { user } = useAuth();
+  return hasAnyRole(user, roles) ? children : <Navigate to={isOperator(user) ? "/upload" : "/"} replace />;
+}
+
+function UploadRoute({ children }) {
+  const { user } = useAuth();
+  return canUploadRecords(user) ? children : <Navigate to="/" replace />;
 }
 
 function HomeRoute() {
   const { user } = useAuth();
-  return isOperator(user) ? <Navigate to="/upload" replace /> : <DashboardPage />;
+  if (isOperator(user)) {
+    return <Navigate to="/upload" replace />;
+  }
+  return canAccessDashboard(user) ? <DashboardPage /> : <Navigate to="/upload" replace />;
 }
 
 export default function App() {
@@ -73,12 +104,49 @@ export default function App() {
         }
       >
         <Route index element={<HomeRoute />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="upload" element={<UploadPage />} />
+        <Route
+          path="dashboard"
+          element={
+            <RoleRoute minimumRole={ROLE_OPERATOR}>
+              <DashboardPage />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="upload"
+          element={
+            <UploadRoute>
+              <UploadPage />
+            </UploadRoute>
+          }
+        />
+        <Route
+          path="kpi"
+          element={
+            <RoleRoute minimumRole={ROLE_OPERATOR}>
+              <KpiPage />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="announcements"
+          element={
+            <RoleRoute minimumRole={ROLE_OPERATOR}>
+              <AnnouncementsPage />
+            </RoleRoute>
+          }
+        />
         <Route path="records" element={<RecordsPage />} />
         <Route path="batches" element={<BatchesPage />} />
-        <Route path="privacy" element={<PrivacyRulesPage />} />
         <Route path="guide" element={<GuidePage />} />
+        <Route
+          path="help"
+          element={
+            <RoleRoute minimumRole={ROLE_OPERATOR}>
+              <HelpPage />
+            </RoleRoute>
+          }
+        />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route
@@ -95,6 +163,22 @@ export default function App() {
             <ManagementRoute>
               <AuditLogsPage />
             </ManagementRoute>
+          }
+        />
+        <Route
+          path="manager"
+          element={
+            <AnyRoleRoute roles={[ROLE_MANAGER]}>
+              <RoleWorkspacePage mode="manager" />
+            </AnyRoleRoute>
+          }
+        />
+        <Route
+          path="admin-panel"
+          element={
+            <AnyRoleRoute roles={[ROLE_ADMIN]}>
+              <RoleWorkspacePage mode="admin" />
+            </AnyRoleRoute>
           }
         />
       </Route>

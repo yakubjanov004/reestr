@@ -21,6 +21,8 @@
   border-radius: 0 18px 18px 0;
   box-shadow: 18px 0 42px rgba(15, 23, 42, 0.04);
   color: #8b94aa;
+  display: flex;
+  flex-direction: column;
 }
 
 [data-theme="dark"] .sidebar {
@@ -124,14 +126,14 @@
   stroke-width: 2;
 }
 
-.sidebar a:hover,
+.sidebar a:not(.active):hover,
 .logout-button:hover {
   background: var(--sidebar-reference-hover) !important;
   box-shadow: none !important;
   color: #536175 !important;
 }
 
-.sidebar a:hover svg,
+.sidebar a:not(.active):hover svg,
 .logout-button:hover svg {
   animation: none;
   color: #7d8799 !important;
@@ -139,15 +141,27 @@
 }
 
 .sidebar a.active {
-  background: #2f6ed8 !important;
+  background: linear-gradient(135deg, #1e63d6 0%, #1f7a8c 100%) !important;
   border-radius: 12px;
-  box-shadow: 0 10px 18px rgba(47, 110, 216, 0.22) !important;
+  box-shadow: 0 10px 18px rgba(31, 122, 140, 0.25) !important;
   color: #ffffff;
   font-weight: 500;
 }
 
 .sidebar a.active svg {
   color: #ffffff;
+  opacity: 1;
+}
+
+.sidebar a.active:hover {
+  background: linear-gradient(135deg, #1c5abf 0%, #1a6675 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 18px rgba(31, 122, 140, 0.25) !important;
+  transform: none !important;
+}
+
+.sidebar a.active:hover svg {
+  color: #ffffff !important;
   opacity: 1;
 }
 
@@ -178,7 +192,7 @@
 
 .sidebar-footer {
   display: grid;
-  gap: 26px;
+  gap: 8px;
   margin-top: auto;
   padding: 0 6px;
   border-top: 0;
@@ -195,16 +209,16 @@
   padding: 11px 14px;
   border: 0 !important;
   border-radius: 14px;
-  background: #2f6ed8 !important;
-  box-shadow: none !important;
+  background: linear-gradient(135deg, #1e63d6 0%, #1f7a8c 100%) !important;
+  box-shadow: 0 10px 18px rgba(31, 122, 140, 0.25) !important;
   color: #ffffff;
 }
 
 .profile-summary:hover,
 .sidebar .profile-summary:hover {
   border: 0 !important;
-  background: #2b64c6 !important;
-  box-shadow: none !important;
+  background: linear-gradient(135deg, #1c5abf 0%, #1a6675 100%) !important;
+  box-shadow: 0 10px 18px rgba(31, 122, 140, 0.25) !important;
 }
 
 .user-avatar {
@@ -226,6 +240,10 @@
   font-size: 15.5px;
   font-weight: 500;
   letter-spacing: 0;
+}
+
+[data-theme="dark"] .user-summary-text strong {
+  color: #ffffff;
 }
 
 .user-summary-text small {

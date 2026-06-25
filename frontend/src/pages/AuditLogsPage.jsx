@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Activity, Filter, ScrollText, ShieldCheck } from "lucide-react";
+import { Activity, Filter, ScrollText, ShieldCheck, UserRound } from "lucide-react";
 
 import api from "../api/client.js";
-import { roleLabel } from "../auth/roles.js";
+import { useAuth } from "../auth/AuthContext.jsx";
+import { ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR, roleLabel } from "../auth/roles.js";
 import PageHero from "../components/PageHero.jsx";
 import { useI18n } from "../localization/i18n.jsx";
 import { formatDateTime } from "../utils/format.js";
@@ -13,8 +14,12 @@ const actionKeys = [
   "operator_created",
   "operator_updated",
   "operator_status_changed",
-  "operator_password_changed"
+  "operator_password_changed",
+  "self_profile_updated",
+  "self_password_changed"
 ];
+
+const PAGE_SIZE = 30;
 
 function metadataText(metadata = {}, t) {
   if (metadata.imported_count !== undefined) {
@@ -35,8 +40,25 @@ function metadataText(metadata = {}, t) {
   return "";
 }
 
+function actionClassName(action) {
+  if (action === "upload_created") return "audit-action-badge audit-action-upload";
+  if (action === "operator_created") return "audit-action-badge audit-action-create";
+  if (action === "operator_status_changed") return "audit-action-badge audit-action-status";
+  if (action === "operator_password_changed") return "audit-action-badge audit-action-password";
+  if (action?.includes("delete")) return "audit-action-badge audit-action-delete";
+  return "audit-action-badge";
+}
+
+function permissionLabel(t, user) {
+  if (user?.role === ROLE_ADMIN || user?.is_superuser) return t.roles.admin;
+  if (user?.role === ROLE_MANAGER) return t.roles.manager;
+  if (user?.role === ROLE_SUPERVISOR) return t.roles.supervisor;
+  return t.common.notEntered;
+}
+
 export default function AuditLogsPage() {
   const { t } = useI18n();
+  const { user } = useAuth();
   const [logs, setLogs] = useState([]);
   const [action, setAction] = useState("");
   const [page, setPage] = useState(1);
@@ -63,8 +85,11 @@ export default function AuditLogsPage() {
     setPage(1);
   }
 
+  const rangeStart = meta.count === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min((page - 1) * PAGE_SIZE + logs.length, meta.count);
+
   return (
-    <section className="page-stack">
+    <section className="page-stack audit-page">
       <PageHero
         kicker={t.audit.heroKicker}
         title={t.audit.title}
@@ -74,13 +99,16 @@ export default function AuditLogsPage() {
           { label: t.audit.totalLog, value: meta.count, icon: ScrollText },
           { label: t.audit.currentPage, value: logs.length, icon: Activity },
           { label: t.audit.actionTypes, value: actionKeys.length, icon: Filter },
-          { label: t.audit.permission, value: "MGR", icon: ShieldCheck }
+          { label: t.audit.permission, value: permissionLabel(t, user), icon: ShieldCheck }
         ]}
       />
 
-      <section className="panel">
+      <section className="panel audit-table-panel">
         <div className="panel-heading split">
-          <h2>{t.audit.title}</h2>
+          <div className="audit-heading-title">
+            <h2>{t.audit.title}</h2>
+            <span className="panel-badge secondary">{rangeStart}-{rangeEnd} / {meta.count}</span>
+          </div>
           <label className="audit-filter">
             {t.audit.action}
             <select value={action} onChange={(event) => handleAction(event.target.value)}>
@@ -113,23 +141,38 @@ export default function AuditLogsPage() {
               )}
               {!loading &&
                 logs.map((log) => {
-                  const actionClass =
-                    log.action === "upload_created" ? "audit-action-upload" :
-                    log.action === "operator_created" ? "audit-action-create" :
-                    log.action?.includes("delete") ? "audit-action-delete" : "";
                   return (
                     <tr key={log.id}>
                       <td style={{ color: 'var(--muted)', fontSize: '12.5px', whiteSpace: 'nowrap' }}>
                         {formatDateTime(log.created_at)}
                       </td>
-                      <td style={{ fontWeight: 600 }}>{log.actor_username || "-"}</td>
                       <td>
-                        <span className={actionClass} style={{ fontSize: '13px' }}>
+                        <div className="audit-user-cell">
+                          <span className="audit-user-icon">
+                            <UserRound size={14} />
+                          </span>
+                          <div>
+                            <strong>{log.actor_full_name || log.actor_username || "-"}</strong>
+                            <small>
+                              {log.actor_username ? `@${log.actor_username}` : ""}
+                              {log.actor_role ? ` · ${roleLabel(t, log.actor_role)}` : ""}
+                            </small>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span className={actionClassName(log.action)}>
                           {t.audit.actions[log.action] || log.action}
                         </span>
                       </td>
-                      <td style={{ color: 'var(--muted)' }}>{log.target_label || log.target_type}</td>
-                      <td style={{ color: 'var(--muted)', fontSize: '12.5px' }}>{metadataText(log.metadata, t)}</td>
+                      <td>
+                        <span className="audit-target">
+                          {log.target_label || log.target_type || "-"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="audit-details">{metadataText(log.metadata, t) || "-"}</span>
+                      </td>
                     </tr>
                   );
                 })}
@@ -142,8 +185,8 @@ export default function AuditLogsPage() {
           </table>
         </div>
 
-        <div className="pagination">
-          <span>{t.common.total}: {meta.count}</span>
+        <div className="pagination audit-pagination">
+          <span>{rangeStart}-{rangeEnd} / {meta.count}</span>
           <div>
             <button type="button" disabled={!meta.previous} onClick={() => setPage(page - 1)}>
               {t.common.previous}

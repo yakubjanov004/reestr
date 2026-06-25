@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
-import { FileSpreadsheet, History, Upload, Users } from "lucide-react";
 
 import api from "../api/client.js";
-import PageHero from "../components/PageHero.jsx";
+import { useAuth } from "../auth/AuthContext.jsx";
+import {
+  ROLE_ADMIN,
+  ROLE_MANAGER,
+  ROLE_OPERATOR,
+  ROLE_SUPERVISOR,
+  effectiveRole
+} from "../auth/roles.js";
 import SourceTypeTabs from "../components/SourceTypeTabs.jsx";
 import { useI18n } from "../localization/i18n.jsx";
 import { formatDateTime } from "../utils/format.js";
+import { sourceLabel } from "./records/recordUtils.js";
+
+const PAGE_SIZE = 30;
 
 const emptyFilters = {
   date_from: "",
@@ -15,8 +24,19 @@ const emptyFilters = {
   assigned_branch: ""
 };
 
+function resolveBatchesTitle(t, role) {
+  if (role === ROLE_ADMIN) return t.batches.adminTitle;
+  if (role === ROLE_MANAGER) return t.batches.managerTitle;
+  if (role === ROLE_SUPERVISOR) return t.batches.supervisorTitle;
+  return t.batches.operatorTitle;
+}
+
 export default function BatchesPage() {
+  const { user } = useAuth();
   const { t } = useI18n();
+  const currentRole = effectiveRole(user) || ROLE_OPERATOR;
+  const canUseTeamFilters = currentRole !== ROLE_OPERATOR;
+  const pageTitle = resolveBatchesTitle(t, currentRole);
   const [batches, setBatches] = useState([]);
   const [sourceType, setSourceType] = useState("");
   const [filters, setFilters] = useState(emptyFilters);
@@ -69,29 +89,18 @@ export default function BatchesPage() {
   const branchOptions = branches.filter(
     (branch) => !filters.assigned_region || String(branch.region) === String(filters.assigned_region)
   );
+  const rangeStart = meta.count === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min((page - 1) * PAGE_SIZE + batches.length, meta.count);
 
   return (
-    <section className="page-stack">
-      <PageHero
-        kicker={t.batches.heroKicker}
-        title={t.batches.title}
-        description={t.batches.description}
-        icon={History}
-        stats={[
-          { label: t.batches.totalBatch, value: meta.count, icon: Upload },
-          { label: t.batches.currentPage, value: batches.length, icon: FileSpreadsheet },
-          { label: t.common.operators, value: operators.length, icon: Users },
-          { label: t.source.sourceType, value: sourceType ? "1" : "2", icon: History }
-        ]}
-      />
-
-      <section className="panel">
-        <div className="panel-heading split">
-          <h2>{t.batches.tableTitle}</h2>
+    <section className="page-stack batches-page">
+      <section className="panel batches-table-panel">
+        <div className="panel-heading split batches-filter-heading">
+          <h2>{pageTitle}</h2>
           <SourceTypeTabs value={sourceType} onChange={handleSourceType} includeAll />
         </div>
 
-        <div className="advanced-filters compact-filters">
+        <div className="advanced-filters batches-advanced-filters">
           <label>
             {t.batches.from}
             <input
@@ -108,7 +117,7 @@ export default function BatchesPage() {
               onChange={(event) => handleFilter("date_to", event.target.value)}
             />
           </label>
-          {operators.length > 0 && (
+          {canUseTeamFilters && operators.length > 0 && (
             <label>
               {t.common.operator}
               <select
@@ -124,7 +133,7 @@ export default function BatchesPage() {
               </select>
             </label>
           )}
-          {regions.length > 0 && (
+          {canUseTeamFilters && regions.length > 0 && (
             <label>
               {t.common.region}
               <select
@@ -140,7 +149,7 @@ export default function BatchesPage() {
               </select>
             </label>
           )}
-          {branches.length > 0 && (
+          {canUseTeamFilters && branches.length > 0 && (
             <label>
               {t.common.branch}
               <select
@@ -157,6 +166,7 @@ export default function BatchesPage() {
             </label>
           )}
           <button
+            className="batches-clear-filter"
             type="button"
             onClick={() => {
               setFilters(emptyFilters);
@@ -168,8 +178,8 @@ export default function BatchesPage() {
           </button>
         </div>
 
-        <div className="table-wrap">
-          <table>
+        <div className="table-wrap batches-table-wrap">
+          <table className="batches-table">
             <thead>
               <tr>
                 <th>{t.common.file}</th>
@@ -193,7 +203,7 @@ export default function BatchesPage() {
                   </td>
                   <td>
                     <span className={`source-pill ${batch.source_type}`}>
-                      {batch.source_type === "mobile" ? `📱 ${t.source.mobileShort}` : `🌐 ${t.source.internetShort}`}
+                      {sourceLabel(batch.source_type, t)}
                     </span>
                   </td>
                   <td style={{ fontWeight: 600 }}>{batch.uploaded_by_username}</td>
@@ -228,8 +238,8 @@ export default function BatchesPage() {
           </table>
         </div>
 
-        <div className="pagination">
-          <span>{t.common.total}: {meta.count}</span>
+        <div className="pagination batches-pagination">
+          <span>{rangeStart}-{rangeEnd} / {meta.count}</span>
           <div>
             <button type="button" disabled={!meta.previous} onClick={() => setPage(page - 1)}>
               {t.common.previous}

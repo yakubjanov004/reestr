@@ -31,9 +31,15 @@ export default function RecordsTable({ t, records, loading, onOpenDetail }) {
         </thead>
         <tbody>
           {loading && (
-            <tr>
-              <td colSpan={COLUMN_COUNT}>{t.common.loading}</td>
-            </tr>
+            <>
+              {Array.from({ length: 15 }).map((_, idx) => (
+                <tr key={`skeleton-${idx}`}>
+                  <td colSpan={COLUMN_COUNT}>
+                    <div className="skeleton skeleton-row" style={{ margin: 0, height: '36px' }} />
+                  </td>
+                </tr>
+              ))}
+            </>
           )}
           {!loading &&
             records.map((record) => (
@@ -50,7 +56,11 @@ export default function RecordsTable({ t, records, loading, onOpenDetail }) {
               >
                 <td>{record.id}</td>
                 <td>{record.client_name}</td>
-                <td>{sourceLabel(record.source_type, t)}</td>
+                <td>
+                  <span className={`source-pill ${record.source_type}`}>
+                    {sourceLabel(record.source_type, t)}
+                  </span>
+                </td>
                 <td>{record.assigned_region_name || "-"}</td>
                 <td>{record.assigned_branch_name || "-"}</td>
                 <td>{record.region}</td>

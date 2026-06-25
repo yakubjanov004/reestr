@@ -16,9 +16,9 @@ body {
 
 .login-screen::before {
   background-image:
-    linear-gradient(rgba(31, 48, 76, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(31, 48, 76, 0.035) 1px, transparent 1px);
-  opacity: 0.55;
+    linear-gradient(rgba(47, 110, 216, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 110, 216, 0.09) 1px, transparent 1px);
+  opacity: 0.82;
 }
 
 [data-theme="dark"] .login-screen::before {

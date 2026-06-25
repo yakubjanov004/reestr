@@ -74,7 +74,7 @@ def manageable_user_queryset(user):
 
 def creatable_roles(user):
     if user.is_admin_role:
-        return [choice[0] for choice in User.Role.choices]
+        return [User.Role.MANAGER]
     if user.role == User.Role.MANAGER:
         return [User.Role.SUPERVISOR, User.Role.OPERATOR]
     if user.role == User.Role.SUPERVISOR:
@@ -143,11 +143,27 @@ class AuditLogListView(ListAPIView):
     def get_queryset(self):
         queryset = AuditLog.objects.select_related("actor")
         user = self.request.user
-        if not user.is_manager:
-            if user.is_supervisor and user.region_id:
-                queryset = queryset.filter(Q(actor__region=user.region) | Q(actor=user))
-            else:
-                queryset = queryset.none()
+        if user.is_admin_role:
+            pass
+        elif user.role == User.Role.MANAGER:
+            lower_user_ids = User.objects.filter(
+                role__in=(User.Role.SUPERVISOR, User.Role.OPERATOR)
+            ).values_list("id", flat=True)
+            lower_target_ids = [str(user_id) for user_id in lower_user_ids]
+            queryset = queryset.filter(
+                Q(actor__role__in=(User.Role.SUPERVISOR, User.Role.OPERATOR))
+                | Q(target_type="User", target_id__in=lower_target_ids)
+            )
+        elif user.role == User.Role.SUPERVISOR and user.region_id:
+            lower_users = User.objects.filter(role=User.Role.OPERATOR, region=user.region)
+            lower_user_ids = lower_users.values_list("id", flat=True)
+            lower_target_ids = [str(user_id) for user_id in lower_user_ids]
+            queryset = queryset.filter(
+                Q(actor__role=User.Role.OPERATOR, actor__region=user.region)
+                | Q(target_type="User", target_id__in=lower_target_ids)
+            )
+        else:
+            queryset = queryset.none()
         action = self.request.query_params.get("action")
         actor = self.request.query_params.get("actor")
         if action:
@@ -164,7 +180,10 @@ class OrganizationOptionsView(APIView):
         user = request.user
         if user.is_supervisor:
             regions = Region.objects.filter(id=user.region_id) if user.region_id else Region.objects.none()
-            branches = Branch.objects.filter(region_id=user.region_id, is_active=True) if user.region_id else Branch.objects.none()
+            if user.branch_id:
+                branches = Branch.objects.filter(id=user.branch_id, is_active=True)
+            else:
+                branches = Branch.objects.filter(region_id=user.region_id, is_active=True) if user.region_id else Branch.objects.none()
         else:
             regions = Region.objects.all()
             branches = Branch.objects.select_related("region").filter(is_active=True)

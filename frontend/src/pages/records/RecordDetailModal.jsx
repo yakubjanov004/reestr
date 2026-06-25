@@ -29,7 +29,16 @@ export default function RecordDetailModal({ t, detail, detailLoading, onClose })
           </button>
         </div>
 
-        {detailLoading && <div className="modal-loading">{t.common.loading}</div>}
+        {detailLoading && (
+          <div className="skeleton-wrapper" style={{ padding: '20px' }}>
+            <div className="skeleton-grid-2">
+              <div className="skeleton-card" style={{ height: '80px' }}><div className="skeleton skeleton-title"/><div className="skeleton skeleton-text"/></div>
+              <div className="skeleton-card" style={{ height: '80px' }}><div className="skeleton skeleton-title"/><div className="skeleton skeleton-text"/></div>
+              <div className="skeleton-card" style={{ height: '80px' }}><div className="skeleton skeleton-title"/><div className="skeleton skeleton-text"/></div>
+              <div className="skeleton-card" style={{ height: '80px' }}><div className="skeleton skeleton-title"/><div className="skeleton skeleton-text"/></div>
+            </div>
+          </div>
+        )}
 
         {detail && (
           <div className="detail-sections">

@@ -4,6 +4,8 @@ import { Building2, KeyRound, MapPin, ShieldCheck, UserPlus, Users } from "lucid
 import api from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
 import {
+  ROLE_ADMIN,
+  ROLE_MANAGER,
   ROLE_OPERATOR,
   ROLE_SUPERVISOR,
   creatableRolesFor,
@@ -13,18 +15,17 @@ import {
 import StatCard from "../components/StatCard.jsx";
 import { useI18n } from "../localization/i18n.jsx";
 
+const PAGE_SIZE = 30;
+
 function createEmptyForm(user, role = defaultCreatableRole(user)) {
   return {
     username: "",
     password: "",
     first_name: "",
     last_name: "",
-    email: "",
     role,
     region_id: "",
     branch_id: "",
-    region_name: "",
-    branch_name: "",
     is_active: true
   };
 }
@@ -47,6 +48,13 @@ function compactPayload(form) {
   );
 }
 
+function resolvePageTitle(t, user, allowedRoles) {
+  if (user?.role === ROLE_ADMIN || user?.is_superuser) return t.operators.title;
+  if (allowedRoles.includes(ROLE_MANAGER)) return t.operators.managersTitle;
+  if (allowedRoles.includes(ROLE_SUPERVISOR)) return t.operators.teamTitle;
+  return t.operators.operatorsTitle;
+}
+
 export default function OperatorsPage() {
   const { user } = useAuth();
   const { t, fmt } = useI18n();
@@ -55,6 +63,8 @@ export default function OperatorsPage() {
   const [form, setForm] = useState(() => createEmptyForm(user));
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState({ count: 0, next: null, previous: null });
 
   const allowedRoles = orgOptions.roles?.length ? orgOptions.roles : creatableRolesFor(user);
   const selectedRegionId = form.region_id ? String(form.region_id) : "";
@@ -69,8 +79,14 @@ export default function OperatorsPage() {
   const needsBranch = form.role === ROLE_OPERATOR;
 
   function loadOperators() {
-    api.get("/operators/").then((res) => {
-      setOperators(res.data.results || res.data || []);
+    api.get("/operators/", { params: { page } }).then((res) => {
+      const results = res.data.results || res.data || [];
+      setOperators(results);
+      setMeta({
+        count: res.data.count ?? results.length,
+        next: res.data.next || null,
+        previous: res.data.previous || null
+      });
     });
   }
 
@@ -93,6 +109,9 @@ export default function OperatorsPage() {
 
   useEffect(() => {
     loadOperators();
+  }, [page]);
+
+  useEffect(() => {
     loadOrganizationOptions();
   }, []);
 
@@ -101,9 +120,7 @@ export default function OperatorsPage() {
       ...current,
       role,
       region_id: "",
-      branch_id: "",
-      region_name: "",
-      branch_name: ""
+      branch_id: ""
     }));
   }
 
@@ -113,7 +130,6 @@ export default function OperatorsPage() {
       return {
         ...current,
         region_id: regionId,
-        region_name: "",
         branch_id: branch && String(branch.region) === String(regionId) ? current.branch_id : ""
       };
     });
@@ -124,8 +140,6 @@ export default function OperatorsPage() {
     setForm((current) => ({
       ...current,
       branch_id: branchId,
-      branch_name: "",
-      region_name: "",
       region_id: branch?.region ? String(branch.region) : current.region_id
     }));
   }
@@ -138,7 +152,11 @@ export default function OperatorsPage() {
       await api.post("/operators/", compactPayload(form));
       const nextRole = allowedRoles.includes(form.role) ? form.role : allowedRoles[0];
       setForm(createEmptyForm(user, nextRole));
-      loadOperators();
+      if (page !== 1) {
+        setPage(1);
+      } else {
+        loadOperators();
+      }
       loadOrganizationOptions();
     } catch (err) {
       setError(formatApiError(err.response?.data, t.operators.createError));
@@ -162,14 +180,26 @@ export default function OperatorsPage() {
     acc[operator.role] = (acc[operator.role] || 0) + 1;
     return acc;
   }, {});
+  const visibleStatRoles = [ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR, ROLE_OPERATOR].filter(
+    (role) => allowedRoles.includes(role) || roleCounts[role]
+  );
+  const pageTitle = resolvePageTitle(t, user, allowedRoles);
+  const createTitle = allowedRoles.includes(ROLE_MANAGER)
+    ? t.operators.createManager
+    : allowedRoles.includes(ROLE_SUPERVISOR)
+      ? t.operators.createTeamUser
+      : t.operators.createOperator;
+  const fixedCreatableRole = allowedRoles.length === 1 ? allowedRoles[0] : null;
+  const rangeStart = meta.count === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min((page - 1) * PAGE_SIZE + operators.length, meta.count);
 
   return (
     <section className="page-stack operators-page">
       <div className="operators-grid">
         <section className="panel operators-table-panel">
           <div className="panel-heading">
-            <h2>{t.operators.title}</h2>
-            <span className="panel-badge secondary">{fmt(t.operators.usersCount, { count: operators.length })}</span>
+            <h2>{pageTitle}</h2>
+            <span className="panel-badge secondary">{fmt(t.operators.usersCount, { count: meta.count })}</span>
           </div>
           <div className="table-wrap">
             <table>
@@ -180,7 +210,6 @@ export default function OperatorsPage() {
                   <th>{t.common.fullName}</th>
                   <th>{t.common.region}</th>
                   <th>{t.common.branch}</th>
-                  <th>Email</th>
                   <th>{t.common.status}</th>
                   <th>{t.common.action}</th>
                 </tr>
@@ -197,7 +226,6 @@ export default function OperatorsPage() {
                     <td>{op.full_name}</td>
                     <td>{op.region?.name || "-"}</td>
                     <td>{op.branch?.name || "-"}</td>
-                    <td>{op.email}</td>
                     <td>
                       <span className={`badge ${op.is_active ? "badge-active" : "badge-blocked"}`}>
                         <span className="status-dot" />
@@ -219,7 +247,7 @@ export default function OperatorsPage() {
                 ))}
                 {operators.length === 0 && (
                   <tr>
-                    <td colSpan="8" style={{ textAlign: "center", color: "var(--muted)", padding: "32px" }}>
+                    <td colSpan="7" style={{ textAlign: "center", color: "var(--muted)", padding: "32px" }}>
                       {t.operators.noUsers}
                     </td>
                   </tr>
@@ -227,33 +255,75 @@ export default function OperatorsPage() {
               </tbody>
             </table>
           </div>
+          <div className="pagination operators-pagination">
+            <span>{rangeStart}-{rangeEnd} / {meta.count}</span>
+            <div>
+              <button type="button" disabled={!meta.previous} onClick={() => setPage(page - 1)}>
+                {t.common.previous}
+              </button>
+              <strong>{page}</strong>
+              <button type="button" disabled={!meta.next} onClick={() => setPage(page + 1)}>
+                {t.common.next}
+              </button>
+            </div>
+          </div>
         </section>
 
         <aside className="operators-sidebar">
           <div className="operators-stats">
-            <StatCard label={t.operators.totalUsers} value={operators.length} icon={Users} />
+            <StatCard label={t.operators.totalUsers} value={meta.count} icon={Users} />
             <StatCard label={t.common.active} value={activeCount} icon={ShieldCheck} tone="success" />
-            <StatCard label={t.roles.supervisor} value={roleCounts.supervisor || 0} icon={KeyRound} tone="primary" />
-            <StatCard label={t.roles.operator} value={roleCounts.operator || 0} icon={UserPlus} />
+            {visibleStatRoles.map((role) => (
+              <StatCard
+                key={role}
+                label={roleLabel(t, role)}
+                value={roleCounts[role] || 0}
+                icon={
+                  role === ROLE_ADMIN
+                    ? ShieldCheck
+                    : role === ROLE_MANAGER
+                      ? Building2
+                      : role === ROLE_SUPERVISOR
+                        ? KeyRound
+                        : UserPlus
+                }
+                tone={
+                  role === ROLE_ADMIN
+                    ? "amber"
+                    : role === ROLE_MANAGER
+                      ? "teal"
+                      : role === ROLE_SUPERVISOR
+                        ? "green"
+                        : undefined
+                }
+              />
+            ))}
           </div>
 
           <section className="panel operator-create-panel">
             <div className="panel-heading">
-              <h2>{t.operators.createUser}</h2>
+              <h2>{createTitle}</h2>
             </div>
 
             <form className="operator-form" onSubmit={handleSubmit}>
-              <label>
-                {t.common.role}
-                <select
-                  value={form.role}
-                  onChange={(e) => handleRoleChange(e.target.value)}
-                >
-                  {allowedRoles.map((role) => (
-                    <option value={role} key={role}>{roleLabel(t, role)}</option>
-                  ))}
-                </select>
-              </label>
+              {fixedCreatableRole ? (
+                <div className="operator-scope-note">
+                  <UserPlus size={15} />
+                  <span>{t.common.role}: {roleLabel(t, fixedCreatableRole)}</span>
+                </div>
+              ) : (
+                <label>
+                  {t.common.role}
+                  <select
+                    value={form.role}
+                    onChange={(e) => handleRoleChange(e.target.value)}
+                  >
+                    {allowedRoles.map((role) => (
+                      <option value={role} key={role}>{roleLabel(t, role)}</option>
+                    ))}
+                  </select>
+                </label>
+              )}
 
               {needsRegion && user?.role !== ROLE_SUPERVISOR && (
                 <>
@@ -268,14 +338,6 @@ export default function OperatorsPage() {
                         <option value={region.id} key={region.id}>{region.name}</option>
                       ))}
                     </select>
-                  </label>
-                  <label>
-                    {t.operators.newRegion}
-                    <input
-                      placeholder={t.operators.newRegionPlaceholder}
-                      value={form.region_name}
-                      onChange={(e) => setForm({ ...form, region_name: e.target.value, region_id: "" })}
-                    />
                   </label>
                 </>
               )}
@@ -302,14 +364,6 @@ export default function OperatorsPage() {
                         </option>
                       ))}
                     </select>
-                  </label>
-                  <label>
-                    {t.operators.newBranch}
-                    <input
-                      placeholder={t.operators.newBranchPlaceholder}
-                      value={form.branch_name}
-                      onChange={(e) => setForm({ ...form, branch_name: e.target.value, branch_id: "" })}
-                    />
                   </label>
                 </>
               )}
@@ -348,15 +402,6 @@ export default function OperatorsPage() {
                   placeholder={t.common.lastName}
                   value={form.last_name}
                   onChange={(e) => setForm({ ...form, last_name: e.target.value })}
-                />
-              </label>
-              <label>
-                Email
-                <input
-                  type="email"
-                  placeholder="email@example.com"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
                 />
               </label>
 

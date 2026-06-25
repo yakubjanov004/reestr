@@ -1,6 +1,6 @@
 from datetime import datetime, time, timedelta
 
-from django.db.models import Count, Max, Q, Sum
+from django.db.models import Count, F, Max, Q, Sum
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from rest_framework import filters, generics, status
@@ -10,8 +10,13 @@ from rest_framework.views import APIView
 
 from accounts.audit import log_audit_event
 from accounts.models import Branch, Region, User
-from .models import RegistryRecord, UploadBatch
-from .serializers import RegistryRecordDetailSerializer, RegistryRecordSerializer, UploadBatchSerializer
+from .models import Announcement, RegistryRecord, UploadBatch
+from .serializers import (
+    AnnouncementSerializer,
+    RegistryRecordDetailSerializer,
+    RegistryRecordSerializer,
+    UploadBatchSerializer,
+)
 from .services import import_excel_file
 
 
@@ -20,6 +25,11 @@ class ScopedQuerysetMixin:
         user = self.request.user
         if user.can_view_all_data:
             return queryset
+        if user.is_supervisor and user.branch_id:
+            return queryset.filter(
+                Q(assigned_branch=user.branch)
+                | Q(assigned_branch__isnull=True, uploaded_by__branch=user.branch)
+            )
         if user.is_supervisor and user.region_id:
             return queryset.filter(
                 Q(assigned_region=user.region)
@@ -32,6 +42,8 @@ def scoped_operator_queryset(user):
     queryset = User.objects.select_related("region", "branch", "branch__region").filter(role=User.Role.OPERATOR)
     if user.can_view_all_data:
         return queryset.order_by("username")
+    if user.is_supervisor and user.branch_id:
+        return queryset.filter(branch=user.branch).order_by("username")
     if user.is_supervisor and user.region_id:
         return queryset.filter(region=user.region).order_by("username")
     if user.is_operator:
@@ -42,6 +54,13 @@ def scoped_operator_queryset(user):
 def relation_scope_filter(user, relation_name):
     if user.can_view_all_data:
         return Q()
+    if user.is_supervisor and user.branch_id:
+        return Q(**{f"{relation_name}__assigned_branch": user.branch}) | Q(
+            **{
+                f"{relation_name}__assigned_branch__isnull": True,
+                f"{relation_name}__uploaded_by__branch": user.branch,
+            }
+        )
     if user.is_supervisor and user.region_id:
         return Q(**{f"{relation_name}__assigned_region": user.region}) | Q(
             **{
@@ -67,6 +86,21 @@ def apply_organization_filters(queryset, request):
     return queryset
 
 
+def apply_operator_organization_filters(queryset, request):
+    if not request.user.can_manage_users:
+        return queryset
+
+    assigned_region = request.query_params.get("assigned_region")
+    if assigned_region and assigned_region.isdigit():
+        queryset = queryset.filter(region_id=assigned_region)
+
+    assigned_branch = request.query_params.get("assigned_branch")
+    if assigned_branch and assigned_branch.isdigit():
+        queryset = queryset.filter(branch_id=assigned_branch)
+
+    return queryset
+
+
 def scoped_regions(user):
     if user.can_view_all_data:
         return Region.objects.all()
@@ -78,11 +112,56 @@ def scoped_regions(user):
 def scoped_branches(user):
     if user.can_view_all_data:
         return Branch.objects.select_related("region").filter(is_active=True)
+    if user.is_supervisor and user.branch_id:
+        return Branch.objects.select_related("region").filter(id=user.branch_id, is_active=True)
     if user.is_supervisor and user.region_id:
         return Branch.objects.select_related("region").filter(region=user.region, is_active=True)
     if user.branch_id:
         return Branch.objects.select_related("region").filter(id=user.branch_id)
     return Branch.objects.none()
+
+
+def announcement_scope_filter(user):
+    unrestricted = Q(assigned_region__isnull=True, assigned_branch__isnull=True)
+    if user.branch_id:
+        return (
+            unrestricted
+            | Q(assigned_branch=user.branch)
+            | Q(assigned_branch__isnull=True, assigned_region=user.branch.region)
+        )
+    if user.region_id:
+        return unrestricted | Q(assigned_branch__isnull=True, assigned_region=user.region)
+    return unrestricted
+
+
+def announcement_queryset_for(user):
+    queryset = Announcement.objects.select_related(
+        "created_by",
+        "assigned_region",
+        "assigned_branch",
+    ).filter(is_active=True)
+
+    if user.can_view_all_data:
+        return queryset
+    if user.is_supervisor:
+        return queryset.filter(
+            (Q(target__in=[Announcement.Target.ALL, Announcement.Target.SUPERVISOR]) & announcement_scope_filter(user))
+            | Q(created_by=user)
+        )
+    if user.is_operator:
+        return queryset.filter(
+            target__in=[Announcement.Target.ALL, Announcement.Target.OPERATOR]
+        ).filter(announcement_scope_filter(user))
+    return queryset.none()
+
+
+def announcement_scope_for_creator(user):
+    if user.is_supervisor:
+        return {
+            "assigned_region": user.branch.region if user.branch_id else user.region,
+            "assigned_branch": user.branch,
+        }
+    return {"assigned_region": None, "assigned_branch": None}
 
 
 def parse_day_param(value, *, end=False):
@@ -131,6 +210,59 @@ def apply_record_filters(queryset, request):
     return queryset
 
 
+class AnnouncementListCreateView(APIView):
+    def get(self, request):
+        queryset = announcement_queryset_for(request.user)
+        return Response(AnnouncementSerializer(queryset, many=True).data)
+
+    def post(self, request):
+        user = request.user
+        if not user.can_manage_users:
+            return Response(
+                {"detail": "E'lon yaratish uchun supervisor yoki manager huquqi kerak."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        title = (request.data.get("title") or "").strip()
+        body = (request.data.get("body") or "").strip()
+        target = request.data.get("target") or Announcement.Target.ALL
+
+        if not title or not body:
+            return Response(
+                {"detail": "E'lon sarlavhasi va matni kiritilishi kerak."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if user.is_supervisor:
+            target = Announcement.Target.OPERATOR
+        elif target not in {Announcement.Target.ALL, Announcement.Target.SUPERVISOR}:
+            return Response(
+                {"detail": "Manager faqat hammaga yoki supervisorlarga e'lon yubora oladi."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        scope = announcement_scope_for_creator(user)
+        announcement = Announcement.objects.create(
+            created_by=user,
+            title=title,
+            body=body,
+            target=target,
+            **scope,
+        )
+        log_audit_event(
+            actor=user,
+            action="announcement_created",
+            target=announcement,
+            target_label=announcement.title,
+            metadata={
+                "target": target,
+                "region": announcement.assigned_region.name if announcement.assigned_region else "",
+                "branch": announcement.assigned_branch.name if announcement.assigned_branch else "",
+            },
+        )
+        return Response(AnnouncementSerializer(announcement).data, status=status.HTTP_201_CREATED)
+
+
 class UploadExcelView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
@@ -143,11 +275,16 @@ class UploadExcelView(APIView):
                 {"detail": "Excel turi tanlanishi kerak: mobile yoki internet."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        if not request.user.is_operator:
+            return Response(
+                {"detail": "Reestr faylini faqat operator yuklay oladi."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         if not upload:
             return Response({"detail": "Excel fayl yuborilmadi."}, status=status.HTTP_400_BAD_REQUEST)
         if not upload.name.lower().endswith((".xlsx", ".xlsm")):
             return Response({"detail": "Faqat .xlsx yoki .xlsm fayl qabul qilinadi."}, status=status.HTTP_400_BAD_REQUEST)
-        if request.user.is_operator and not request.user.branch_id:
+        if not request.user.branch_id:
             return Response(
                 {"detail": "Operator filialga biriktirilmagan. Avval filial tanlanishi kerak."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -194,6 +331,7 @@ class StatsView(ScopedQuerysetMixin, APIView):
         batches = apply_organization_filters(batches, request)
 
         now = timezone.localtime()
+        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         last_7_start = now - timedelta(days=7)
         last_30_start = now - timedelta(days=30)
@@ -209,15 +347,10 @@ class StatsView(ScopedQuerysetMixin, APIView):
             records.filter(created_at__gte=last_30_start)
             .annotate(day=TruncDate("created_at"))
             .values("day")
-            .annotate(count=Count("id"))
-            .order_by("day")
-        )
-        last_180_start = now - timedelta(days=180)
-        by_day_180 = (
-            records.filter(created_at__gte=last_180_start)
-            .annotate(day=TruncDate("created_at"))
-            .values("day")
-            .annotate(count=Count("id"))
+            .annotate(
+                count=Count("id"),
+                amount=Sum("payment_amount")
+            )
             .order_by("day")
         )
         region_summary = (
@@ -231,6 +364,21 @@ class StatsView(ScopedQuerysetMixin, APIView):
             .values("status")
             .annotate(count=Count("id"))
             .order_by("-count", "status")[:10]
+        )
+        organization_region_summary = (
+            records.filter(assigned_region__isnull=False)
+            .values(organization_region=F("assigned_region__name"))
+            .annotate(count=Count("id"))
+            .order_by("-count", "organization_region")[:10]
+        )
+        organization_branch_summary = (
+            records.filter(assigned_branch__isnull=False)
+            .values(
+                organization_branch=F("assigned_branch__name"),
+                organization_region=F("assigned_branch__region__name"),
+            )
+            .annotate(count=Count("id"))
+            .order_by("-count", "organization_region", "organization_branch")[:10]
         )
         batch_totals = batches.aggregate(
             total_rows_in_files=Sum("rows_in_file"),
@@ -254,18 +402,40 @@ class StatsView(ScopedQuerysetMixin, APIView):
                 skipped_rows=Sum("skipped_count"),
                 rows_in_files=Sum("rows_in_file"),
             )
+            source_payment_totals = source_records.aggregate(
+                total_amount=Sum("payment_amount"),
+                amount_last_7=Sum("payment_amount", filter=Q(created_at__gte=last_7_start)),
+                amount_this_month=Sum("payment_amount", filter=Q(created_at__gte=month_start)),
+            )
             source_summary[source_type] = {
                 "label": label,
                 "records": source_records.count(),
                 "uploads": source_batches.count(),
                 "imported_this_month": source_records.filter(created_at__gte=month_start).count(),
+                "revenue": source_payment_totals["total_amount"] or 0,
+                "revenue_last_7": source_payment_totals["amount_last_7"] or 0,
+                "revenue_this_month": source_payment_totals["amount_this_month"] or 0,
                 "imported_rows": source_batch_totals["imported_rows"] or 0,
                 "duplicate_rows": source_batch_totals["duplicate_rows"] or 0,
                 "skipped_rows": source_batch_totals["skipped_rows"] or 0,
                 "rows_in_files": source_batch_totals["rows_in_files"] or 0,
             }
-        total_revenue = records.aggregate(total=Sum("payment_amount"))["total"] or 0
-        operator_queryset = scoped_operator_queryset(request.user)
+        payment_totals = records.aggregate(
+            total=Sum("payment_amount"),
+            today=Sum("payment_amount", filter=Q(created_at__gte=today_start)),
+            last_7=Sum("payment_amount", filter=Q(created_at__gte=last_7_start)),
+            last_30=Sum("payment_amount", filter=Q(created_at__gte=last_30_start)),
+            this_month=Sum("payment_amount", filter=Q(created_at__gte=month_start)),
+        )
+        total_revenue = payment_totals["total"] or 0
+        paid_records = records.filter(payment_amount__isnull=False).count()
+        average_payment = total_revenue / paid_records if paid_records else 0
+        operator_queryset = apply_operator_organization_filters(
+            scoped_operator_queryset(request.user),
+            request,
+        )
+        if request.user.can_manage_users and uploaded_by and uploaded_by.isdigit():
+            operator_queryset = operator_queryset.filter(id=uploaded_by)
         if request.user.can_manage_users:
             total_operators = operator_queryset.count()
             active_operators = operator_queryset.filter(is_active=True).count()
@@ -280,6 +450,15 @@ class StatsView(ScopedQuerysetMixin, APIView):
             "uploads_last_7": batches.filter(created_at__gte=last_7_start).count(),
             "uploads_last_30": batches.filter(created_at__gte=last_30_start).count(),
             "total_revenue": total_revenue,
+            "kpi": {
+                "total_amount": total_revenue,
+                "amount_today": payment_totals["today"] or 0,
+                "amount_last_7": payment_totals["last_7"] or 0,
+                "amount_last_30": payment_totals["last_30"] or 0,
+                "amount_this_month": payment_totals["this_month"] or 0,
+                "paid_records": paid_records,
+                "average_amount": average_payment,
+            },
             "total_rows_in_files": batch_totals["total_rows_in_files"] or 0,
             "total_imported_rows": batch_totals["total_imported_rows"] or 0,
             "total_duplicate_rows": batch_totals["total_duplicate_rows"] or 0,
@@ -298,101 +477,108 @@ class StatsView(ScopedQuerysetMixin, APIView):
                 {"date": item["day"].isoformat(), "count": item["count"]} for item in by_day
             ],
             "records_by_day_30": [
-                {"date": item["day"].isoformat(), "count": item["count"]} for item in by_day_30
-            ],
-            "records_by_day_180": [
-                {"date": item["day"].isoformat(), "count": item["count"]} for item in by_day_180
+                {
+                    "date": item["day"].isoformat(), 
+                    "count": item["count"],
+                    "amount": item["amount"] or 0
+                } for item in by_day_30
             ],
             "region_summary": list(region_summary),
             "status_summary": list(status_summary),
+            "organization_region_summary": list(organization_region_summary),
+            "organization_branch_summary": list(organization_branch_summary),
             "source_summary": source_summary,
             "recent_batches": UploadBatchSerializer(recent_batches, many=True).data,
+            "scope": {
+                "role": request.user.role,
+                "region": request.user.region.name if request.user.region else "",
+                "branch": request.user.branch.name if request.user.branch else "",
+            },
         }
 
-        if request.user.can_manage_users:
-            yesterday = timezone.localdate() - timedelta(days=1)
-            day_start = timezone.make_aware(
-                datetime.combine(yesterday, time.min),
-                timezone.get_current_timezone(),
+        yesterday = timezone.localdate() - timedelta(days=1)
+        day_start = timezone.make_aware(
+            datetime.combine(yesterday, time.min),
+            timezone.get_current_timezone(),
+        )
+        day_end = day_start + timedelta(days=1)
+        record_relation_filter = relation_scope_filter(request.user, "registry_records")
+        batch_relation_filter = relation_scope_filter(request.user, "upload_batches")
+        operator_rows = (
+            operator_queryset
+            .annotate(
+                records_count=Count("registry_records", filter=record_relation_filter, distinct=True),
+                uploads_count=Count(
+                    "upload_batches",
+                    filter=batch_relation_filter,
+                    distinct=True,
+                ),
+                total_revenue=Sum("registry_records__payment_amount", filter=record_relation_filter),
             )
-            day_end = day_start + timedelta(days=1)
-            record_relation_filter = relation_scope_filter(request.user, "registry_records")
-            batch_relation_filter = relation_scope_filter(request.user, "upload_batches")
-            operator_rows = (
-                operator_queryset
-                .annotate(
-                    records_count=Count("registry_records", filter=record_relation_filter, distinct=True),
-                    uploads_count=Count(
-                        "upload_batches",
-                        filter=batch_relation_filter,
-                        distinct=True,
-                    ),
-                    total_revenue=Sum("registry_records__payment_amount", filter=record_relation_filter),
-                )
-                .order_by("username")
-            )
-            data["operators"] = [
-                {
-                    "id": operator.id,
-                    "username": operator.username,
-                    "full_name": operator.get_full_name() or operator.username,
-                    "records_count": operator.records_count,
-                    "uploads_count": operator.uploads_count,
-                    "total_revenue": operator.total_revenue or 0,
-                    "is_active": operator.is_active,
-                }
-                for operator in operator_rows
-            ]
-            missing_yesterday = (
-                operator_queryset.filter(is_active=True)
-                .exclude(
-                    upload_batches__created_at__gte=day_start,
-                    upload_batches__created_at__lt=day_end,
-                )
-                .order_by("username")
-            )
-            data["upload_alerts"] = {
-                "date": yesterday.isoformat(),
-                "missing_yesterday": [
-                    {
-                        "id": operator.id,
-                        "username": operator.username,
-                        "full_name": operator.get_full_name() or operator.username,
-                    }
-                    for operator in missing_yesterday
-                ],
+            .order_by("username")
+        )
+        data["operators"] = [
+            {
+                "id": operator.id,
+                "username": operator.username,
+                "full_name": operator.get_full_name() or operator.username,
+                "records_count": operator.records_count,
+                "uploads_count": operator.uploads_count,
+                "total_revenue": operator.total_revenue or 0,
+                "is_active": operator.is_active,
             }
-            ranking_rows = (
-                operator_queryset
-                .annotate(
-                    records_count=Count(
-                        "registry_records",
-                        filter=record_relation_filter & Q(registry_records__created_at__gte=last_30_start),
-                        distinct=True,
-                    ),
-                    uploads_count=Count(
-                        "upload_batches",
-                        filter=batch_relation_filter & Q(upload_batches__created_at__gte=last_30_start),
-                        distinct=True,
-                    ),
-                    total_revenue=Sum(
-                        "registry_records__payment_amount",
-                        filter=record_relation_filter & Q(registry_records__created_at__gte=last_30_start),
-                    ),
-                )
-                .order_by("-records_count", "username")[:10]
+            for operator in operator_rows
+        ]
+        missing_yesterday = (
+            operator_queryset.filter(is_active=True)
+            .exclude(
+                upload_batches__created_at__gte=day_start,
+                upload_batches__created_at__lt=day_end,
             )
-            data["operator_ranking"] = [
+            .order_by("username")
+        )
+        data["upload_alerts"] = {
+            "date": yesterday.isoformat(),
+            "missing_yesterday": [
                 {
                     "id": operator.id,
                     "username": operator.username,
                     "full_name": operator.get_full_name() or operator.username,
-                    "records_count": operator.records_count,
-                    "uploads_count": operator.uploads_count,
-                    "total_revenue": operator.total_revenue or 0,
                 }
-                for operator in ranking_rows
-            ]
+                for operator in missing_yesterday
+            ],
+        }
+        ranking_rows = (
+            operator_queryset
+            .annotate(
+                records_count=Count(
+                    "registry_records",
+                    filter=record_relation_filter & Q(registry_records__created_at__gte=last_30_start),
+                    distinct=True,
+                ),
+                uploads_count=Count(
+                    "upload_batches",
+                    filter=batch_relation_filter & Q(upload_batches__created_at__gte=last_30_start),
+                    distinct=True,
+                ),
+                total_revenue=Sum(
+                    "registry_records__payment_amount",
+                    filter=record_relation_filter & Q(registry_records__created_at__gte=last_30_start),
+                ),
+            )
+            .order_by("-records_count", "username")[:10]
+        )
+        data["operator_ranking"] = [
+            {
+                "id": operator.id,
+                "username": operator.username,
+                "full_name": operator.get_full_name() or operator.username,
+                "records_count": operator.records_count,
+                "uploads_count": operator.uploads_count,
+                "total_revenue": operator.total_revenue or 0,
+            }
+            for operator in ranking_rows
+        ]
 
         return Response(data)
 

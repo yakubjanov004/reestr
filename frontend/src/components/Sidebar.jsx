@@ -1,63 +1,22 @@
 import {
-  Database,
-  BookOpenText,
-  ChartNoAxesColumn,
-  History,
-  LayoutGrid,
   LogOut,
-  ScrollText,
-  ShieldCheck,
   UserRound,
-  Users,
-  X,
-  Settings,
-  Info
+  X
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext.jsx";
-import { canManageUsers, canViewAllData, roleLongLabel } from "../auth/roles.js";
+import { isOperator, roleLongLabel } from "../auth/roles.js";
 import { useI18n } from "../localization/i18n.jsx";
+import { buildBottomLinks, buildSidebarSections } from "../navigation/roleNavigation.js";
 
 export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
   const { logout, user } = useAuth();
   const { t } = useI18n();
   const navigate = useNavigate();
-  const sections = [
-    {
-      key: "operations",
-      title: t.layout.sections.operations,
-      links: [
-        { to: "/upload", label: t.layout.nav.upload, mobileLabel: t.layout.nav.uploadShort, icon: LayoutGrid }
-      ]
-    },
-    {
-      key: "data",
-      title: t.layout.sections.data,
-      links: [
-        { to: "/dashboard", label: t.layout.nav.dashboard, mobileLabel: t.layout.nav.dashboard, icon: ChartNoAxesColumn },
-        { to: "/records", label: t.layout.nav.records, mobileLabel: t.layout.nav.recordsShort, icon: Database },
-        { to: "/batches", label: t.layout.nav.batches, mobileLabel: t.layout.nav.batchesShort, icon: History },
-        { to: "/privacy", label: t.layout.nav.privacy, mobileLabel: t.layout.nav.privacyShort, icon: ShieldCheck },
-        { to: "/guide", label: t.layout.nav.guide, mobileLabel: t.layout.nav.guideShort, icon: BookOpenText }
-      ]
-    }
-  ];
-  const managementSection = {
-    key: "system",
-    title: canViewAllData(user) ? t.layout.sections.management : t.layout.sections.supervision,
-    links: [
-      { to: "/operators", label: t.layout.nav.operators, mobileLabel: t.layout.nav.operatorsShort, icon: Users },
-      { to: "/audit", label: t.layout.nav.audit, mobileLabel: t.layout.nav.audit, icon: ScrollText }
-    ]
-  };
-  const visibleSections =
-    canManageUsers(user) ? [...sections, managementSection] : sections;
-
-  const bottomLinks = [
-    { to: "/settings", label: "Sozlamalar", mobileLabel: "Sozlamalar", icon: Settings },
-    { to: "/help", label: "Yordam", mobileLabel: "Yordam", icon: Info }
-  ];
+  const operatorSession = isOperator(user);
+  const visibleSections = buildSidebarSections(t, user);
+  const bottomLinks = buildBottomLinks(t);
 
   function handleLogout() {
     logout();
@@ -67,6 +26,13 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
   function openProfile() {
     navigate("/profile");
     onClose();
+  }
+
+  function navLinkClass(item, isActive) {
+    if (isActive || (operatorSession && item.to === "/upload")) {
+      return "active";
+    }
+    return undefined;
   }
 
   return (
@@ -82,7 +48,7 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
         {visibleSections.map((section) => (
           <div
             className={
-              "nav-section" + (section.key === "system" ? " manager-section" : "")
+              "nav-section" + (["supervision", "management", "admin"].includes(section.key) ? " manager-section" : "")
             }
             key={section.key}
           >
@@ -98,7 +64,7 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
                   end={item.to === "/"}
                   title={item.label}
                   onClick={onClose}
-                  className={({ isActive }) => isActive ? "active" : undefined}
+                  className={({ isActive }) => navLinkClass(item, isActive)}
                 >
                   <Icon size={20} strokeWidth={1.5} />
                   <span className="nav-label-full">{item.label}</span>
@@ -119,7 +85,7 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
                 end={item.to === "/"}
                 title={item.label}
                 onClick={onClose}
-                className={({ isActive }) => isActive ? "active" : undefined}
+                className={({ isActive }) => navLinkClass(item, isActive)}
               >
                 <Icon size={20} strokeWidth={1.5} />
                 <span className="nav-label-full">{item.label}</span>

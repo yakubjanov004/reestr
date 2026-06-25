@@ -11,7 +11,6 @@
 @import './styles/08-upload.css';
 @import './styles/09-operators.css';
 @import './styles/10-records.css';
-@import './styles/11-privacy.css';
 @import './styles/12-dashboard-polish.css';
 @import './styles/13-navigation-polish.css';
 @import './styles/14-guide.css';
@@ -21,3 +20,135 @@
 @import './styles/18-sidebar-reference.css';
 @import './styles/19-upload-reference.css';
 @import './styles/20-dashboard-real.css';
+@import './styles/21-role-workspace.css';
+@import './styles/22-settings.css';
+@import './styles/23-profile.css';
+@import './styles/24-operator-pages.css';
+
+/* Typography balance: keep strong weight only for primary titles and actions. */
+.panel-heading h2,
+.records-table-panel .records-filter-heading h2,
+.batches-filter-heading h2,
+.audit-heading-title h2,
+.operator-create-panel .panel-heading h2,
+.profile-form-panel .panel-title-with-icon h2,
+.settings-card-head h2,
+.workspace-panel .panel-heading h2 {
+  font-weight: 700 !important;
+  letter-spacing: 0;
+}
+
+.kpi-overview-panel .panel-heading h2,
+.operator-kpi-panel .panel-heading h2,
+.announcement-create-panel .panel-heading h2,
+.announcement-list-panel .panel-heading h2 {
+  font-weight: 600 !important;
+  letter-spacing: 0;
+}
+
+.announcement-submit {
+  font-weight: 600 !important;
+}
+
+.workspace-header h1,
+.profile-identity h2 {
+  font-weight: 700 !important;
+  letter-spacing: 0;
+}
+
+.workspace-header .section-kicker,
+.operators-sidebar .stat-label,
+.workspace-summary-grid .stat-label,
+.workspace-panel .stat-label,
+.records-advanced-filters label,
+.batches-advanced-filters label,
+.operator-form label,
+.audit-filter,
+.profile-form label,
+.profile-meta-row span:not(.profile-meta-icon) {
+  font-weight: 600 !important;
+  letter-spacing: 0.04em;
+}
+
+.workspace-header p,
+.settings-card-head p,
+.profile-identity p,
+.profile-form input,
+.operator-form input,
+.operator-form select,
+.records-table-panel .search-box input,
+.records-advanced-filters input,
+.records-advanced-filters .custom-select-trigger,
+.batches-advanced-filters input,
+.batches-advanced-filters select,
+.audit-filter select {
+  font-weight: 500 !important;
+}
+
+.records-table-panel .records-table th,
+.batches-table th,
+.audit-table-panel th,
+.operators-table-panel th {
+  font-weight: 600 !important;
+  letter-spacing: 0.04em;
+}
+
+.records-table-panel .records-table td,
+.batches-table td,
+.audit-target,
+.audit-details,
+.audit-user-cell small,
+.operators-table-panel td {
+  font-weight: 500 !important;
+}
+
+.profile-meta-row strong,
+.workspace-region-row span,
+.workspace-region-row strong,
+.audit-user-cell strong,
+.operators-pagination > span,
+.records-pagination > span,
+.batches-pagination > span,
+.audit-pagination > span {
+  font-weight: 600 !important;
+}
+
+.operators-sidebar .stat-value,
+.workspace-summary-grid .stat-value,
+.workspace-panel .stat-value {
+  font-weight: 700 !important;
+}
+
+.badge,
+.source-pill,
+.batch-status-done,
+.batch-status-error,
+.audit-action-badge,
+.operator-scope-note,
+.records-clear-filter,
+.batches-clear-filter,
+.settings-card-body .language-switcher button,
+.profile-language-body .language-switcher button,
+.workspace-scope-badge,
+.workspace-action {
+  font-weight: 600 !important;
+}
+
+.primary-button,
+.operator-form .primary-button,
+.profile-form .primary-button,
+.btn-block,
+.btn-activate,
+.btn-password,
+.btn-save {
+  font-weight: 700 !important;
+}
+
+.primary-button.announcement-submit,
+.primary-button.help-copy-button {
+  font-weight: 600 !important;
+}
+
+.profile-avatar {
+  font-weight: 700 !important;
+}

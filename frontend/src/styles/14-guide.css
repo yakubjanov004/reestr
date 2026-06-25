@@ -1,4 +1,4 @@
-﻿/* Guide page and previews */
+/* Guide page and previews */
 
 /* ═══════════════════════════════════════════════════════
    GUIDE PAGE
@@ -72,7 +72,7 @@
   gap: 10px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: #f8faff;
+  background: transparent;
   padding: 12px 14px;
   color: var(--ink);
   font-weight: 600;
@@ -106,10 +106,8 @@
 }
 
 .guide-checklist {
-  border: 1px solid var(--line);
-  border-radius: 16px;
   background: var(--bg-2);
-  padding: 18px 20px;
+  padding: 24px;
 }
 
 .guide-checklist h3 {
@@ -186,20 +184,15 @@
 .guide-step-card {
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(280px, 1.08fr);
-  gap: 16px;
-  align-items: stretch;
+  gap: 32px;
+  align-items: center;
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: var(--bg-2);
-  padding: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 .guide-step-copy {
-  display: grid;
-  align-content: start;
-  gap: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .guide-step-copy p {
@@ -212,8 +205,9 @@
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: var(--bg-1, var(--bg));
+  background: white;
   min-height: 232px;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
 }
 
 .guide-shot-bar {
@@ -222,8 +216,8 @@
   gap: 6px;
   min-height: 32px;
   border-bottom: 1px solid var(--line);
-  background: var(--blue-soft);
-  padding: 0 11px;
+  background: #f8fafc;
+  padding: 0 12px;
 }
 
 .guide-shot-bar span {
@@ -236,6 +230,15 @@
 .guide-shot-bar span:first-child { background: #ef4444; }
 .guide-shot-bar span:nth-child(2) { background: #f59e0b; }
 .guide-shot-bar span:nth-child(3) { background: #22c55e; }
+
+.guide-shot-bar strong {
+  margin-left: 8px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 
 @media (max-width: 700px) {
   .page-stack {

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import RegistryRecord, UploadBatch
+from .models import Announcement, RegistryRecord, UploadBatch
 
 
 @admin.register(UploadBatch)
@@ -39,3 +39,18 @@ class RegistryRecordAdmin(admin.ModelAdmin):
         "internet_login",
         "request_number",
     )
+
+
+@admin.register(Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "target",
+        "created_by",
+        "assigned_region",
+        "assigned_branch",
+        "is_active",
+        "created_at",
+    )
+    list_filter = ("target", "is_active", "assigned_region", "assigned_branch", "created_at")
+    search_fields = ("title", "body", "created_by__username")

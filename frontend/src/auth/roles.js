@@ -3,7 +3,7 @@ export const ROLE_SUPERVISOR = "supervisor";
 export const ROLE_MANAGER = "manager";
 export const ROLE_ADMIN = "admin";
 
-const ROLE_RANKS = {
+export const ROLE_RANKS = {
   [ROLE_OPERATOR]: 10,
   [ROLE_SUPERVISOR]: 20,
   [ROLE_MANAGER]: 30,
@@ -14,12 +14,44 @@ export function roleRank(role) {
   return ROLE_RANKS[role] || 0;
 }
 
+export function userRoleRank(user) {
+  return Math.max(roleRank(user?.role), user?.is_superuser ? ROLE_RANKS[ROLE_ADMIN] : 0);
+}
+
+export function effectiveRole(user) {
+  return user?.is_superuser ? ROLE_ADMIN : user?.role;
+}
+
+export function hasRoleAtLeast(user, minimumRole) {
+  return userRoleRank(user) >= roleRank(minimumRole);
+}
+
+export function hasAnyRole(user, roles = []) {
+  return roles.includes(effectiveRole(user));
+}
+
 export function canManageUsers(user) {
-  return roleRank(user?.role) >= ROLE_RANKS[ROLE_SUPERVISOR] || Boolean(user?.is_superuser);
+  return hasRoleAtLeast(user, ROLE_SUPERVISOR);
 }
 
 export function canViewAllData(user) {
-  return roleRank(user?.role) >= ROLE_RANKS[ROLE_MANAGER] || Boolean(user?.is_superuser);
+  return hasRoleAtLeast(user, ROLE_MANAGER);
+}
+
+export function canAccessDashboard(user) {
+  return hasRoleAtLeast(user, ROLE_OPERATOR);
+}
+
+export function canUploadRecords(user) {
+  return hasAnyRole(user, [ROLE_OPERATOR]);
+}
+
+export function canAccessManagerWorkspace(user) {
+  return hasAnyRole(user, [ROLE_MANAGER, ROLE_ADMIN]);
+}
+
+export function canAccessAdminWorkspace(user) {
+  return hasAnyRole(user, [ROLE_ADMIN]);
 }
 
 export function isOperator(user) {
@@ -27,8 +59,8 @@ export function isOperator(user) {
 }
 
 export function creatableRolesFor(user) {
-  if (roleRank(user?.role) >= ROLE_RANKS[ROLE_ADMIN] || user?.is_superuser) {
-    return [ROLE_OPERATOR, ROLE_SUPERVISOR, ROLE_MANAGER, ROLE_ADMIN];
+  if (hasRoleAtLeast(user, ROLE_ADMIN)) {
+    return [ROLE_MANAGER];
   }
   if (user?.role === ROLE_MANAGER) {
     return [ROLE_SUPERVISOR, ROLE_OPERATOR];

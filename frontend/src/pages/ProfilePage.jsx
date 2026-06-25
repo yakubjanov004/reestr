@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { KeyRound, Languages, Monitor, Save, UserRound } from "lucide-react";
+import { Building2, KeyRound, MapPin, Save, ShieldCheck, UserRound } from "lucide-react";
 
 import api from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
+import { roleLongLabel } from "../auth/roles.js";
 import { useI18n } from "../localization/i18n.jsx";
 
 const emptyPasswordForm = {
@@ -30,8 +31,7 @@ export default function ProfilePage() {
   const { t } = useI18n();
   const [profileForm, setProfileForm] = useState({
     first_name: "",
-    last_name: "",
-    email: ""
+    last_name: ""
   });
   const [passwordForm, setPasswordForm] = useState(emptyPasswordForm);
   const [profileStatus, setProfileStatus] = useState(null);
@@ -43,12 +43,16 @@ export default function ProfilePage() {
     if (!user) return;
     setProfileForm({
       first_name: user.first_name || "",
-      last_name: user.last_name || "",
-      email: user.email || ""
+      last_name: user.last_name || ""
     });
   }, [user]);
 
   const displayName = user?.full_name || user?.username || "";
+  const profileDetails = [
+    { label: t.common.role, value: roleLongLabel(t, user), icon: ShieldCheck },
+    { label: t.common.region, value: user?.region?.name || t.common.notEntered, icon: MapPin },
+    { label: t.common.branch, value: user?.branch?.name || t.common.notEntered, icon: Building2 }
+  ];
   const initials = useMemo(() => {
     const source = displayName || "U";
     return source
@@ -103,14 +107,6 @@ export default function ProfilePage() {
 
   return (
     <section className="page-stack profile-page">
-      <header className="profile-compact-header">
-        <div className="profile-compact-title">
-          <span className="section-kicker">{t.profile.heroKicker}</span>
-          <h1>{t.profile.title}</h1>
-          <p>{t.profile.description}</p>
-        </div>
-      </header>
-
       <div className="profile-grid">
         <div className="profile-side-stack">
           <section className="panel profile-card">
@@ -119,8 +115,21 @@ export default function ProfilePage() {
               <div>
                 <h2>{displayName}</h2>
                 <p>@{user?.username}</p>
-                <span className="profile-email">{user?.email || t.common.notEntered}</span>
               </div>
+            </div>
+            <div className="profile-meta-list">
+              {profileDetails.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div className="profile-meta-row" key={item.label}>
+                    <span className="profile-meta-icon">
+                      <Icon size={16} />
+                    </span>
+                    <span>{item.label}</span>
+                    <strong>{item.value}</strong>
+                  </div>
+                );
+              })}
             </div>
           </section>
         </div>
@@ -153,15 +162,6 @@ export default function ProfilePage() {
                   value={profileForm.last_name}
                   onChange={(e) => setProfileForm({ ...profileForm, last_name: e.target.value })}
                   placeholder={t.common.lastName}
-                />
-              </label>
-              <label>
-                {t.common.email}
-                <input
-                  type="email"
-                  value={profileForm.email}
-                  onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                  placeholder="email@example.com"
                 />
               </label>
 

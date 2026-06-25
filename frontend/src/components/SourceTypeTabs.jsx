@@ -21,6 +21,7 @@ export default function SourceTypeTabs({ value, onChange, includeAll = false }) 
             className={value === option.value ? "active" : ""}
             key={option.value}
             type="button"
+            data-value={option.value}
             title={option.label}
             onClick={() => onChange(option.value)}
           >

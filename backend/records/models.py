@@ -124,3 +124,47 @@ class RegistryRecord(models.Model):
 
     def __str__(self):
         return self.client_name
+
+
+class Announcement(models.Model):
+    class Target(models.TextChoices):
+        ALL = "all", "All users"
+        SUPERVISOR = "supervisor", "Supervisors"
+        OPERATOR = "operator", "Operators"
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="announcements",
+    )
+    assigned_region = models.ForeignKey(
+        "accounts.Region",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="announcements",
+    )
+    assigned_branch = models.ForeignKey(
+        "accounts.Branch",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="announcements",
+    )
+    title = models.CharField(max_length=180)
+    body = models.TextField()
+    target = models.CharField(max_length=20, choices=Target.choices, default=Target.ALL)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at", "-id")
+        indexes = [
+            models.Index(fields=["target", "created_at"], name="records_ann_target_8b2b70_idx"),
+            models.Index(fields=["assigned_region", "created_at"], name="records_ann_region_3c5b62_idx"),
+            models.Index(fields=["assigned_branch", "created_at"], name="records_ann_branch_5e6f4a_idx"),
+        ]
+
+    def __str__(self):
+        return self.title

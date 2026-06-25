@@ -1,8 +1,16 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+
 import { useI18n } from '../localization/i18n';
 
-export default function GithubHeatmap({ data = [], days = 180 }) {
-  const { t } = useI18n();
+const WEEKDAY_LABELS = {
+  uz: ["Yak", "Dush", "Sesh", "Chor", "Pay", "Jum", "Shan"],
+  "uz-cyrl": ["Як", "Душ", "Сеш", "Чор", "Пай", "Жум", "Шан"],
+  ru: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"]
+};
+
+export default function GithubHeatmap({ data = [], days = 7 }) {
+  const { language } = useI18n();
+  const weekdayLabels = WEEKDAY_LABELS[language] || WEEKDAY_LABELS.uz;
 
   const { cells, maxCount } = useMemo(() => {
     const countsByDate = new Map();
@@ -19,9 +27,11 @@ export default function GithubHeatmap({ data = [], days = 180 }) {
     const startDate = new Date(today);
     startDate.setDate(today.getDate() - days + 1);
 
-    const dayOfWeek = startDate.getDay();
-    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    startDate.setDate(startDate.getDate() - diff);
+    if (days > 31) {
+      const dayOfWeek = startDate.getDay();
+      const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      startDate.setDate(startDate.getDate() - diff);
+    }
 
     let current = new Date(startDate);
     while (current <= today) {
@@ -45,11 +55,19 @@ export default function GithubHeatmap({ data = [], days = 180 }) {
     return 'level-4';
   };
 
-  // For formatting the weekday
   const formatDay = (dateStr) => {
     try {
       const d = new Date(dateStr);
-      return new Intl.DateTimeFormat('uz-UZ', { weekday: 'short' }).format(d);
+      return weekdayLabels[d.getDay()] || "";
+    } catch {
+      return '';
+    }
+  };
+
+  const formatShortDate = (dateStr) => {
+    try {
+      const d = new Date(dateStr);
+      return new Intl.DateTimeFormat('uz-UZ', { day: '2-digit', month: 'short' }).format(d);
     } catch {
       return '';
     }
@@ -67,6 +85,31 @@ export default function GithubHeatmap({ data = [], days = 180 }) {
                 title={`${cell.date}: ${cell.count} ta`}
               />
               <div className="heatmap-day-label">{formatDay(cell.date)}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (days <= 31) {
+    return (
+      <div className="heatmap-container heatmap-compact-days">
+        <div
+          className="heatmap-compact-grid"
+          style={{ gridTemplateColumns: `repeat(${days}, minmax(8px, 1fr))` }}
+        >
+          {cells.map((cell, index) => (
+            <div key={cell.date} className="heatmap-compact-day">
+              <div
+                className={`heatmap-cell ${getColorLevel(cell.count)}`}
+                title={`${cell.date}: ${cell.count} ta`}
+              />
+              <span className="heatmap-compact-date">
+                {index === 0 || index === cells.length - 1 || index % 7 === 0
+                  ? formatShortDate(cell.date)
+                  : ""}
+              </span>
             </div>
           ))}
         </div>

@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import {
   BarChart3,
   BookOpenText,
+  Building2,
   CheckCircle2,
   Database,
   FileSpreadsheet,
@@ -9,14 +9,20 @@ import {
   ListChecks,
   ScrollText,
   Search,
-  ShieldCheck,
   UploadCloud,
   UserCog,
   Users
 } from "lucide-react";
 
 import { useAuth } from "../auth/AuthContext.jsx";
-import { canManageUsers } from "../auth/roles.js";
+import {
+  ROLE_ADMIN,
+  ROLE_MANAGER,
+  ROLE_OPERATOR,
+  ROLE_SUPERVISOR,
+  effectiveRole,
+  roleLabel
+} from "../auth/roles.js";
 import PageHero from "../components/PageHero.jsx";
 import { GUIDE_TRANSLATIONS } from "../localization/guide.js";
 import { useI18n } from "../localization/i18n.jsx";
@@ -25,11 +31,17 @@ const stepIcons = {
   upload: UploadCloud,
   result: CheckCircle2,
   records: Search,
-  privacy: ShieldCheck,
   dashboard: BarChart3,
   users: UserCog,
   audit: ScrollText,
   batches: History
+};
+
+const roleIntroIcons = {
+  [ROLE_OPERATOR]: UploadCloud,
+  [ROLE_SUPERVISOR]: UserCog,
+  [ROLE_MANAGER]: Building2,
+  [ROLE_ADMIN]: Building2
 };
 
 function MiniBrowser({ title, children }) {
@@ -103,27 +115,6 @@ function ScreenshotMock({ type, copy }) {
     );
   }
 
-  if (type === "privacy") {
-    return (
-      <MiniBrowser title={s.title}>
-        <div className="guide-shot-heading">
-          <strong>{s.title}</strong>
-          <small>Excel columns</small>
-        </div>
-        <div className="guide-rule-grid">
-          <span className="red">{s.red}</span>
-          <span className="yellow">{s.yellow}</span>
-          <span className="white">{s.white}</span>
-        </div>
-        <div className="guide-rule-lines">
-          <span />
-          <span />
-          <span />
-        </div>
-      </MiniBrowser>
-    );
-  }
-
   if (type === "dashboard") {
     return (
       <MiniBrowser title={s.title}>
@@ -187,44 +178,51 @@ export default function GuidePage() {
   const { user } = useAuth();
   const { language, t } = useI18n();
   const copy = GUIDE_TRANSLATIONS[language] || GUIDE_TRANSLATIONS.uz;
-  const hasManagementAccess = canManageUsers(user);
-  const defaultRole = hasManagementAccess ? "manager" : "operator";
-  const [activeRole, setActiveRole] = useState(defaultRole);
-  const guide = copy.roles[activeRole];
-  const isManagerSection = activeRole === "manager";
-
-  useEffect(() => {
-    setActiveRole(hasManagementAccess ? "manager" : "operator");
-  }, [hasManagementAccess]);
+  const userRole = effectiveRole(user) || ROLE_OPERATOR;
+  const activeRole = copy.roles[userRole] ? userRole : ROLE_OPERATOR;
+  const guide = copy.roles[activeRole] || copy.roles[ROLE_OPERATOR];
+  const visibleSteps = guide.steps.filter((step) => step.screen !== "privacy" && step.icon !== "privacy");
+  const RoleIntroIcon = roleIntroIcons[activeRole] || BookOpenText;
+  const screenCount = new Set(visibleSteps.map((step) => step.screen)).size;
 
   return (
     <section className="page-stack guide-page">
       <PageHero
         kicker={copy.heroKicker}
-        title={copy.title}
-        description={copy.description}
-        icon={BookOpenText}
+        title={guide.title}
+        description={guide.intro}
+        icon={RoleIntroIcon}
         stats={[
-          { label: copy.stats.roles, value: "2", icon: Users },
-          { label: copy.stats.screens, value: "8", icon: Database },
-          { label: copy.stats.steps, value: guide.steps.length, icon: ListChecks },
-          { label: copy.stats.language, value: "UZ/RU", icon: ShieldCheck }
+          { label: copy.stats.roles, value: roleLabel(t, activeRole), icon: Users },
+          { label: copy.stats.screens, value: screenCount, icon: Database },
+          { label: copy.stats.steps, value: visibleSteps.length, icon: ListChecks },
+          { label: copy.stats.language, value: "UZ/RU", icon: BookOpenText }
         ]}
       />
 
-      <section className="panel guide-overview">
-        <div className="panel-heading split">
-          <h2>{copy.whatSystemDoes.title}</h2>
+      <section className="panel guide-overview github-style-panel">
+        <div className="stats-panel-head">
+          <div>
+            <h2>{guide.checklistTitle}</h2>
+            <p>Tizimdan foydalanish bo'yicha ketma-ket qadamlar va ko'rsatmalar.</p>
+          </div>
+          <ListChecks size={18} />
         </div>
 
         <div className="guide-overview-grid">
           <div className="guide-system-list">
-            {copy.whatSystemDoes.items.map((item) => (
-              <div key={item}>
-                <CheckCircle2 size={16} />
-                <span>{item}</span>
-              </div>
-            ))}
+            {visibleSteps.map((step) => {
+              const Icon = stepIcons[step.icon] || CheckCircle2;
+              return (
+                <div key={step.title}>
+                  <Icon size={16} />
+                  <span>
+                    <strong>{step.title}</strong>
+                    <small>{step.text}</small>
+                  </span>
+                </div>
+              );
+            })}
           </div>
           <div className="guide-checklist">
             <h3>{guide.checklistTitle}</h3>
@@ -233,34 +231,23 @@ export default function GuidePage() {
                 <li key={item}>{item}</li>
               ))}
             </ol>
-            {isManagerSection && !hasManagementAccess && (
-              <p className="guide-role-note">{copy.roleNote}</p>
-            )}
           </div>
         </div>
       </section>
 
-      <section className="guide-role-intro">
-        <span className="guide-role-icon">
-          {activeRole === "manager" ? <UserCog size={20} /> : <UploadCloud size={20} />}
-        </span>
-        <div>
-          <h2>{guide.title}</h2>
-          <p>{guide.intro}</p>
-        </div>
-      </section>
-
       <div className="guide-step-grid">
-        {guide.steps.map((step) => {
+        {visibleSteps.map((step) => {
           const Icon = stepIcons[step.icon] || BookOpenText;
           return (
-            <article className="guide-step-card" key={step.title}>
+            <article className="panel guide-step-card github-style-panel" key={step.title} style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '24px' }}>
               <div className="guide-step-copy">
                 <span className="guide-step-icon">
                   <Icon size={18} />
                 </span>
-                <h3>{step.title}</h3>
-                <p>{step.text}</p>
+                <div>
+                  <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#020617', margin: '0 0 6px 0' }}>{step.title}</h3>
+                  <p style={{ margin: 0, color: '#475569', fontSize: '13px', lineHeight: '1.6' }}>{step.text}</p>
+                </div>
               </div>
               <ScreenshotMock type={step.screen} copy={copy} t={t} />
             </article>
