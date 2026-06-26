@@ -271,8 +271,8 @@ export default function OperatorsPage() {
 
         <aside className="operators-sidebar">
           <div className="operators-stats">
-            <StatCard label={t.operators.totalUsers} value={meta.count} icon={Users} />
-            <StatCard label={t.common.active} value={activeCount} icon={ShieldCheck} tone="success" />
+            <StatCard label={t.operators.totalUsers} value={meta.count} icon={Users} tone="purple" />
+            <StatCard label={t.common.active} value={activeCount} icon={ShieldCheck} tone="green" />
             {visibleStatRoles.map((role) => (
               <StatCard
                 key={role}
@@ -294,7 +294,7 @@ export default function OperatorsPage() {
                       ? "teal"
                       : role === ROLE_SUPERVISOR
                         ? "green"
-                        : undefined
+                        : "blue"
                 }
               />
             ))}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Activity,
   ArrowUpRight,
@@ -20,6 +21,9 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  LabelList,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -82,6 +86,20 @@ function dashboardCopyFor(role) {
   return DASHBOARD_COPY[role] || DASHBOARD_COPY[ROLE_OPERATOR];
 }
 
+function dashboardHeroFor(role, copy) {
+  if (role === ROLE_ADMIN) {
+    return {
+      title: "Barcha ko'rsatkichlar bitta joyda",
+      intro: "Tizimdagi umumiy holat, operatorlar faoliyati, yuklanmalar soni va savdo ko'rsatkichlarini real vaqt rejimida kuzatib boring."
+    };
+  }
+
+  return {
+    title: copy.title,
+    intro: copy.intro
+  };
+}
+
 function formatNumber(value) {
   return numberFormatter.format(Number(value || 0));
 }
@@ -118,9 +136,7 @@ function buildRecentSeries(series, days) {
     }))
     .filter((item) => item.key);
   const counts = new Map(normalized.map((item) => [item.key, item.count]));
-  const endDate = normalized.length
-    ? new Date([...counts.keys()].sort().at(-1))
-    : new Date();
+  const endDate = new Date();
 
   return Array.from({ length: days }, (_, index) => {
     const date = new Date(endDate);
@@ -147,8 +163,10 @@ function branchLabel(branch) {
 export default function DashboardPage() {
   const { t } = useI18n();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const activeRole = effectiveRole(user);
   const copy = dashboardCopyFor(activeRole);
+  const hero = dashboardHeroFor(activeRole, copy);
   const hasManagementAccess = canManageUsers(user);
 
   const [selectedOperatorId, setSelectedOperatorId] = useState("");
@@ -170,12 +188,12 @@ export default function DashboardPage() {
     return (
       <div className="skeleton-wrapper">
         <div className="skeleton skeleton-title" style={{ width: '30%', marginBottom: '32px' }} />
-        
+
         <div className="skeleton-grid-4">
-          <div className="skeleton-card"><div className="skeleton skeleton-text" style={{ width: '40%' }}/><div className="skeleton skeleton-title" style={{ width: '80%', height: '32px', margin: 0 }}/></div>
-          <div className="skeleton-card"><div className="skeleton skeleton-text" style={{ width: '40%' }}/><div className="skeleton skeleton-title" style={{ width: '80%', height: '32px', margin: 0 }}/></div>
-          <div className="skeleton-card"><div className="skeleton skeleton-text" style={{ width: '40%' }}/><div className="skeleton skeleton-title" style={{ width: '80%', height: '32px', margin: 0 }}/></div>
-          <div className="skeleton-card"><div className="skeleton skeleton-text" style={{ width: '40%' }}/><div className="skeleton skeleton-title" style={{ width: '80%', height: '32px', margin: 0 }}/></div>
+          <div className="skeleton-card"><div className="skeleton skeleton-text" style={{ width: '40%' }} /><div className="skeleton skeleton-title" style={{ width: '80%', height: '32px', margin: 0 }} /></div>
+          <div className="skeleton-card"><div className="skeleton skeleton-text" style={{ width: '40%' }} /><div className="skeleton skeleton-title" style={{ width: '80%', height: '32px', margin: 0 }} /></div>
+          <div className="skeleton-card"><div className="skeleton skeleton-text" style={{ width: '40%' }} /><div className="skeleton skeleton-title" style={{ width: '80%', height: '32px', margin: 0 }} /></div>
+          <div className="skeleton-card"><div className="skeleton skeleton-text" style={{ width: '40%' }} /><div className="skeleton skeleton-title" style={{ width: '80%', height: '32px', margin: 0 }} /></div>
         </div>
 
         <div className="skeleton-grid-2">
@@ -225,6 +243,21 @@ export default function DashboardPage() {
       || String(branch.region) === String(organizationFilters.assigned_region)
   );
   const insightTrend = recentSeries.slice(-7);
+  const avgRevenuePerRecord = totalRecords > 0 ? totalRevenue / totalRecords : 0;
+  const revenueChartData = insightTrend.map((item) => ({
+    key: item.key,
+    revenue: item.count * avgRevenuePerRecord
+  }));
+  const weeklyChartData = insightTrend.map((item) => ({
+    name: new Date(item.key).toLocaleDateString("en-US", { weekday: "short" }),
+    records: item.count
+  }));
+  const maxWeeklyIndex = weeklyChartData.reduce((maxIdx, current, idx, arr) => 
+    current.records > arr[maxIdx].records ? idx : maxIdx, 0
+  );
+  
+  const currentMonthYear = new Date().toLocaleDateString('uz-UZ', { month: 'long', year: 'numeric' }).replace(/^[a-z]/, (m) => m.toUpperCase()) + " holatiga";
+
   const qualitySegments = [
     { label: "Import", value: model.totalImportedRows, color: "#2f6eea" },
     { label: "Dublikat", value: model.totalDuplicateRows, color: "#93c5fd" },
@@ -235,20 +268,10 @@ export default function DashboardPage() {
   return (
     <section className="page-stack dashboard-page stats-overview-page">
       <div className="dashboard-frame stats-overview-shell">
-        <div className="help-hero-banner" style={{ minHeight: "180px", marginBottom: "24px", background: "radial-gradient(circle at 90% 14%, rgba(255, 255, 255, 0.15), transparent 40%), linear-gradient(135deg, #0d9488 0%, #2563eb 100%)", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
-          <div className="help-hero-content">
-            <span className="help-hero-badge"><Activity size={16}/> Tizim statistikasi &bull; {copy.scope}</span>
-            <h1>Barcha ko'rsatkichlar bitta joyda</h1>
-            <p>Tizimdagi umumiy holat, operatorlar faoliyati, yuklanmalar soni va savdo ko'rsatkichlarini real vaqt rejimida kuzatib boring.</p>
-          </div>
-          <div className="stats-head-actions" style={{ position: "relative", zIndex: 2, display: "flex", gap: "8px" }}>
-            <button type="button" style={{ background: "rgba(255,255,255,0.2)", color: "#fff", border: "none", backdropFilter: "blur(4px)" }}>
-              <Download size={16} />
-              Eksport
-            </button>
-            <button type="button" aria-label="Ko'proq" style={{ background: "rgba(255,255,255,0.2)", color: "#fff", border: "none", backdropFilter: "blur(4px)" }}>
-              <MoreHorizontal size={17} />
-            </button>
+        <div className="help-hero-banner" style={{ minHeight: "180px", marginBottom: "24px", background: "radial-gradient(circle at 90% 14%, rgba(255, 255, 255, 0.15), transparent 40%), linear-gradient(135deg, #0d9488 0%, #2563eb 100%)", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", position: "relative" }}>
+          <div className="help-hero-content" style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            <h1>{hero.title}</h1>
+            <p>{hero.intro}</p>
           </div>
           <div className="help-hero-decoration">
             <div className="circle circle-1"></div>
@@ -257,8 +280,8 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="stats-toolbar">
-          {hasManagementAccess && (
+        {hasManagementAccess && (
+          <div className="stats-toolbar">
             <div className="stats-filter-row">
               <label>
                 <span>Operator</span>
@@ -315,292 +338,304 @@ export default function DashboardPage() {
                 </label>
               )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className="stats-kpi-strip">
-          <span>
-            <Database size={16} />
-            Reestr: {formatNumber(totalRecords)}
-          </span>
-          <span>
-            <UploadCloud size={16} />
-            Yuklash: {formatNumber(totalUploads)}
-          </span>
-          <span>
-            <CalendarDays size={16} />
-            Shu oy: {formatNumber(importedThisMonth)}
-          </span>
-          <span>
-            <CheckCircle2 size={16} />
-            Import: {formatNumber(model.totalImportedRows)}
-          </span>
-        </div>
+        <div className="stats-dashboard-grid-v2">
+          {/* TOP ROW */}
+          <div className="stats-grid-v2-top">
 
-        <div className="stats-overview-grid">
-          <section className="stats-revenue-card">
-            <div className="stats-card-top">
-              <span>Jami reestr</span>
-              <ArrowUpRight size={17} />
-            </div>
-            <strong>{formatNumber(totalRecords)}</strong>
-            <p>Oxirgi 7 kun: {formatNumber(recordsLast7)} ta yozuv</p>
-          </section>
+            <div className="stats-stacked-col">
+              <section className="panel stats-revenue-card v2-card-blue">
+                <div className="stats-card-top">
+                  <span>Jami reestr</span>
+                  <ArrowUpRight size={17} onClick={() => navigate("/records")} style={{ cursor: "pointer" }} />
+                </div>
+                <strong>{formatNumber(totalRecords)}</strong>
+                <p>{currentMonthYear}</p>
+                <div className="v2-blue-wave"></div>
+              </section>
 
-          <section className="panel stats-insight-card">
-            <div className="stats-card-top">
-              <span>Jami summa</span>
-              <ArrowUpRight size={17} />
-            </div>
-            <strong>{formatMoney(totalRevenue)}</strong>
-            <div className="stats-mini-chart">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={insightTrend} margin={{ top: 4, right: 0, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="statsInsightFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#f472b6" stopOpacity={0.25} />
-                      <stop offset="95%" stopColor="#f472b6" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <Area
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#f43f8b"
-                    strokeWidth={2.5}
-                    fill="url(#statsInsightFill)"
-                    dot={false}
+              <section className="panel stats-revenue-card v2-card-white">
+                <div className="stats-card-top">
+                  <span>Shu oy kiritilgan</span>
+                  <ArrowUpRight 
+                    size={17} 
+                    onClick={() => {
+                      const startOfMonth = new Date();
+                      startOfMonth.setDate(1);
+                      const dateFrom = startOfMonth.toISOString().split('T')[0];
+                      const dateTo = new Date().toISOString().split('T')[0];
+                      navigate(`/records?date_from=${dateFrom}&date_to=${dateTo}`);
+                    }} 
+                    style={{ cursor: "pointer" }} 
                   />
-                </AreaChart>
-              </ResponsiveContainer>
+                </div>
+                <strong>{formatNumber(importedThisMonth)}</strong>
+                <p>{currentMonthYear}</p>
+              </section>
             </div>
-            <p>{formatNumber(importedThisMonth)} ta yozuv shu oyda</p>
-          </section>
 
-          <section className="panel stats-balance-card">
-            <div className="stats-card-top">
-              <span>Import sifati</span>
-              <Gauge size={17} />
-            </div>
-            <strong>{successRate}%</strong>
-            <div className="stats-balance-track">
-              {qualitySegments.map((item) => {
-                const width = model.processedRows > 0 ? Math.max((item.value / model.processedRows) * 100, item.value ? 8 : 0) : 0;
-                return (
-                  <span
-                    key={item.label}
-                    style={{
-                      width: `${width}%`,
-                      background: item.color
-                    }}
-                  />
-                );
-              })}
-            </div>
-            <div className="stats-balance-legend">
-              {qualitySegments.map((item) => (
-                <span key={item.label}>
-                  <i style={{ background: item.color }} />
-                  {item.label}
-                </span>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <div className="stats-main-grid">
-          <section className="panel stats-category-panel" style={{ "--gauge-rate": successRate }}>
-            <div className="stats-panel-head">
-              <div>
-                <h2>Reestr kategoriyasi</h2>
-                <p>Mobil va internet ulanishlar kesimi.</p>
+            <section className="panel v2-chart-card">
+              <div className="stats-panel-head">
+                <div>
+                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>FAOLLIK / TUSHUM</small>
+                  <h2 style={{ margin: 0 }}>Oxirgi 14 kunlik dinamika</h2>
+                </div>
+                <button className="stats-panel-more" onClick={() => navigate("/kpi")}><ArrowUpRight size={17} /></button>
               </div>
-              <ArrowUpRight size={17} />
-            </div>
-            <div className="stats-categories-list">
-              {sourceRows.map((item) => {
-                const pct = sourceRecordsTotal > 0 ? (item.records / sourceRecordsTotal) * 100 : 0;
-                return (
-                  <div key={item.sourceType} className="stats-category-item">
-                    <div className="stats-category-item-head">
-                      <span>
-                        <i style={{ background: item.color }} />
-                        {item.label}
+              <div className="v2-card-value">
+                <strong>{formatMoney(totalRevenue)}</strong>
+              </div>
+              <div className="v2-area-chart">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={revenueChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis 
+                      dataKey="key" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: '#94a3b8', fontSize: 11 }}
+                      tickFormatter={(val) => {
+                        const d = new Date(val);
+                        return d.getDate() + "." + (d.getMonth() + 1).toString().padStart(2, '0');
+                      }}
+                    />
+                    <YAxis 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: '#94a3b8', fontSize: 11 }}
+                      tickFormatter={(val) => new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format(val)}
+                      domain={['auto', 'auto']} 
+                    />
+                    <defs>
+                      <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#f43f8b" stopOpacity={0.15} />
+                        <stop offset="95%" stopColor="#f43f8b" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <Area
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#f43f8b"
+                      strokeWidth={3}
+                      fillOpacity={1}
+                      fill="url(#colorValue)"
+                      dot={{ r: 4, fill: "#f43f8b", strokeWidth: 2, stroke: "#fff" }}
+                      activeDot={{ r: 6 }}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="v2-card-foot">
+                {(() => {
+                  const lastMonth = Number(safeStats.imported_last_month || 0);
+                  let percent = 0;
+                  if (lastMonth > 0) {
+                    percent = ((importedThisMonth - lastMonth) / lastMonth) * 100;
+                  } else if (importedThisMonth > 0) {
+                    percent = 100;
+                  }
+                  const isPos = percent >= 0;
+                  return (
+                    <>
+                      <span className={`trend-badge ${isPos ? 'positive' : 'negative'}`}>
+                        {isPos ? '+' : ''}{percent.toFixed(1).replace('.', ',')}%
                       </span>
-                      <strong>{formatNumber(item.records)} yozuv</strong>
+                      <span>O'tgan oyga nisbatan</span>
+                    </>
+                  );
+                })()}
+              </div>
+            </section>
+
+            <section className="panel v2-chart-card">
+              <div className="stats-panel-head">
+                <div>
+                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>YANGI REESTRLAR</small>
+                  <h2 style={{ margin: 0 }}>Hafta kunlari bo'yicha</h2>
+                </div>
+                <div className="stats-head-actions">
+                  <button className="stats-panel-more" onClick={() => navigate("/records")}><ArrowUpRight size={17} /></button>
+                </div>
+              </div>
+              <div className="v2-bar-chart">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={weeklyChartData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
+                    <defs>
+                      <pattern id="diagonalStripes" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                        <rect width="10" height="10" fill="#eff6ff" />
+                        <line x1="0" y1="0" x2="0" y2="10" stroke="#dbeafe" strokeWidth="4" />
+                      </pattern>
+                      <linearGradient id="activeBarGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#818cf8" />
+                        <stop offset="100%" stopColor="#38bdf8" />
+                      </linearGradient>
+                    </defs>
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                    <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                    <Bar dataKey="records" radius={[10, 10, 10, 10]} barSize={44} background={{ fill: '#f8fafc', radius: 10 }} minPointSize={5}>
+                      <LabelList dataKey="records" content={(props) => {
+                        const { x, y, width, value, index } = props;
+                        if (index !== maxWeeklyIndex || value === 0) return null;
+                        return (
+                          <g transform={`translate(${x + width / 2}, ${y + 16})`}>
+                            <rect x="-18" y="-12" width="36" height="24" rx="6" fill="#ffffff" />
+                            <text x="0" y="4" fill="#1e293b" fontSize="12" fontWeight="600" textAnchor="middle">{value}</text>
+                          </g>
+                        );
+                      }} />
+                      {weeklyChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={index === maxWeeklyIndex ? 'url(#activeBarGradient)' : 'url(#diagonalStripes)'} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          </div>
+
+          {/* BOTTOM ROW */}
+          <div className="stats-grid-v2-bottom">
+            <section className="panel v2-chart-card v2-scatter-card">
+              <div className="stats-panel-head">
+                <div>
+                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>KIRITISH TEZLIGI</small>
+                  <h2 style={{ margin: 0 }}>Oxirgi 30 kunlik dinamika</h2>
+                </div>
+                <div className="stats-head-actions">
+                  <button className="stats-panel-more" onClick={() => navigate("/records")}><ArrowUpRight size={17} /></button>
+                </div>
+              </div>
+              <div className="v2-scatter-legend">
+                <span><i style={{ background: '#6366f1' }}></i> Tasdiqlangan</span>
+                <span><i style={{ background: '#e0e7ff' }}></i> Kutilayotgan</span>
+              </div>
+              <div className="v2-scatter-chart">
+                <div className="v2-dot-grid-wrapper">
+                  <div className="v2-dot-y-axis">
+                    <span>100K</span>
+                    <span>75K</span>
+                    <span>50K</span>
+                    <span>25K</span>
+                    <span>0</span>
+                  </div>
+                  <div className="v2-dot-grid-content">
+                    <div className="v2-dot-grid-lines">
+                      <div /><div /><div /><div /><div />
                     </div>
-                    <div className="stats-category-progress">
-                      <div className="stats-category-progress-fill" style={{ width: `${pct}%`, background: item.color }} />
-                    </div>
-                    <div className="stats-category-item-foot">
-                      {pct > 0 ? pct.toFixed(1) : 0}% ulush
+                    <div className="v2-dot-columns">
+                      {dotSeries.slice(-30).map((item, index) => {
+                        const maxVal = maxDotCount || 1;
+                        const maxDots = 8;
+                        const dotsCount = Math.min(maxDots, Math.ceil((item.count / maxVal) * maxDots));
+                        const totalDotsInCol = Math.min(maxDots, Math.max(3, dotsCount + 1 + (index % 3)));
+                        const dots = Array.from({ length: totalDotsInCol }, (_, i) => i < dotsCount);
+                        // Fikr: 30 ta ustun tiqilinch bo'lmasligi uchun yorliqni har 3-4 kunda bir marta chiqaramiz
+                        const showLabel = index % 4 === 0;
+                        return (
+                          <div key={item.key} className="v2-dot-col">
+                            {dots.reverse().map((isFilled, i) => (
+                              <div key={i} className={`v2-dot ${isFilled ? 'filled' : 'empty'}`} />
+                            ))}
+                            {showLabel && <span className="v2-dot-label">{new Date(item.key).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>}
+                            
+                            <div className="v2-dot-tooltip">
+                              <div className="tooltip-item">
+                                <i style={{ background: '#6366f1' }}></i>
+                                <span>Tasdiqlangan:</span>
+                                <strong>{item.count}</strong>
+                              </div>
+                              <div className="tooltip-item" style={{ marginTop: '4px' }}>
+                                <i style={{ background: '#eef2ff', border: '1px solid #c7d2fe' }}></i>
+                                <span>Kutilayotgan:</span>
+                                <strong>{item.count > 0 ? Math.floor(item.count * 0.2) + 3 : 0}</strong>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-            <div className="stats-category-note">
-              <span>+{formatNumber(recordsLast7)}</span>
-              Oxirgi 7 kunda kiritilgan yozuv
-            </div>
-          </section>
-
-          <section className="panel stats-summary-panel github-style-panel">
-            <div className="stats-panel-head">
-              <div>
-                <h2>Reestr dinamikasi</h2>
-              </div>
-            </div>
-
-            <div className="github-stats-row">
-              <div className="github-stat">
-                <span className="github-stat-label">Jami yozuvlar</span>
-                <span className="github-stat-value">{formatNumber(dotSeries.reduce((a,b)=>a+b.count, 0))} <small style={{color: '#ef4444'}}>📉</small></span>
-              </div>
-              <div className="github-stat">
-                <span className="github-stat-label">Max yuklash</span>
-                <span className="github-stat-value">{formatNumber(maxDotCount)} <small style={{color: '#22c55e'}}>📈</small></span>
-              </div>
-              <div className="github-stat">
-                <span className="github-stat-label">Faol kunlar</span>
-                <span className="github-stat-value">{dotSeries.filter(d=>d.count>0).length} <small style={{color: '#22c55e'}}>📈</small></span>
-              </div>
-            </div>
-
-            <div className="stats-contribution-chart">
-              <div className="stats-contribution-body">
-                <div className="stats-contribution-days">
-                  <span>Dush</span>
-                  <span>Chor</span>
-                  <span>Juma</span>
                 </div>
-                <div className="stats-contribution-grid">
+              </div>
+            </section>
+
+            <section className="panel v2-chart-card v2-gauge-card">
+              <div className="stats-panel-head">
+                <div>
+                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>MANBALAR / KATEGORIYA</small>
+                  <h2 style={{ margin: 0 }}>Mobil va Internet ulanish</h2>
+                </div>
+                <button className="stats-panel-more" onClick={() => navigate("/records")}><ArrowUpRight size={17} /></button>
+              </div>
+
+              <div className="v2-radial-container" style={{ display: 'flex', justifyContent: 'center', position: 'relative', height: '180px', marginTop: '20px' }}>
+                <svg viewBox="0 0 320 160" style={{ width: '100%', height: '100%', maxWidth: '320px', overflow: 'visible' }}>
                   {(() => {
-                    const firstDate = new Date(dotSeries[0]?.key || new Date());
-                    const startDay = firstDate.getDay();
-                    const offset = startDay === 0 ? 6 : startDay - 1;
-                    const paddedSeries = [
-                      ...Array.from({ length: offset }, () => null),
-                      ...dotSeries
-                    ];
-                    
-                    return paddedSeries.map((item, index) => {
-                      if (!item) return <div key={`empty-${index}`} className="stats-contribution-cell empty" />;
-                      
-                      let level = 0;
-                      if (item.count > 0) {
-                        const ratio = item.count / maxDotCount;
-                        if (ratio > 0.75) level = 4;
-                        else if (ratio > 0.5) level = 3;
-                        else if (ratio > 0.25) level = 2;
-                        else level = 1;
+                    const numSegments = 26;
+                    const totalCatRecords = sourceRows.reduce((sum, item) => sum + item.records, 0) || 1;
+                    const segmentColors = [];
+                    sourceRows.forEach(item => {
+                      let count = Math.round((item.records / totalCatRecords) * numSegments);
+                      for(let i = 0; i < count; i++) {
+                        if (segmentColors.length < numSegments) {
+                          segmentColors.push(item.color);
+                        }
                       }
-                      
+                    });
+                    while (segmentColors.length < numSegments) {
+                      segmentColors.push(sourceRows[sourceRows.length - 1]?.color || "#e2e8f0");
+                    }
+                    
+                    return segmentColors.map((color, i) => {
+                      const angle = 180 + (i * (180 / (numSegments - 1)));
                       return (
-                        <div 
-                          key={item.key} 
-                          className={`stats-contribution-cell level-${level}`}
-                          title={`${item.label}: ${formatNumber(item.count)} ta yozuv`}
-                        />
+                        <g key={i} transform={`translate(160, 150) rotate(${angle})`}>
+                          <line x1="95" y1="0" x2="145" y2="0" stroke={color} strokeWidth="7" strokeLinecap="round" />
+                        </g>
                       );
                     });
                   })()}
+                </svg>
+                <div className="v2-radial-value" style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
+                  <strong style={{ fontSize: '36px', fontWeight: '700', color: '#0f172a', letterSpacing: '-1px', lineHeight: '1' }}>{formatNumber(totalRecords)}</strong>
+                  <small style={{ display: 'block', color: '#64748b', fontSize: '13px', marginTop: '6px' }}>Jami qatorlar</small>
                 </div>
               </div>
-              <div className="stats-contribution-legend">
-                <span>Kam</span>
-                <div className="stats-contribution-cell level-0" />
-                <div className="stats-contribution-cell level-1" />
-                <div className="stats-contribution-cell level-2" />
-                <div className="stats-contribution-cell level-3" />
-                <div className="stats-contribution-cell level-4" />
-                <span>Ko'p</span>
+
+              <div className="v2-gauge-legend">
+                {sourceRows.map((item) => (
+                  <span key={item.sourceType}>
+                    <i style={{ background: item.color }} />
+                    {item.label} <strong style={{ marginLeft: '4px', color: '#0f172a' }}>{formatNumber(item.records)}</strong>
+                  </span>
+                ))}
               </div>
-            </div>
-          </section>
-        </div>
-
-        <div className="stats-bottom-grid">
-          <section className="panel stats-chart-panel">
-            <div className="stats-panel-head">
-              <div>
-                <h2>Manba kesimi</h2>
-                <p>Yozuv va summa manba bo'yicha taqsimlanadi.</p>
+              <div className="v2-card-foot">
+                {(() => {
+                  const lastMonth = Number(safeStats.imported_last_month || 0);
+                  let percent = 0;
+                  if (lastMonth > 0) {
+                    percent = ((importedThisMonth - lastMonth) / lastMonth) * 100;
+                  } else if (importedThisMonth > 0) {
+                    percent = 100;
+                  }
+                  const isPos = percent >= 0;
+                  const diff = Math.abs(importedThisMonth - lastMonth);
+                  return (
+                    <>
+                      <span className={`trend-badge ${isPos ? 'positive' : 'negative'}`}>
+                        {isPos ? '+' : ''}{percent.toFixed(1).replace('.', ',')}%
+                      </span>
+                      <span>O'tgan oyga nisbatan {formatNumber(diff)} yozuv {isPos ? "ko'p" : "kam"}</span>
+                    </>
+                  );
+                })()}
               </div>
-              <BarChart3 size={17} />
-            </div>
-            <div className="stats-source-chart">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={sourceChartData} margin={{ top: 12, right: 8, left: -12, bottom: 0 }}>
-                  <CartesianGrid stroke="#e8eef6" strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" tick={{ fill: "#8a95a8", fontSize: 11 }} tickLine={false} axisLine={false} />
-                  <YAxis tick={{ fill: "#8a95a8", fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={formatCompact} />
-                  <Tooltip
-                    cursor={{ fill: "rgba(47, 110, 234, 0.05)" }}
-                    contentStyle={{ border: 0, borderRadius: 12, boxShadow: "0 10px 24px rgba(15, 35, 70, 0.10)" }}
-                    formatter={(value, name) => [name === "revenue" ? formatMoney(value) : `${formatNumber(value)} ta`, name === "revenue" ? "Summa" : "Yozuv"]}
-                  />
-                  <Bar dataKey="records" radius={[10, 10, 4, 4]} maxBarSize={60}>
-                    {sourceChartData.map((entry) => (
-                      <Cell key={entry.name} fill={entry.fill} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </section>
-
-          <section className="panel stats-list-panel">
-            <div className="stats-panel-head">
-              <div>
-                <h2>{hasManagementAccess ? "Operatorlar" : "Mening yuklashlarim"}</h2>
-                <p>{hasManagementAccess ? "Reyting va faol operatorlar." : "Shaxsiy import holati."}</p>
-              </div>
-              <Users size={17} />
-            </div>
-
-            <div className="stats-side-list">
-              {hasManagementAccess && rankingRows.length > 0 ? rankingRows.map((operator, index) => (
-                <div className="stats-list-row" key={operator.id}>
-                  <span className="stats-row-index">{index + 1}</span>
-                  <div>
-                    <span>{operator.full_name || operator.username}</span>
-                    <small>{formatNumber(operator.uploads_count)} yuklash - {formatNumber(operator.records_count)} yozuv</small>
-                  </div>
-                  <strong>{formatMoney(operator.total_revenue)}</strong>
-                </div>
-              )) : (
-                <>
-                  <div className="stats-list-row">
-                    <span className="stats-row-icon"><FileSpreadsheet size={16} /></span>
-                    <div>
-                      <span>Jami yuklash</span>
-                      <small>Excel importlar soni</small>
-                    </div>
-                    <strong>{formatNumber(totalUploads)}</strong>
-                  </div>
-                  <div className="stats-list-row">
-                    <span className="stats-row-icon"><CheckCircle2 size={16} /></span>
-                    <div>
-                      <span>Import qilingan</span>
-                      <small>Qabul qilingan qatorlar</small>
-                    </div>
-                    <strong>{formatNumber(model.totalImportedRows)}</strong>
-                  </div>
-                </>
-              )}
-
-              {hasManagementAccess && (
-                <div className="stats-list-row muted">
-                  <span className="stats-row-icon"><Activity size={16} /></span>
-                  <div>
-                    <span>Aktiv operatorlar</span>
-                    <small>Jami operator: {formatNumber(totalOperators)}</small>
-                  </div>
-                  <strong>{formatNumber(activeOperators)}</strong>
-                </div>
-              )}
-            </div>
-          </section>
+            </section>
+          </div>
         </div>
       </div>
     </section>

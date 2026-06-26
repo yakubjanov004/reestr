@@ -443,6 +443,7 @@ td a[href^="mailto"]:hover {
 }
 
 .records-table-panel .records-filter-heading {
+  align-items: center;
   gap: 16px;
   min-height: 70px;
   border-bottom: 1px solid #dce8f6;
@@ -452,8 +453,12 @@ td a[href^="mailto"]:hover {
 
 .records-table-panel .records-filter-heading h2 {
   min-width: 0;
-  color: #17213a;
-  font-size: 16px;
+  background: linear-gradient(135deg, #2563eb 0%, #1f7a8c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  font-size: 18px;
   font-weight: 850;
   line-height: 1.25;
 }
@@ -489,6 +494,14 @@ td a[href^="mailto"]:hover {
   color: #17213a;
   font-size: 13px;
   font-weight: 650;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+}
+
+.records-table-panel .search-box input:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .records-advanced-filters {

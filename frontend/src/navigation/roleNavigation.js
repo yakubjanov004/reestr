@@ -38,7 +38,13 @@ export function buildSidebarSections(t, user) {
           mobileLabel: t.layout.nav.uploadShort,
           icon: LayoutGrid,
           roles: [ROLE_OPERATOR]
-        },
+        }
+      ]
+    },
+    {
+      key: "operator_view",
+      title: t.layout.operatorPanel,
+      links: [
         {
           to: "/dashboard",
           label: t.layout.nav.dashboard,

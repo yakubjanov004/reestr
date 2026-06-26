@@ -85,7 +85,6 @@ export default function AnnouncementsPage() {
     <section className="page-stack operator-page operator-announcements-page">
       <div className="help-hero-banner" style={{ minHeight: "200px", marginBottom: "20px", background: "radial-gradient(circle at 90% 14%, rgba(255, 255, 255, 0.15), transparent 40%), linear-gradient(135deg, #0284c7 0%, #4f46e5 100%)" }}>
         <div className="help-hero-content">
-          <span className="help-hero-badge"><BellRing size={16}/> Tizim e'lonlari</span>
           <h1>So'nggi yangiliklar va bildirishnomalar</h1>
           <p>Tizimdagi so'nggi o'zgarishlar, qo'shilgan yangi imkoniyatlar va muhim xabarlardan doim xabardor bo'ling.</p>
         </div>
@@ -162,7 +161,6 @@ export default function AnnouncementsPage() {
         <section className="panel announcement-list-panel">
           <div className="panel-heading">
             <div>
-              <span className="panel-kicker">Xabarlar</span>
               <h2>{canCreate ? "Yuborilgan va ko'rinadigan e'lonlar" : "Menga kelgan e'lonlar"}</h2>
               <small className="announcement-heading-note">
                 Kimdan kelgani, qachon yuborilgani va kimga tegishli ekani shu yerda ko'rinadi.

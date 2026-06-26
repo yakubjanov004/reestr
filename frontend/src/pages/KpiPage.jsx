@@ -1,9 +1,11 @@
 import {
   Activity,
-  BarChart3,
-  CheckCircle2,
-  ReceiptText,
-  Users
+  BarChart2,
+  Users,
+  Wallet,
+  TrendingUp,
+  CalendarDays,
+  Landmark
 } from "lucide-react";
 import {
   Area,
@@ -72,9 +74,7 @@ function buildRecentActivity(series, days = 7) {
     }))
     .filter((item) => item.key);
   const counts = new Map(normalized.map((item) => [item.key, item.count]));
-  const endDate = normalized.length
-    ? new Date([...counts.keys()].sort().at(-1))
-    : new Date();
+  const endDate = new Date();
   return Array.from({ length: days }, (_, index) => {
     const date = new Date(endDate);
     date.setDate(endDate.getDate() - (days - index - 1));
@@ -95,9 +95,7 @@ function buildSalesActivity(series, days = 30) {
     }))
     .filter((item) => item.key);
   const amounts = new Map(normalized.map((item) => [item.key, item.amount]));
-  const endDate = normalized.length
-    ? new Date([...amounts.keys()].sort().at(-1))
-    : new Date();
+  const endDate = new Date();
   return Array.from({ length: days }, (_, index) => {
     const date = new Date(endDate);
     date.setDate(endDate.getDate() - (days - index - 1));
@@ -113,8 +111,8 @@ function buildSalesActivity(series, days = 30) {
 const sourceColors = {
   mobile: {
     id: "gradMobile",
-    css: "linear-gradient(135deg, #1e63d6 0%, #1f7a8c 100%)",
-    svgStart: "#1e63d6",
+    css: "linear-gradient(135deg, #2563eb 0%, #1f7a8c 100%)",
+    svgStart: "#2563eb",
     svgEnd: "#1f7a8c",
   },
   internet: {
@@ -175,25 +173,25 @@ export default function KpiPage() {
     {
       label: "Bugungi",
       value: formatMoney(todayAmount),
-      icon: ReceiptText,
+      icon: Wallet,
       tone: "blue"
     },
     {
       label: "7 kunlik",
       value: formatMoney(weeklyAmount),
-      icon: Activity,
+      icon: TrendingUp,
       tone: "green"
     },
     {
       label: "Shu oy",
       value: formatMoney(monthAmount),
-      icon: BarChart3,
+      icon: CalendarDays,
       tone: "violet"
     },
     {
       label: "Jami",
       value: formatMoney(totalAmount),
-      icon: CheckCircle2,
+      icon: Landmark,
       tone: "amber"
     }
   ];
@@ -231,24 +229,22 @@ export default function KpiPage() {
     <section className="page-stack operator-page operator-kpi-page">
       <div className="kpi-top-grid">
         <section className="panel kpi-primary-panel">
-          <h2>Umumiy savdo</h2>
+          <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>BARCHA DAVR UCHUN</small>
+          <h2 style={{ margin: 0 }}>Umumiy savdo</h2>
           <span className="kpi-primary-value">{formatMoney(totalAmount)}</span>
         </section>
 
         <section className="panel kpi-chart-panel kpi-activity-panel">
           <div className="panel-heading">
             <div>
-              <span className="panel-kicker">Faollik</span>
-              <h2>Oxirgi 7 kun</h2>
+              <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>FAOLLIK / REESTRLAR</small>
+              <h2 style={{ margin: 0 }}>Oxirgi 7 kunlik yozuvlar</h2>
             </div>
             <span className="panel-badge secondary">{formatNumber(weeklyRecords)} yozuv</span>
           </div>
           <div className="kpi-chart-body">
-            {activityData.every((item) => item.count === 0) ? (
-              <div className="kpi-empty-chart">Ma'lumot yo'q.</div>
-            ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={activityData} margin={{ top: 12, right: 8, left: -20, bottom: 0 }}>
+                <AreaChart data={activityData} margin={{ top: 12, right: 10, left: 10, bottom: 0 }}>
                   <defs>
                     <linearGradient id="kpiActivityFill" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#2563eb" stopOpacity={0.24} />
@@ -272,17 +268,18 @@ export default function KpiPage() {
                   />
                 </AreaChart>
               </ResponsiveContainer>
-            )}
           </div>
         </section>
 
         <section className="panel kpi-source-mix-panel">
-          <div className="panel-heading">
+          <div className="panel-heading kpi-source-heading">
             <div>
-              <span className="panel-kicker">Manba</span>
-              <h2>Summa ulushi</h2>
+              <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>MANBALAR / KATEGORIYA</small>
+              <h2 style={{ margin: 0 }}>Tushumlarning manba ulushi</h2>
             </div>
-            <BarChart3 size={20} />
+            <div className="source-heading-icon">
+              <BarChart2 size={20} />
+            </div>
           </div>
           <div className="kpi-source-mix-body">
             <div className="kpi-donut-wrap">
@@ -303,9 +300,9 @@ export default function KpiPage() {
                       data={sourcePieData}
                       dataKey="value"
                       nameKey="name"
-                      innerRadius={58}
-                      outerRadius={82}
-                      paddingAngle={4}
+                      innerRadius={46}
+                      outerRadius={76}
+                      paddingAngle={0}
                       stroke="none"
                     >
                       {sourcePieData.map((item) => (
@@ -364,18 +361,18 @@ export default function KpiPage() {
         ))}
       </div>
 
-      <section className="panel kpi-chart-panel" style={{ marginTop: "24px" }}>
+      <section className="panel kpi-chart-panel">
         <div className="panel-heading">
           <div>
-            <span className="panel-kicker">Dinamika</span>
-            <h2>Savdo grafigi</h2>
+            <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>MOLIYAVIY DINAMIKA</small>
+            <h2 style={{ margin: 0 }}>Oxirgi 30 kunlik savdo grafigi</h2>
           </div>
           <Activity size={20} />
         </div>
         <div style={{ height: 320, width: "100%", padding: "20px 0 10px", overflowX: "auto" }}>
           <div style={{ minWidth: "1000px", width: "100%", height: "100%" }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={activityData30} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
+              <AreaChart data={activityData30} margin={{ top: 10, right: 15, left: 10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="kpiBrushFill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
@@ -403,12 +400,13 @@ export default function KpiPage() {
       </section>
 
       {hasManagementAccess && (
-        <div className="kpi-management-grid" style={{ display: 'grid', gap: '24px', marginTop: '24px' }}>
+        <div className="kpi-management-grid" style={{ display: 'grid', gap: '24px' }}>
           {(user?.role === ROLE_MANAGER || user?.role === ROLE_ADMIN) && model.organizationBranchSummary && model.organizationBranchSummary.length > 0 && (
             <section className="panel operator-kpi-panel github-style-panel">
               <div className="stats-panel-head">
                 <div>
-                  <h2>Filiallar kesimida KPI</h2>
+                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>HUDUDIY KO'RSATKICHLAR</small>
+                  <h2 style={{ margin: 0 }}>Filiallar kesimida KPI</h2>
                   <p>Barcha filiallar bo'yicha umumiy savdo va yozuvlar ko'rsatkichlari</p>
                 </div>
                 <Users size={20} />
@@ -441,7 +439,8 @@ export default function KpiPage() {
             <section className="panel operator-kpi-panel github-style-panel">
               <div className="stats-panel-head">
                 <div>
-                  <h2>Operatorlar kesimida KPI</h2>
+                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>XODIMLAR NATIJADORLIGI</small>
+                  <h2 style={{ margin: 0 }}>Operatorlar kesimida KPI</h2>
                   <p>Sizga biriktirilgan operatorlarning savdo va yozuvlar ko'rsatkichlari</p>
                 </div>
                 <Users size={20} />

@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import api from "../../api/client.js";
 import { EMPTY_FILTERS } from "./recordUtils.js";
 
 export function useRecordsData() {
+  const [searchParams] = useSearchParams();
+  
   const [records, setRecords] = useState([]);
   const [search, setSearch] = useState("");
   const [sourceType, setSourceType] = useState("");
-  const [filters, setFilters] = useState(EMPTY_FILTERS);
+  const [filters, setFilters] = useState({
+    ...EMPTY_FILTERS,
+    date_from: searchParams.get("date_from") || "",
+    date_to: searchParams.get("date_to") || ""
+  });
   const [filterOptions, setFilterOptions] = useState({
     organization_regions: [],
     branches: [],

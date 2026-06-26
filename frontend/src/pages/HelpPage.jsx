@@ -4,7 +4,6 @@ export default function HelpPage() {
     <section className="page-stack help-page">
       <div className="help-hero-banner">
         <div className="help-hero-content">
-          <span className="help-hero-badge"><LifeBuoy size={16}/> Qo'llab-quvvatlash markazi</span>
           <h1>Sizga qanday yordam bera olamiz?</h1>
           <p>Tizim bilan ishlashda muammo tug'ildimi? Bizning jamoa sizga yordam berishga doim tayyor. O'zingizga qulay aloqa usulini tanlang.</p>
         </div>
