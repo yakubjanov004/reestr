@@ -6,7 +6,10 @@ import App from "./App.jsx";
 import { AuthProvider } from "./auth/AuthContext.jsx";
 import { I18nProvider } from "./localization/i18n.jsx";
 import { ThemeProvider } from "./theme/ThemeContext.jsx";
+import { installZoomLock } from "./utils/zoomLock.js";
 import "./styles.css";
+
+installZoomLock();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

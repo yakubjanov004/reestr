@@ -218,9 +218,10 @@ class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
             branch = branch if branch is not None else self.instance.branch
 
         if actor.is_supervisor:
-            if not actor.region_id:
+            actor_region = actor.effective_region
+            if not actor_region:
                 raise serializers.ValidationError({"region": "Supervisor viloyatga biriktirilmagan."})
-            region = actor.region
+            region = actor_region
 
         if region_name:
             raise serializers.ValidationError({"region_name": "Viloyat oldindan kiritiladi. Ro'yxatdan tanlang."})
@@ -233,10 +234,8 @@ class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"branch": "Filial tanlangan viloyatga tegishli emas."})
             region = branch.region
 
-        if actor.is_supervisor and branch and branch.region_id != actor.region_id:
+        if actor.is_supervisor and branch and branch.region_id != actor.effective_region_id:
             raise serializers.ValidationError({"branch": "Supervisor faqat o'z viloyatidagi filialni tanlay oladi."})
-        if actor.is_supervisor and actor.branch_id and branch and branch.id != actor.branch_id:
-            raise serializers.ValidationError({"branch": "Supervisor faqat o'z filialiga operator qo'sha oladi."})
 
         if role == User.Role.OPERATOR:
             if not branch and (self.instance is None or role_was_submitted or location_was_submitted):

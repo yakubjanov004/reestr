@@ -98,10 +98,10 @@
 }
 
 .dashboard-heatmap-manager {
-  --activity: #7c3aed;
-  --activity-soft: #f5f3ff;
-  --activity-border: #ddd6fe;
-  --activity-shadow: rgba(124, 58, 237, 0.16);
+  --activity: #0f8f8f;
+  --activity-soft: #e6f7f6;
+  --activity-border: #99f6e4;
+  --activity-shadow: rgba(15, 143, 143, 0.16);
 }
 
 .dashboard-heatmap-admin {
@@ -1505,10 +1505,23 @@
 }
 
 .v2-card-blue {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: var(--brand-gradient);
   color: #ffffff;
   border: none;
   min-height: 160px;
+}
+
+.stats-dashboard-grid-v2 .stats-revenue-card::before,
+.stats-dashboard-grid-v2 .stats-revenue-card::after {
+  pointer-events: none;
+}
+
+.stats-dashboard-grid-v2 .v2-card-blue::before {
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.stats-dashboard-grid-v2 .v2-card-blue::after {
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .v2-card-blue .stats-card-top {
@@ -1549,20 +1562,31 @@
 }
 
 .v2-card-white {
+  background: linear-gradient(135deg, #f8fbff 0%, #eff6ff 52%, #dbeafe 100%);
+  border-color: #bfdbfe;
   min-height: 140px;
 }
 
+.stats-dashboard-grid-v2 .v2-card-white::before {
+  background: rgba(37, 99, 235, 0.13);
+}
+
+.stats-dashboard-grid-v2 .v2-card-white::after {
+  background: rgba(30, 136, 200, 0.16);
+}
+
 .v2-card-white .stats-card-top {
-  color: #475569;
+  color: #1e3a8a;
 }
 
 .v2-card-white .stats-card-top svg {
-  border: 1px solid #e2e8f0;
+  background: rgba(37, 99, 235, 0.10);
+  border: 1px solid rgba(37, 99, 235, 0.18);
   border-radius: 50%;
   padding: 6px;
   width: 28px;
   height: 28px;
-  color: #64748b;
+  color: #2563eb;
 }
 
 .v2-card-white strong {
@@ -1574,7 +1598,7 @@
 }
 
 .v2-card-white p {
-  color: #64748b;
+  color: #3b6ea8;
   font-size: 12px;
   margin-top: 6px;
 }
@@ -1754,11 +1778,11 @@
 }
 
 .v2-dot.filled {
-  background: #6366f1;
+  background: #2563eb;
 }
 
 .v2-dot.empty {
-  background: #eef2ff;
+  background: #dbeafe;
 }
 
 .v2-dot-label {

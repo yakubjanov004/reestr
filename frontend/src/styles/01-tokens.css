@@ -28,17 +28,17 @@
   --text-tertiary: #94a3b8;
   --accent-color: #2563eb;
 
-  /* ── Primary Accent — Vibrant Blue ── */
+  /* ── Primary Accent — Datan blue to teal ── */
   --blue: #2563eb;
-  --blue-mid: #1d4ed8;
+  --blue-mid: #1e7fc5;
   --blue-deep: #1e3a8a;
   --blue-light: #60a5fa;
   --blue-soft: #eff6ff;
   --blue-hover: #dbeafe;
-  --blue-glow: rgba(37, 99, 235, 0.16);
+  --blue-glow: rgba(37, 99, 235, 0.18);
 
   /* ── Emerald Accent (success states) ── */
-  --emerald: #059669;
+  --emerald: #0f8f8f;
   --emerald-light: #10b981;
   --emerald-soft: #ecfdf5;
   --emerald-glow: rgba(16, 185, 129, 0.18);
@@ -49,8 +49,8 @@
   --violet-soft: #f5f3ff;
 
   /* ── Backward compatibility ── */
-  --teal: #3b82f6;
-  --teal-soft: #eff6ff;
+  --teal: #0f8f8f;
+  --teal-soft: #e6f7f6;
 
   /* ── Amber Accent ── */
   --amber: #d97706;
@@ -73,7 +73,21 @@
   --sidebar-active: #2563eb;
   --sidebar-ink: #6b7280;
   --sidebar-ink-strong: #111827;
-  --sidebar-accent: #2563eb;
+  --sidebar-accent: #0f8f8f;
+  --sidebar-section-gap: 12px;
+  --sidebar-section-divider-gap: 17px;
+  --sidebar-item-gap: 6px;
+  --sidebar-item-height: 44px;
+  --sidebar-item-radius: 12px;
+  --sidebar-item-padding-x: 24px;
+  --sidebar-item-icon-size: 20px;
+  --sidebar-item-inner-gap: 16px;
+  --sidebar-item-font-size: 15.5px;
+  --sidebar-title-gap: 8px;
+  --sidebar-title-height: 18px;
+  --sidebar-title-padding-x: 20px;
+  --sidebar-profile-height: 68px;
+  --sidebar-footer-gap: 8px;
 
   /* ── Glass Styles — Flattened ── */
   --glass: rgba(255, 255, 255, 0.86);
@@ -88,7 +102,7 @@
   --heading-bg: #f9fafb;
   --page-gradient: #f3f4f6;
   --section-gradient: #ffffff;
-  --brand-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  --brand-gradient: linear-gradient(135deg, #2563eb 0%, #1e88c8 48%, #0f8f8f 100%);
   --focus-ring: rgba(37, 99, 235, 0.18);
   --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.04);
   --shadow-tight: 0 6px 16px rgba(0, 0, 0, 0.04);
@@ -168,7 +182,7 @@
     radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.13), transparent 32%),
     linear-gradient(135deg, #020408 0%, #040c1a 46%, #0c1e3f 100%);
   --section-gradient: linear-gradient(145deg, rgba(7, 14, 26, 0.96) 0%, rgba(8, 30, 58, 0.86) 100%);
-  --brand-gradient: linear-gradient(135deg, #030811 0%, #0c2d5e 52%, #3b82f6 100%);
+  --brand-gradient: linear-gradient(135deg, #1d4ed8 0%, #0369a1 48%, #047857 100%);
   --focus-ring: rgba(59, 130, 246, 0.24);
   --shadow-soft: 0 18px 42px rgba(0, 0, 0, 0.42);
   --shadow-tight: 0 10px 24px rgba(0, 0, 0, 0.34);

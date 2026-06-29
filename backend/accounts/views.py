@@ -67,8 +67,11 @@ def manageable_user_queryset(user):
         )
     if user.role == User.Role.MANAGER:
         return queryset.filter(role__in=(User.Role.OPERATOR, User.Role.SUPERVISOR))
-    if user.role == User.Role.SUPERVISOR and user.region_id:
-        return queryset.filter(role=User.Role.OPERATOR, region=user.region)
+    if user.role == User.Role.SUPERVISOR and user.effective_region_id:
+        return queryset.filter(
+            Q(role=User.Role.OPERATOR),
+            Q(region_id=user.effective_region_id) | Q(branch__region_id=user.effective_region_id),
+        ).distinct()
     return queryset.none()
 
 
@@ -154,12 +157,18 @@ class AuditLogListView(ListAPIView):
                 Q(actor__role__in=(User.Role.SUPERVISOR, User.Role.OPERATOR))
                 | Q(target_type="User", target_id__in=lower_target_ids)
             )
-        elif user.role == User.Role.SUPERVISOR and user.region_id:
-            lower_users = User.objects.filter(role=User.Role.OPERATOR, region=user.region)
+        elif user.role == User.Role.SUPERVISOR and user.effective_region_id:
+            lower_users = User.objects.filter(
+                Q(role=User.Role.OPERATOR),
+                Q(region_id=user.effective_region_id) | Q(branch__region_id=user.effective_region_id),
+            )
             lower_user_ids = lower_users.values_list("id", flat=True)
             lower_target_ids = [str(user_id) for user_id in lower_user_ids]
             queryset = queryset.filter(
-                Q(actor__role=User.Role.OPERATOR, actor__region=user.region)
+                (
+                    Q(actor__role=User.Role.OPERATOR)
+                    & (Q(actor__region_id=user.effective_region_id) | Q(actor__branch__region_id=user.effective_region_id))
+                )
                 | Q(target_type="User", target_id__in=lower_target_ids)
             )
         else:
@@ -179,11 +188,12 @@ class OrganizationOptionsView(APIView):
     def get(self, request):
         user = request.user
         if user.is_supervisor:
-            regions = Region.objects.filter(id=user.region_id) if user.region_id else Region.objects.none()
-            if user.branch_id:
-                branches = Branch.objects.filter(id=user.branch_id, is_active=True)
-            else:
-                branches = Branch.objects.filter(region_id=user.region_id, is_active=True) if user.region_id else Branch.objects.none()
+            regions = Region.objects.filter(id=user.effective_region_id) if user.effective_region_id else Region.objects.none()
+            branches = (
+                Branch.objects.filter(region_id=user.effective_region_id, is_active=True)
+                if user.effective_region_id
+                else Branch.objects.none()
+            )
         else:
             regions = Region.objects.all()
             branches = Branch.objects.select_related("region").filter(is_active=True)

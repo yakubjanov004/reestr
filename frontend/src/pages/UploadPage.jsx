@@ -45,6 +45,17 @@ export default function UploadPage() {
     handleFileSelection(event.dataTransfer.files?.[0] || null);
   }
 
+  function uploadErrorMessage(uploadError) {
+    const detail = uploadError?.response?.data?.detail;
+    if (typeof detail === "string" && detail.trim()) {
+      return detail;
+    }
+    if (Array.isArray(detail) && detail.length > 0) {
+      return detail.join(" ");
+    }
+    return t.upload.uploadError;
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     if (!file) {
@@ -66,8 +77,8 @@ export default function UploadPage() {
       setResult(response.data);
       setFile(null);
       event.target.reset();
-    } catch {
-      setError(t.upload.uploadError);
+    } catch (uploadError) {
+      setError(uploadErrorMessage(uploadError));
     } finally {
       setUploading(false);
     }

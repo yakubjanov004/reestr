@@ -98,9 +98,10 @@
   /* Sidebar link/font kattaroq */
   .sidebar a,
   .logout-button {
-    font-size: 14px;
-    min-height: 40px;
-    padding: 9px 12px;
+    font-size: var(--sidebar-item-font-size);
+    min-height: var(--sidebar-item-height);
+    height: var(--sidebar-item-height);
+    padding: 0 var(--sidebar-item-padding-x);
   }
 
   .nav-section-title {
@@ -135,7 +136,8 @@
 
   .sidebar a,
   .logout-button {
-    font-size: 14.5px;
-    min-height: 42px;
+    font-size: var(--sidebar-item-font-size);
+    min-height: var(--sidebar-item-height);
+    height: var(--sidebar-item-height);
   }
 }

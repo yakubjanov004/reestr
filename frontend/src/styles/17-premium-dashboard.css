@@ -21,7 +21,7 @@
 }
 
 .premium-blue {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: var(--brand-gradient);
   color: #fff;
   border: none;
 }

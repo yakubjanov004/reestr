@@ -13,7 +13,10 @@ export function useRecordsData() {
   const [filters, setFilters] = useState({
     ...EMPTY_FILTERS,
     date_from: searchParams.get("date_from") || "",
-    date_to: searchParams.get("date_to") || ""
+    date_to: searchParams.get("date_to") || "",
+    uploaded_by: searchParams.get("uploaded_by") || "",
+    assigned_region: searchParams.get("assigned_region") || "",
+    assigned_branch: searchParams.get("assigned_branch") || ""
   });
   const [filterOptions, setFilterOptions] = useState({
     organization_regions: [],

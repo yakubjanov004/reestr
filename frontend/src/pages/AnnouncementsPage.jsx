@@ -83,7 +83,7 @@ export default function AnnouncementsPage() {
 
   return (
     <section className="page-stack operator-page operator-announcements-page">
-      <div className="help-hero-banner" style={{ minHeight: "200px", marginBottom: "20px", background: "radial-gradient(circle at 90% 14%, rgba(255, 255, 255, 0.15), transparent 40%), linear-gradient(135deg, #0284c7 0%, #4f46e5 100%)" }}>
+      <div className="help-hero-banner" style={{ minHeight: "200px", marginBottom: "20px", background: "radial-gradient(circle at 90% 14%, rgba(255, 255, 255, 0.15), transparent 40%), var(--brand-gradient)" }}>
         <div className="help-hero-content">
           <h1>So'nggi yangiliklar va bildirishnomalar</h1>
           <p>Tizimdagi so'nggi o'zgarishlar, qo'shilgan yangi imkoniyatlar va muhim xabarlardan doim xabardor bo'ling.</p>

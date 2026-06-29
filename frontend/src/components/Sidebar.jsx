@@ -6,17 +6,17 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext.jsx";
-import { isOperator, roleLongLabel } from "../auth/roles.js";
+import { roleLongLabel } from "../auth/roles.js";
 import { useI18n } from "../localization/i18n.jsx";
-import { buildBottomLinks, buildSidebarSections } from "../navigation/roleNavigation.js";
+import { buildBottomLinks, buildSidebarSections, buildTopLinks } from "../navigation/roleNavigation.js";
 
 export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
   const { logout, user } = useAuth();
   const { t } = useI18n();
   const navigate = useNavigate();
-  const operatorSession = isOperator(user);
   const visibleSections = buildSidebarSections(t, user);
   const bottomLinks = buildBottomLinks(t);
+  const topLinks = buildTopLinks(t);
 
   function handleLogout() {
     logout();
@@ -29,7 +29,7 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
   }
 
   function navLinkClass(item, isActive) {
-    if (isActive || (operatorSession && item.to === "/upload")) {
+    if (isActive) {
       return "active";
     }
     return undefined;
@@ -45,10 +45,32 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
       </div>
 
       <nav>
+        {topLinks && topLinks.length > 0 && (
+          <div className="nav-section">
+            {topLinks.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === "/"}
+                  title={item.label}
+                  onClick={onClose}
+                  className={({ isActive }) => navLinkClass(item, isActive)}
+                >
+                  <Icon size={20} strokeWidth={1.5} />
+                  <span className="nav-label-full">{item.label}</span>
+                  <span className="nav-label-short">{item.mobileLabel}</span>
+                </NavLink>
+              );
+            })}
+          </div>
+        )}
+
         {visibleSections.map((section) => (
           <div
             className={
-              "nav-section" + (["sv_control", "sv_monitoring", "management", "admin"].includes(section.key) ? " manager-section" : "")
+              "nav-section" + (["supervisor_panel", "manager_panel", "admin_panel"].includes(section.key) ? " manager-section" : "")
             }
             key={section.key}
           >
@@ -75,25 +97,27 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
           </div>
         ))}
         
-        <div className="nav-section" style={{ marginTop: 'auto' }}>
-          {bottomLinks.map((item) => {
-            const Icon = item.icon;
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === "/"}
-                title={item.label}
-                onClick={onClose}
-                className={({ isActive }) => navLinkClass(item, isActive)}
-              >
-                <Icon size={20} strokeWidth={1.5} />
-                <span className="nav-label-full">{item.label}</span>
-                <span className="nav-label-short">{item.mobileLabel}</span>
-              </NavLink>
-            );
-          })}
-        </div>
+        {bottomLinks && bottomLinks.length > 0 && (
+          <div className="nav-section nav-section-utility">
+            {bottomLinks.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === "/"}
+                  title={item.label}
+                  onClick={onClose}
+                  className={({ isActive }) => navLinkClass(item, isActive)}
+                >
+                  <Icon size={20} strokeWidth={1.5} />
+                  <span className="nav-label-full">{item.label}</span>
+                  <span className="nav-label-short">{item.mobileLabel}</span>
+                </NavLink>
+              );
+            })}
+          </div>
+        )}
       </nav>
 
       <div className="sidebar-footer">

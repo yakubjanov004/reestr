@@ -48,10 +48,35 @@ const numberFormatter = new Intl.NumberFormat("de-DE");
 const moneyFormatter = new Intl.NumberFormat("de-DE", {
   maximumFractionDigits: 0
 });
-const shortDateFormatter = new Intl.DateTimeFormat("uz-UZ", {
-  day: "2-digit",
-  month: "short"
-});
+const UZBEK_MONTHS = [
+  "yanvar",
+  "fevral",
+  "mart",
+  "aprel",
+  "may",
+  "iyun",
+  "iyul",
+  "avgust",
+  "sentabr",
+  "oktabr",
+  "noyabr",
+  "dekabr"
+];
+
+const UZBEK_SHORT_MONTHS = [
+  "yan",
+  "fev",
+  "mar",
+  "apr",
+  "may",
+  "iyun",
+  "iyul",
+  "avg",
+  "sen",
+  "okt",
+  "noy",
+  "dek"
+];
 
 const DASHBOARD_COPY = {
   [ROLE_OPERATOR]: {
@@ -125,7 +150,14 @@ function dateKey(date) {
 
 function formatShortDate(value) {
   if (!value) return "";
-  return shortDateFormatter.format(new Date(value));
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${day} ${UZBEK_SHORT_MONTHS[date.getMonth()]}`;
+}
+
+function formatDashboardMonthLabel(date = new Date()) {
+  return `${date.getFullYear()} yil ${UZBEK_MONTHS[date.getMonth()]} holatiga`;
 }
 
 function buildRecentSeries(series, days) {
@@ -218,6 +250,9 @@ export default function DashboardPage() {
   const recentSeries = buildRecentSeries(model.daySeries || model.heatmapSeries, 14);
   const dotSeries = buildRecentSeries(model.daySeries || model.heatmapSeries, 30);
   const maxDotCount = Math.max(...dotSeries.map((item) => item.count), 1);
+  const dotAxisLabels = [1, 0.75, 0.5, 0.25, 0].map((ratio) => (
+    formatNumber(Math.round(maxDotCount * ratio))
+  ));
   const maxDotRows = 7;
   const sourceRows = (model.sourceSummary.length ? model.sourceSummary : [
     { sourceType: "mobile", records: 0, uploads: 0, revenue: 0 },
@@ -256,7 +291,7 @@ export default function DashboardPage() {
     current.records > arr[maxIdx].records ? idx : maxIdx, 0
   );
   
-  const currentMonthYear = new Date().toLocaleDateString('uz-UZ', { month: 'long', year: 'numeric' }).replace(/^[a-z]/, (m) => m.toUpperCase()) + " holatiga";
+  const currentMonthYear = formatDashboardMonthLabel();
 
   const qualitySegments = [
     { label: "Import", value: model.totalImportedRows, color: "#2f6eea" },
@@ -268,7 +303,7 @@ export default function DashboardPage() {
   return (
     <section className="page-stack dashboard-page stats-overview-page">
       <div className="dashboard-frame stats-overview-shell">
-        <div className="help-hero-banner" style={{ minHeight: "180px", marginBottom: "24px", background: "radial-gradient(circle at 90% 14%, rgba(255, 255, 255, 0.15), transparent 40%), linear-gradient(135deg, #0d9488 0%, #2563eb 100%)", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", position: "relative" }}>
+        <div className="help-hero-banner" style={{ minHeight: "180px", marginBottom: "24px", background: "radial-gradient(circle at 90% 14%, rgba(255, 255, 255, 0.15), transparent 40%), var(--brand-gradient)", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", position: "relative" }}>
           <div className="help-hero-content" style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
             <h1>{hero.title}</h1>
             <p>{hero.intro}</p>
@@ -379,7 +414,7 @@ export default function DashboardPage() {
             <section className="panel v2-chart-card">
               <div className="stats-panel-head">
                 <div>
-                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>FAOLLIK / TUSHUM</small>
+                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>FAOLLIK / TUSHUM</small>
                   <h2 style={{ margin: 0 }}>Oxirgi 14 kunlik dinamika</h2>
                 </div>
                 <button className="stats-panel-more" onClick={() => navigate("/kpi")}><ArrowUpRight size={17} /></button>
@@ -452,7 +487,7 @@ export default function DashboardPage() {
             <section className="panel v2-chart-card">
               <div className="stats-panel-head">
                 <div>
-                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>YANGI REESTRLAR</small>
+                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>YANGI REESTRLAR</small>
                   <h2 style={{ margin: 0 }}>Hafta kunlari bo'yicha</h2>
                 </div>
                 <div className="stats-head-actions">
@@ -501,7 +536,7 @@ export default function DashboardPage() {
             <section className="panel v2-chart-card v2-scatter-card">
               <div className="stats-panel-head">
                 <div>
-                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>KIRITISH TEZLIGI</small>
+                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>KIRITISH TEZLIGI</small>
                   <h2 style={{ margin: 0 }}>Oxirgi 30 kunlik dinamika</h2>
                 </div>
                 <div className="stats-head-actions">
@@ -509,17 +544,14 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="v2-scatter-legend">
-                <span><i style={{ background: '#6366f1' }}></i> Tasdiqlangan</span>
-                <span><i style={{ background: '#e0e7ff' }}></i> Kutilayotgan</span>
+                <span><i style={{ background: '#2563eb' }}></i> Kiritilgan reestrlar</span>
               </div>
               <div className="v2-scatter-chart">
                 <div className="v2-dot-grid-wrapper">
                   <div className="v2-dot-y-axis">
-                    <span>100K</span>
-                    <span>75K</span>
-                    <span>50K</span>
-                    <span>25K</span>
-                    <span>0</span>
+                    {dotAxisLabels.map((label, index) => (
+                      <span key={`${label}-${index}`}>{label}</span>
+                    ))}
                   </div>
                   <div className="v2-dot-grid-content">
                     <div className="v2-dot-grid-lines">
@@ -539,18 +571,13 @@ export default function DashboardPage() {
                             {dots.reverse().map((isFilled, i) => (
                               <div key={i} className={`v2-dot ${isFilled ? 'filled' : 'empty'}`} />
                             ))}
-                            {showLabel && <span className="v2-dot-label">{new Date(item.key).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>}
+                            {showLabel && <span className="v2-dot-label">{item.label}</span>}
                             
                             <div className="v2-dot-tooltip">
                               <div className="tooltip-item">
-                                <i style={{ background: '#6366f1' }}></i>
-                                <span>Tasdiqlangan:</span>
+                                <i style={{ background: '#2563eb' }}></i>
+                                <span>Kiritilgan:</span>
                                 <strong>{item.count}</strong>
-                              </div>
-                              <div className="tooltip-item" style={{ marginTop: '4px' }}>
-                                <i style={{ background: '#eef2ff', border: '1px solid #c7d2fe' }}></i>
-                                <span>Kutilayotgan:</span>
-                                <strong>{item.count > 0 ? Math.floor(item.count * 0.2) + 3 : 0}</strong>
                               </div>
                             </div>
                           </div>
@@ -565,7 +592,7 @@ export default function DashboardPage() {
             <section className="panel v2-chart-card v2-gauge-card">
               <div className="stats-panel-head">
                 <div>
-                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>MANBALAR / KATEGORIYA</small>
+                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>MANBALAR / KATEGORIYA</small>
                   <h2 style={{ margin: 0 }}>Mobil va Internet ulanish</h2>
                 </div>
                 <button className="stats-panel-more" onClick={() => navigate("/records")}><ArrowUpRight size={17} /></button>
@@ -601,7 +628,7 @@ export default function DashboardPage() {
                 </svg>
                 <div className="v2-radial-value" style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
                   <strong style={{ fontSize: '36px', fontWeight: '700', color: '#0f172a', letterSpacing: '-1px', lineHeight: '1' }}>{formatNumber(totalRecords)}</strong>
-                  <small style={{ display: 'block', color: '#64748b', fontSize: '13px', marginTop: '6px' }}>Jami qatorlar</small>
+                  <small style={{ display: 'block', color: '#64748b', fontSize: '15px', marginTop: '6px' }}>Jami qatorlar</small>
                 </div>
               </div>
 

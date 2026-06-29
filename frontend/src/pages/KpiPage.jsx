@@ -111,7 +111,7 @@ function buildSalesActivity(series, days = 30) {
 const sourceColors = {
   mobile: {
     id: "gradMobile",
-    css: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
+    css: "var(--brand-gradient)",
     svgStart: "#2563eb",
     svgEnd: "#1d4ed8",
   },
@@ -229,7 +229,7 @@ export default function KpiPage() {
     <section className="page-stack operator-page operator-kpi-page">
       <div className="kpi-top-grid">
         <section className="panel kpi-primary-panel">
-          <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>BARCHA DAVR UCHUN</small>
+          <small style={{ fontSize: '16px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '8px', display: 'block' }}>BARCHA DAVR UCHUN</small>
           <h2 style={{ margin: 0 }}>Umumiy savdo</h2>
           <span className="kpi-primary-value">{formatMoney(totalAmount)}</span>
         </section>

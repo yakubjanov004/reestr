@@ -20,21 +20,53 @@ from .serializers import (
 from .services import import_excel_file
 
 
+def impossible_scope_filter(relation_name):
+    return Q(**{f"{relation_name}__pk__isnull": True}) & Q(**{f"{relation_name}__pk__isnull": False})
+
+
+def supervisor_region(user):
+    return user.effective_region if user.is_supervisor else None
+
+
+def assigned_region_scope_filter(region):
+    return (
+        Q(assigned_region=region)
+        | Q(assigned_region__isnull=True, uploaded_by__region=region)
+        | Q(assigned_region__isnull=True, uploaded_by__branch__region=region)
+    )
+
+
+def related_region_scope_filter(user, relation_name):
+    region = supervisor_region(user)
+    if not region:
+        return impossible_scope_filter(relation_name)
+    return (
+        Q(**{f"{relation_name}__assigned_region": region})
+        | Q(
+            **{
+                f"{relation_name}__assigned_region__isnull": True,
+                f"{relation_name}__uploaded_by__region": region,
+            }
+        )
+        | Q(
+            **{
+                f"{relation_name}__assigned_region__isnull": True,
+                f"{relation_name}__uploaded_by__branch__region": region,
+            }
+        )
+    )
+
+
 class ScopedQuerysetMixin:
     def scope_queryset(self, queryset):
         user = self.request.user
         if user.can_view_all_data:
             return queryset
-        if user.is_supervisor and user.branch_id:
-            return queryset.filter(
-                Q(assigned_branch=user.branch)
-                | Q(assigned_branch__isnull=True, uploaded_by__branch=user.branch)
-            )
-        if user.is_supervisor and user.region_id:
-            return queryset.filter(
-                Q(assigned_region=user.region)
-                | Q(assigned_region__isnull=True, uploaded_by__region=user.region)
-            )
+        if user.is_supervisor:
+            region = supervisor_region(user)
+            if not region:
+                return queryset.none()
+            return queryset.filter(assigned_region_scope_filter(region))
         return queryset.filter(uploaded_by=user)
 
 
@@ -42,10 +74,11 @@ def scoped_operator_queryset(user):
     queryset = User.objects.select_related("region", "branch", "branch__region").filter(role=User.Role.OPERATOR)
     if user.can_view_all_data:
         return queryset.order_by("username")
-    if user.is_supervisor and user.branch_id:
-        return queryset.filter(branch=user.branch).order_by("username")
-    if user.is_supervisor and user.region_id:
-        return queryset.filter(region=user.region).order_by("username")
+    if user.is_supervisor:
+        region = supervisor_region(user)
+        if not region:
+            return queryset.none()
+        return queryset.filter(Q(region=region) | Q(branch__region=region)).distinct().order_by("username")
     if user.is_operator:
         return queryset.filter(id=user.id)
     return queryset.none()
@@ -54,20 +87,8 @@ def scoped_operator_queryset(user):
 def relation_scope_filter(user, relation_name):
     if user.can_view_all_data:
         return Q()
-    if user.is_supervisor and user.branch_id:
-        return Q(**{f"{relation_name}__assigned_branch": user.branch}) | Q(
-            **{
-                f"{relation_name}__assigned_branch__isnull": True,
-                f"{relation_name}__uploaded_by__branch": user.branch,
-            }
-        )
-    if user.is_supervisor and user.region_id:
-        return Q(**{f"{relation_name}__assigned_region": user.region}) | Q(
-            **{
-                f"{relation_name}__assigned_region__isnull": True,
-                f"{relation_name}__uploaded_by__region": user.region,
-            }
-        )
+    if user.is_supervisor:
+        return related_region_scope_filter(user, relation_name)
     return Q(**{f"{relation_name}__uploaded_by": user})
 
 
@@ -104,18 +125,16 @@ def apply_operator_organization_filters(queryset, request):
 def scoped_regions(user):
     if user.can_view_all_data:
         return Region.objects.all()
-    if user.is_supervisor and user.region_id:
-        return Region.objects.filter(id=user.region_id)
+    if user.is_supervisor and user.effective_region_id:
+        return Region.objects.filter(id=user.effective_region_id)
     return Region.objects.none()
 
 
 def scoped_branches(user):
     if user.can_view_all_data:
         return Branch.objects.select_related("region").filter(is_active=True)
-    if user.is_supervisor and user.branch_id:
-        return Branch.objects.select_related("region").filter(id=user.branch_id, is_active=True)
-    if user.is_supervisor and user.region_id:
-        return Branch.objects.select_related("region").filter(region=user.region, is_active=True)
+    if user.is_supervisor and user.effective_region_id:
+        return Branch.objects.select_related("region").filter(region_id=user.effective_region_id, is_active=True)
     if user.branch_id:
         return Branch.objects.select_related("region").filter(id=user.branch_id)
     return Branch.objects.none()
@@ -123,6 +142,11 @@ def scoped_branches(user):
 
 def announcement_scope_filter(user):
     unrestricted = Q(assigned_region__isnull=True, assigned_branch__isnull=True)
+    if user.is_supervisor:
+        region = supervisor_region(user)
+        if region:
+            return unrestricted | Q(assigned_branch__isnull=True, assigned_region=region)
+        return unrestricted
     if user.branch_id:
         return (
             unrestricted
@@ -158,8 +182,8 @@ def announcement_queryset_for(user):
 def announcement_scope_for_creator(user):
     if user.is_supervisor:
         return {
-            "assigned_region": user.branch.region if user.branch_id else user.region,
-            "assigned_branch": user.branch,
+            "assigned_region": supervisor_region(user),
+            "assigned_branch": None,
         }
     return {"assigned_region": None, "assigned_branch": None}
 
@@ -491,7 +515,7 @@ class StatsView(ScopedQuerysetMixin, APIView):
             "recent_batches": UploadBatchSerializer(recent_batches, many=True).data,
             "scope": {
                 "role": request.user.role,
-                "region": request.user.region.name if request.user.region else "",
+                "region": request.user.effective_region.name if request.user.effective_region else "",
                 "branch": request.user.branch.name if request.user.branch else "",
             },
         }

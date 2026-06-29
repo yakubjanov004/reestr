@@ -270,7 +270,7 @@
 }
 
 .upload-source-block .source-tabs button.active[data-value="mobile"] {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: var(--brand-gradient);
   color: #ffffff;
   border: none;
   box-shadow: 0 4px 12px rgba(30, 99, 214, 0.3);
@@ -423,7 +423,7 @@
   min-height: 48px;
   border-radius: 12px;
   font-size: 15px;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  background: var(--brand-gradient) !important;
   color: #ffffff !important;
   box-shadow: 0 8px 20px rgba(30, 99, 214, 0.25) !important;
   border: none;

@@ -111,6 +111,18 @@ class User(AbstractUser):
     def can_view_all_data(self):
         return self.role_rank >= self.ROLE_RANKS[self.Role.MANAGER]
 
+    @property
+    def effective_region(self):
+        if self.branch_id:
+            return self.branch.region
+        return self.region
+
+    @property
+    def effective_region_id(self):
+        if self.branch_id:
+            return self.branch.region_id
+        return self.region_id
+
 
 class AuditLog(models.Model):
     actor = models.ForeignKey(

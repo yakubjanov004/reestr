@@ -4,13 +4,26 @@
    ============================================================ */
 
 /* ── Hero Banner ─────────────────────────────────────────────── */
+.help-page {
+  --help-page-gap: 20px;
+  --help-card-gap: 16px;
+  --help-panel-x: 22px;
+  --help-panel-y: 20px;
+  --help-hero-x: 30px;
+  --help-hero-y: 28px;
+  gap: var(--help-page-gap);
+}
+
 .help-page .help-hero-banner {
-  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 40%, #2563eb 100%);
+  background:
+    radial-gradient(circle at 90% 14%, rgba(255, 255, 255, 0.16), transparent 40%),
+    var(--brand-gradient);
   border-radius: var(--radius-xl, 16px);
-  padding: 32px 36px;
+  padding: var(--help-hero-y) var(--help-hero-x);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: var(--help-card-gap);
   position: relative;
   overflow: hidden;
   min-height: 140px;
@@ -22,6 +35,8 @@
   gap: 18px;
   position: relative;
   z-index: 2;
+  width: 100%;
+  max-width: 760px;
 }
 
 .help-hero-icon-wrapper {
@@ -98,14 +113,14 @@
 .help-contacts-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: var(--help-card-gap);
 }
 
 .help-contact-card {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 22px 20px;
+  padding: var(--help-panel-y) var(--help-panel-x);
   border-radius: var(--radius-lg, 12px);
   border: 1.5px solid var(--border-color, #e2e8f0);
   background: var(--card-bg, #fff);
@@ -183,7 +198,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  padding: 20px 22px 0;
+  padding: var(--help-panel-y) var(--help-panel-x) 0;
 }
 
 .help-faq-header h2 {
@@ -210,7 +225,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 14px 22px;
+  padding: 16px var(--help-panel-x);
   flex-wrap: wrap;
 }
 
@@ -281,8 +296,8 @@
 .help-faq-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  padding: 0 22px 16px;
+  gap: 10px;
+  padding: 0 var(--help-panel-x) var(--help-panel-y);
 }
 
 .help-faq-item {
@@ -290,7 +305,7 @@
   border-radius: 10px;
   overflow: hidden;
   transition: border-color 0.2s;
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 
 .help-faq-item:hover {
@@ -386,7 +401,7 @@
 }
 
 .help-guidelines-header {
-  padding: 20px 22px 0;
+  padding: var(--help-panel-y) var(--help-panel-x) 0;
 }
 
 .help-guidelines-header h2 {
@@ -405,8 +420,8 @@
 .help-guidelines-steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  padding: 0 22px 20px;
+  gap: var(--help-card-gap);
+  padding: 0 var(--help-panel-x) var(--help-panel-y);
 }
 
 .help-guideline-step {
@@ -421,14 +436,14 @@
 }
 
 .help-guideline-step:hover {
-  border-color: #c4b5fd;
+  border-color: #93c5fd;
 }
 
 .help-guideline-number {
   width: 32px;
   height: 32px;
   border-radius: 9px;
-  background: linear-gradient(135deg, #7c3aed, #6366f1);
+  background: var(--brand-gradient);
   color: #fff;
   display: flex;
   align-items: center;
@@ -455,7 +470,9 @@
 
 /* ── Dark theme ──────────────────────────────────────────────── */
 [data-theme="dark"] .help-page .help-hero-banner {
-  background: linear-gradient(135deg, #4c1d95 0%, #312e81 40%, #1e3a5f 100%);
+  background:
+    radial-gradient(circle at 90% 14%, rgba(255, 255, 255, 0.10), transparent 40%),
+    linear-gradient(135deg, #1d4ed8 0%, #0369a1 48%, #047857 100%);
 }
 
 [data-theme="dark"] .help-contact-blue .help-contact-icon-wrap { background: #1e3a5f; color: #60a5fa; }
@@ -472,7 +489,7 @@
 }
 
 [data-theme="dark"] .help-guideline-number {
-  background: linear-gradient(135deg, #6d28d9, #4338ca);
+  background: linear-gradient(135deg, #1d4ed8, #047857);
 }
 
 /* ── Responsive ──────────────────────────────────────────────── */
@@ -489,6 +506,10 @@
 
   .help-page .help-hero-banner {
     padding: 22px 20px;
+  }
+
+  .help-page .help-hero-content {
+    gap: 14px;
   }
 
   .help-page .help-hero-banner h1 {

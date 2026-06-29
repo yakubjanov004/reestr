@@ -27,8 +27,8 @@
 @media (min-width: 701px) {
   .sidebar a,
   .logout-button {
-    height: 44px;
-    min-height: 44px;
+    height: var(--sidebar-item-height);
+    min-height: var(--sidebar-item-height);
   }
 }
 
@@ -36,20 +36,20 @@
   .sidebar a,
   .logout-button {
     display: grid;
-    grid-template-columns: 20px minmax(0, 1fr);
-    gap: 10px;
+    grid-template-columns: var(--sidebar-item-icon-size) minmax(0, 1fr);
+    gap: var(--sidebar-item-inner-gap);
     align-items: center;
-    height: 44px;
-    min-height: 44px;
-    padding: 0 12px;
+    height: var(--sidebar-item-height);
+    min-height: var(--sidebar-item-height);
+    padding: 0 var(--sidebar-item-padding-x);
     line-height: 1;
   }
 
   .sidebar a svg,
   .logout-button svg {
     justify-self: center;
-    width: 18px;
-    height: 18px;
+    width: var(--sidebar-item-icon-size);
+    height: var(--sidebar-item-icon-size);
   }
 
   .nav-label-full,
@@ -61,7 +61,7 @@
   }
 
   .nav-section {
-    gap: 6px;
+    gap: var(--sidebar-item-gap);
   }
 
   .user-summary {

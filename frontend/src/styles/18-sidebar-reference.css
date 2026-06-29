@@ -72,13 +72,13 @@
 .nav-section {
   position: relative;
   display: grid;
-  gap: 6px;
+  gap: var(--sidebar-item-gap);
   padding: 0;
 }
 
 .nav-section + .nav-section {
-  margin-top: 12px;
-  padding-top: 17px;
+  margin-top: var(--sidebar-section-gap);
+  padding-top: var(--sidebar-section-divider-gap);
   border-top: 0;
 }
 
@@ -92,10 +92,17 @@
   background: var(--sidebar-reference-line);
 }
 
+.nav-section.nav-section-utility {
+  margin-top: auto;
+}
+
 .nav-section-title,
 .nav-section.manager-section .nav-section-title {
-  margin: 0 0 8px;
-  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  min-height: var(--sidebar-title-height);
+  margin: 0 0 var(--sidebar-title-gap);
+  padding: 0 var(--sidebar-title-padding-x);
   color: var(--muted);
   font-size: 15px;
   font-weight: 500;
@@ -105,19 +112,20 @@
 
 .sidebar a,
 .logout-button {
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--sidebar-item-icon-size) minmax(0, 1fr);
   align-items: center;
-  gap: 16px;
+  gap: var(--sidebar-item-inner-gap);
   width: 100%;
-  min-height: 44px;
-  height: 44px;
-  padding: 0 24px;
+  min-height: var(--sidebar-item-height);
+  height: var(--sidebar-item-height);
+  padding: 0 var(--sidebar-item-padding-x);
   border: 0;
-  border-radius: 5px;
+  border-radius: var(--sidebar-item-radius);
   background: transparent !important;
   box-shadow: none !important;
   color: var(--muted);
-  font-size: 15.5px;
+  font-size: var(--sidebar-item-font-size);
   font-weight: 500;
   line-height: 1;
   letter-spacing: 0;
@@ -125,9 +133,10 @@
 
 .sidebar a svg,
 .logout-button svg {
-  width: 20px;
-  height: 20px;
-  flex: 0 0 20px;
+  width: var(--sidebar-item-icon-size);
+  height: var(--sidebar-item-icon-size);
+  justify-self: center;
+  flex: 0 0 var(--sidebar-item-icon-size);
   color: var(--muted);
   opacity: 1;
   stroke-width: 2;
@@ -149,7 +158,7 @@
 
 .sidebar a.active {
   background: var(--brand-gradient) !important;
-  border-radius: 12px;
+  border-radius: var(--sidebar-item-radius);
   box-shadow: 0 10px 18px var(--blue-glow) !important;
   color: #ffffff;
   font-weight: 500;
@@ -204,7 +213,7 @@
 
 .sidebar-footer {
   display: grid;
-  gap: 8px;
+  gap: var(--sidebar-footer-gap);
   margin-top: auto;
   padding: 0 6px;
   border-top: 0;
@@ -217,8 +226,9 @@
 
 .profile-summary,
 .sidebar .profile-summary {
-  min-height: 68px;
-  padding: 11px 14px;
+  min-height: var(--sidebar-profile-height);
+  height: var(--sidebar-profile-height);
+  padding: 0 14px;
   border: 0 !important;
   border-radius: 14px;
   background: var(--brand-gradient) !important;
@@ -301,9 +311,9 @@
   .sidebar a,
   .logout-button {
     justify-content: flex-start !important;
-    height: 44px !important;
-    min-height: 44px !important;
-    padding: 0 24px !important;
+    height: var(--sidebar-item-height) !important;
+    min-height: var(--sidebar-item-height) !important;
+    padding: 0 var(--sidebar-item-padding-x) !important;
   }
 
   .nav-label-full,
@@ -324,8 +334,9 @@
   }
 
   .profile-summary {
-    min-height: 68px !important;
-    background: var(--blue) !important;
+    min-height: var(--sidebar-profile-height) !important;
+    height: var(--sidebar-profile-height) !important;
+    background: var(--brand-gradient) !important;
   }
 }
 
@@ -372,9 +383,9 @@
   .sidebar a,
   .logout-button {
     justify-content: flex-start !important;
-    height: 44px !important;
-    min-height: 44px !important;
-    padding: 0 22px !important;
+    height: var(--sidebar-item-height) !important;
+    min-height: var(--sidebar-item-height) !important;
+    padding: 0 var(--sidebar-item-padding-x) !important;
   }
 
   .nav-label-full,
@@ -395,7 +406,8 @@
   }
 
   .profile-summary {
-    min-height: 68px !important;
-    background: var(--blue) !important;
+    min-height: var(--sidebar-profile-height) !important;
+    height: var(--sidebar-profile-height) !important;
+    background: var(--brand-gradient) !important;
   }
 }

@@ -83,14 +83,21 @@ export function buildSidebarSections(t, user) {
           mobileLabel: t.layout.nav.batchesShort,
           icon: History,
           roles: [ROLE_OPERATOR]
+        },
+        {
+          to: "/guide",
+          label: t.layout.nav.guide,
+          mobileLabel: t.layout.nav.guideShort,
+          icon: BookOpenText,
+          roles: [ROLE_OPERATOR]
         }
       ]
     },
 
-    /* ── Supervisor: Umumiy ─────────────────────────────────── */
+    /* ── Supervisor: Role panel ──────────────────────────────── */
     {
-      key: "sv_overview",
-      title: t.layout.sections.overview || "Umumiy",
+      key: "supervisor_panel",
+      title: t.layout.sections.supervisorControl || t.layout.supervisorPanel,
       links: [
         {
           to: "/dashboard",
@@ -98,15 +105,7 @@ export function buildSidebarSections(t, user) {
           mobileLabel: t.layout.nav.dashboard,
           icon: ChartNoAxesColumn,
           roles: [ROLE_SUPERVISOR]
-        }
-      ]
-    },
-
-    /* ── Supervisor: Monitoring ─────────────────────────────── */
-    {
-      key: "sv_monitoring",
-      title: t.layout.sections.monitoring || "Monitoring",
-      links: [
+        },
         {
           to: "/supervisor-monitoring",
           label: t.layout.nav.monitoring,
@@ -114,28 +113,6 @@ export function buildSidebarSections(t, user) {
           icon: Activity,
           roles: [ROLE_SUPERVISOR]
         },
-        {
-          to: "/announcements",
-          label: t.layout.nav.announcements,
-          mobileLabel: t.layout.nav.announcementsShort,
-          icon: Megaphone,
-          roles: [ROLE_SUPERVISOR]
-        },
-        {
-          to: "/batches",
-          label: t.layout.nav.batches,
-          mobileLabel: t.layout.nav.batchesShort,
-          icon: History,
-          roles: [ROLE_SUPERVISOR]
-        }
-      ]
-    },
-
-    /* ── Supervisor: Nazorat ────────────────────────────────── */
-    {
-      key: "sv_control",
-      title: t.layout.sections.supervision || "Nazorat",
-      links: [
         {
           to: "/operators",
           label: t.layout.nav.operators,
@@ -151,19 +128,40 @@ export function buildSidebarSections(t, user) {
           roles: [ROLE_SUPERVISOR]
         },
         {
+          to: "/batches",
+          label: t.layout.nav.batches,
+          mobileLabel: t.layout.nav.batchesShort,
+          icon: History,
+          roles: [ROLE_SUPERVISOR]
+        },
+        {
+          to: "/announcements",
+          label: t.layout.nav.announcements,
+          mobileLabel: t.layout.nav.announcementsShort,
+          icon: Megaphone,
+          roles: [ROLE_SUPERVISOR]
+        },
+        {
           to: "/audit",
           label: t.layout.nav.audit,
           mobileLabel: t.layout.nav.audit,
           icon: ScrollText,
           roles: [ROLE_SUPERVISOR]
+        },
+        {
+          to: "/guide",
+          label: t.layout.nav.guide,
+          mobileLabel: t.layout.nav.guideShort,
+          icon: BookOpenText,
+          roles: [ROLE_SUPERVISOR]
         }
       ]
     },
 
-    /* ── Manager: Umumiy ─────────────────────────────────────── */
+    /* ── Manager: Role panel ─────────────────────────────────── */
     {
-      key: "mg_overview",
-      title: t.layout.sections.overview || "Umumiy",
+      key: "manager_panel",
+      title: t.layout.sections.managerControl || t.layout.managerPanel,
       links: [
         {
           to: "/dashboard",
@@ -171,44 +169,7 @@ export function buildSidebarSections(t, user) {
           mobileLabel: t.layout.nav.dashboard,
           icon: ChartNoAxesColumn,
           roles: [ROLE_MANAGER]
-        }
-      ]
-    },
-
-    /* ── Manager: Ma'lumotlar ───────────────────────────────── */
-    {
-      key: "mg_data",
-      title: t.layout.sections.data || "Ma'lumotlar",
-      links: [
-        {
-          to: "/records",
-          label: t.layout.nav.records,
-          mobileLabel: t.layout.nav.recordsShort,
-          icon: Database,
-          roles: [ROLE_MANAGER]
         },
-        {
-          to: "/batches",
-          label: t.layout.nav.batches,
-          mobileLabel: t.layout.nav.batchesShort,
-          icon: History,
-          roles: [ROLE_MANAGER]
-        },
-        {
-          to: "/announcements",
-          label: t.layout.nav.announcements,
-          mobileLabel: t.layout.nav.announcementsShort,
-          icon: Megaphone,
-          roles: [ROLE_MANAGER]
-        }
-      ]
-    },
-
-    /* ── Manager: Boshqaruv ────────────────────────────────── */
-    {
-      key: "management",
-      title: t.layout.sections.management,
-      links: [
         {
           to: "/manager",
           label: t.layout.nav.managerWorkspace,
@@ -231,19 +192,47 @@ export function buildSidebarSections(t, user) {
           roles: [ROLE_MANAGER]
         },
         {
+          to: "/records",
+          label: t.layout.nav.records,
+          mobileLabel: t.layout.nav.recordsShort,
+          icon: Database,
+          roles: [ROLE_MANAGER]
+        },
+        {
+          to: "/batches",
+          label: t.layout.nav.batches,
+          mobileLabel: t.layout.nav.batchesShort,
+          icon: History,
+          roles: [ROLE_MANAGER]
+        },
+        {
+          to: "/announcements",
+          label: t.layout.nav.announcements,
+          mobileLabel: t.layout.nav.announcementsShort,
+          icon: Megaphone,
+          roles: [ROLE_MANAGER]
+        },
+        {
           to: "/audit",
           label: t.layout.nav.audit,
           mobileLabel: t.layout.nav.audit,
           icon: ScrollText,
           roles: [ROLE_MANAGER]
+        },
+        {
+          to: "/guide",
+          label: t.layout.nav.guide,
+          mobileLabel: t.layout.nav.guideShort,
+          icon: BookOpenText,
+          roles: [ROLE_MANAGER]
         }
       ]
     },
 
-    /* ── Admin: Umumiy ──────────────────────────────────────── */
+    /* ── Admin: Role panel ───────────────────────────────────── */
     {
-      key: "ad_overview",
-      title: t.layout.sections.overview || "Umumiy",
+      key: "admin_panel",
+      title: t.layout.sections.adminControl || t.layout.adminPanel,
       links: [
         {
           to: "/dashboard",
@@ -251,15 +240,7 @@ export function buildSidebarSections(t, user) {
           mobileLabel: t.layout.nav.dashboard,
           icon: ChartNoAxesColumn,
           roles: [ROLE_ADMIN]
-        }
-      ]
-    },
-
-    /* ── Admin: Boshqaruv ──────────────────────────────────── */
-    {
-      key: "admin",
-      title: t.layout.sections.admin,
-      links: [
+        },
         {
           to: "/admin-panel",
           label: t.layout.nav.adminWorkspace,
@@ -294,6 +275,13 @@ export function buildSidebarSections(t, user) {
           mobileLabel: t.layout.nav.audit,
           icon: ScrollText,
           roles: [ROLE_ADMIN]
+        },
+        {
+          to: "/guide",
+          label: t.layout.nav.guide,
+          mobileLabel: t.layout.nav.guideShort,
+          icon: BookOpenText,
+          roles: [ROLE_ADMIN]
         }
       ]
     }
@@ -307,9 +295,12 @@ export function buildSidebarSections(t, user) {
     .filter((section) => section.links.length > 0);
 }
 
+export function buildTopLinks(t) {
+  return [];
+}
+
 export function buildBottomLinks(t) {
   return [
-    { to: "/guide", label: t.layout.nav.guide, mobileLabel: t.layout.nav.guideShort, icon: BookOpenText },
     { to: "/help", label: t.layout.nav.help, mobileLabel: t.layout.nav.helpShort, icon: LifeBuoy },
     { to: "/settings", label: t.layout.nav.settings, mobileLabel: t.layout.nav.settingsShort, icon: Settings }
   ];

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import api from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
@@ -32,6 +33,7 @@ function resolveBatchesTitle(t, role) {
 }
 
 export default function BatchesPage() {
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { t } = useI18n();
   const currentRole = effectiveRole(user) || ROLE_OPERATOR;
@@ -39,7 +41,14 @@ export default function BatchesPage() {
   const pageTitle = resolveBatchesTitle(t, currentRole);
   const [batches, setBatches] = useState([]);
   const [sourceType, setSourceType] = useState("");
-  const [filters, setFilters] = useState(emptyFilters);
+  const [filters, setFilters] = useState({
+    ...emptyFilters,
+    date_from: searchParams.get("date_from") || "",
+    date_to: searchParams.get("date_to") || "",
+    uploaded_by: searchParams.get("uploaded_by") || "",
+    assigned_region: searchParams.get("assigned_region") || "",
+    assigned_branch: searchParams.get("assigned_branch") || ""
+  });
   const [operators, setOperators] = useState([]);
   const [regions, setRegions] = useState([]);
   const [branches, setBranches] = useState([]);

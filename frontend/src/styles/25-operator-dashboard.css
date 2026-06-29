@@ -40,7 +40,7 @@
   background: 
     radial-gradient(ellipse at 80% 120%, rgba(255,255,255,0.15) 30%, transparent 40%),
     radial-gradient(circle at -10% 90%, rgba(255,255,255,0.1) 40%, transparent 50%),
-    linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    var(--brand-gradient);
   color: #ffffff;
   flex: 1;
   box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);

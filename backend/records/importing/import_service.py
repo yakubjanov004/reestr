@@ -17,7 +17,7 @@ def import_excel_file(*, file_obj, uploaded_by, expected_source_type=None):
 
     header_row_index, headers = find_header_row(worksheet)
     if not headers:
-        raise ValueError("Excel faylida kerakli sarlavha qatori topilmadi.")
+        raise ValueError("To'g'ri formatdagi Excel faylni yuklang. Ustun sarlavhalari shablonga mos bo'lishi kerak.")
 
     detected_source_type = detect_source_type(headers, worksheet)
     source_type = resolve_source_type(detected_source_type, expected_source_type)
@@ -108,7 +108,7 @@ def import_excel_file(*, file_obj, uploaded_by, expected_source_type=None):
         if rows_in_file == 0:
             if batch.file:
                 batch.file.storage.delete(batch.file.name)
-            raise ValueError("Excel faylida ma'lumot topilmadi.")
+            raise ValueError("Excel faylida ma'lumot topilmadi. Ma'lumotli reestr faylini yuklang.")
 
     return batch
 
@@ -119,15 +119,16 @@ def resolve_source_type(detected_source_type, expected_source_type):
 
     allowed = {UploadBatch.SourceType.MOBILE, UploadBatch.SourceType.INTERNET}
     if expected_source_type not in allowed:
-        raise ValueError("Excel turi noto'g'ri tanlangan.")
+        raise ValueError("Reestr turi noto'g'ri tanlangan. Mobil raqam yoki Internet ulanish turini tanlang.")
 
     if detected_source_type == UploadBatch.SourceType.UNKNOWN:
-        return expected_source_type
+        expected = source_type_label(expected_source_type)
+        raise ValueError(f"To'g'ri formatdagi {expected} Excel faylni yuklang.")
 
     if detected_source_type != expected_source_type:
         expected = source_type_label(expected_source_type)
         actual = source_type_label(detected_source_type)
-        raise ValueError(f"Tanlangan tur {expected}, lekin fayl {actual} formatida.")
+        raise ValueError(f"Bu {actual} reestri. {actual} turini tanlab yuklang yoki {expected} formatidagi faylni yuklang.")
 
     return detected_source_type
 

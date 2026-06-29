@@ -39,10 +39,10 @@ const STEP_ICONS = {
 
 /* ── Gradient per role ── */
 const ROLE_GRADIENTS = {
-  [ROLE_OPERATOR]: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%)",
-  [ROLE_SUPERVISOR]: "linear-gradient(135deg, #7c3aed 0%, #6366f1 50%, #2563eb 100%)",
-  [ROLE_MANAGER]: "linear-gradient(135deg, #1e40af 0%, #1d4ed8 50%, #2563eb 100%)",
-  [ROLE_ADMIN]: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #2563eb 100%)"
+  [ROLE_OPERATOR]: "var(--brand-gradient)",
+  [ROLE_SUPERVISOR]: "var(--brand-gradient)",
+  [ROLE_MANAGER]: "var(--brand-gradient)",
+  [ROLE_ADMIN]: "var(--brand-gradient)"
 };
 
 const ROLE_HERO_ICONS = {
