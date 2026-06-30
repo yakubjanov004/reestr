@@ -369,8 +369,8 @@ export default function KpiPage() {
           </div>
           <Activity size={20} />
         </div>
-        <div style={{ height: 320, width: "100%", padding: "20px 0 10px", overflowX: "auto" }}>
-          <div style={{ minWidth: "1000px", width: "100%", height: "100%" }}>
+        <div className="kpi-long-chart-scroll" style={{ height: 320, width: "100%", padding: "20px 0 10px", overflowX: "auto" }}>
+          <div className="kpi-long-chart-inner" style={{ minWidth: "1000px", width: "100%", height: "100%" }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={activityData30} margin={{ top: 10, right: 15, left: 10, bottom: 0 }}>
                 <defs>

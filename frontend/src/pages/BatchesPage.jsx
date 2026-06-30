@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import api from "../api/client.js";
@@ -207,35 +207,35 @@ export default function BatchesPage() {
             <tbody>
               {batches.map((batch) => (
                 <tr key={batch.id}>
-                  <td style={{ fontWeight: 600, maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <td data-label={t.common.file} style={{ fontWeight: 600, maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {batch.original_filename}
                   </td>
-                  <td>
+                  <td data-label={t.common.type}>
                     <span className={`source-pill ${batch.source_type}`}>
                       {sourceLabel(batch.source_type, t)}
                     </span>
                   </td>
-                  <td style={{ fontWeight: 600 }}>{batch.uploaded_by_username}</td>
-                  <td>{batch.assigned_region_name || "-"}</td>
-                  <td>{batch.assigned_branch_name || "-"}</td>
-                  <td style={{ fontVariantNumeric: 'tabular-nums' }}>{batch.rows_in_file}</td>
-                  <td>
+                  <td data-label={t.common.operator} style={{ fontWeight: 600 }}>{batch.uploaded_by_username}</td>
+                  <td data-label={t.common.region}>{batch.assigned_region_name || "-"}</td>
+                  <td data-label={t.common.branch}>{batch.assigned_branch_name || "-"}</td>
+                  <td data-label={t.batches.rows} style={{ fontVariantNumeric: 'tabular-nums' }}>{batch.rows_in_file}</td>
+                  <td data-label={t.batches.imported}>
                     <span style={{ color: 'var(--blue-mid)', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
                       {batch.imported_count}
                     </span>
                   </td>
-                  <td style={{ color: 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>{batch.duplicate_count}</td>
-                  <td style={{ color: 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>{batch.skipped_count}</td>
-                  <td>
+                  <td data-label={t.batches.duplicate} style={{ color: 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>{batch.duplicate_count}</td>
+                  <td data-label={t.batches.skipped} style={{ color: 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>{batch.skipped_count}</td>
+                  <td data-label={t.batches.issue}>
                     {batch.import_error_count > 0 ? (
                       <span className="batch-status-error">
-                        ⚠ {batch.import_error_count} {t.common.itemSuffix} {t.batches.errors}
+                        {batch.import_error_count} {t.common.itemSuffix} {t.batches.errors}
                       </span>
                     ) : (
-                      <span className="batch-status-done">✓ {t.common.ok}</span>
+                      <span className="batch-status-done">{t.common.ok}</span>
                     )}
                   </td>
-                  <td style={{ color: 'var(--muted)', fontSize: '12.5px' }}>{formatDateTime(batch.created_at)}</td>
+                  <td data-label={t.common.date} style={{ color: 'var(--muted)', fontSize: '12.5px' }}>{formatDateTime(batch.created_at)}</td>
                 </tr>
               ))}
               {batches.length === 0 && (

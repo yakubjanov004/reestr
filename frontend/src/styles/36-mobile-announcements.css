@@ -1,0 +1,319 @@
+/* Mobile announcements page: compact composer and readable notification feed. */
+
+@media (max-width: 768px) {
+  .operator-announcements-page {
+    gap: 10px;
+  }
+
+  .operator-announcements-page .help-hero-banner {
+    min-height: 128px !important;
+    margin-bottom: 10px !important;
+    border-radius: 18px;
+    padding: 20px 18px !important;
+    box-shadow: 0 12px 28px rgba(29, 78, 216, 0.14);
+  }
+
+  .operator-announcements-page .help-hero-content {
+    max-width: 100%;
+  }
+
+  .operator-announcements-page .help-hero-banner h1 {
+    max-width: 340px;
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.13;
+  }
+
+  .operator-announcements-page .help-hero-banner p {
+    max-width: 360px;
+    margin-top: 9px;
+    font-size: 13px;
+    line-height: 1.42;
+  }
+
+  .operator-announcements-page .help-hero-decoration {
+    opacity: 0.42;
+    transform: scale(0.72);
+    transform-origin: 100% 0;
+  }
+
+  .announcements-layout,
+  .announcements-layout.reader-only {
+    display: grid;
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+
+  .announcement-create-panel,
+  .announcement-list-panel {
+    overflow: hidden;
+    border: 1px solid rgba(191, 219, 254, 0.78);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 12px 28px rgba(15, 35, 70, 0.06);
+  }
+
+  .announcement-create-panel .panel-heading,
+  .announcement-list-panel .panel-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 10px;
+    min-height: 0;
+    padding: 14px 16px !important;
+  }
+
+  .announcement-create-panel .panel-heading h2,
+  .announcement-list-panel .panel-heading h2 {
+    margin: 2px 0 0;
+    color: #14213a;
+    font-size: 18px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .announcement-create-panel .panel-heading svg,
+  .announcement-list-panel .panel-heading > svg {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 8px;
+  }
+
+  .announcement-heading-note {
+    margin-top: 5px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .announcement-list-panel .panel-badge.secondary {
+    align-self: start;
+    min-height: 30px;
+    border-radius: 999px;
+    padding: 0 10px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .announcement-form {
+    gap: 12px;
+    padding: 14px 16px 16px;
+  }
+
+  .announcement-form label {
+    gap: 6px;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+  }
+
+  .announcement-form input,
+  .announcement-form select,
+  .announcement-form textarea {
+    min-height: 46px;
+    border-radius: 13px;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .announcement-form textarea {
+    min-height: 136px;
+    line-height: 1.45;
+  }
+
+  .announcement-fixed-target {
+    gap: 9px;
+    border-radius: 13px;
+    padding: 12px;
+    font-size: 12.5px;
+  }
+
+  .announcement-fixed-target svg {
+    flex: 0 0 18px;
+  }
+
+  .announcement-submit {
+    min-height: 50px;
+    border-radius: 13px;
+    font-size: 15px;
+  }
+
+  .announcement-list-panel {
+    min-height: 0 !important;
+  }
+
+  .announcement-list {
+    min-height: 0 !important;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .announcement-list .skeleton-wrapper {
+    display: grid;
+    gap: 10px;
+  }
+
+  .announcement-list .skeleton-card {
+    height: 82px !important;
+    margin-bottom: 0 !important;
+    border-radius: 14px;
+  }
+
+  .announcement-item {
+    gap: 12px;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 8px 20px rgba(15, 35, 70, 0.05);
+  }
+
+  .announcement-item-head {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 9px;
+    align-items: start;
+    padding-bottom: 10px;
+  }
+
+  .announcement-badges {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 7px;
+    align-items: start;
+  }
+
+  .announcement-target {
+    width: fit-content;
+    min-height: 26px;
+    padding: 0 10px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .announcement-author {
+    max-width: 100%;
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .announcement-time {
+    justify-self: start;
+    gap: 6px;
+    min-height: 28px;
+    border: 1px solid #dce8f6;
+    border-radius: 999px;
+    background: #f8fbff;
+    padding: 0 10px;
+    color: #667085;
+    font-size: 11.5px;
+    line-height: 1;
+  }
+
+  .announcement-time svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .announcement-content {
+    gap: 7px;
+  }
+
+  .announcement-content h3 {
+    font-size: 16px;
+    line-height: 1.28;
+    overflow-wrap: anywhere;
+  }
+
+  .announcement-content p {
+    color: #334155;
+    font-size: 13.5px;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+
+  .announcement-empty {
+    min-height: 160px;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .announcement-list-footer {
+    min-height: 42px;
+    padding: 0 14px;
+  }
+
+  .announcement-list-footer span {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 430px) {
+  .operator-announcements-page .help-hero-banner {
+    min-height: 118px !important;
+    border-radius: 16px;
+    padding: 18px 16px !important;
+  }
+
+  .operator-announcements-page .help-hero-banner h1 {
+    font-size: 22px;
+  }
+
+  .operator-announcements-page .help-hero-banner p {
+    font-size: 12.5px;
+  }
+
+  .announcement-create-panel,
+  .announcement-list-panel {
+    border-radius: 16px;
+  }
+
+  .announcement-create-panel .panel-heading,
+  .announcement-list-panel .panel-heading,
+  .announcement-form {
+    padding-inline: 14px !important;
+  }
+
+  .announcement-list-panel .panel-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .announcement-list-panel .panel-badge.secondary {
+    justify-self: start;
+  }
+
+  .announcement-list {
+    padding: 10px;
+  }
+
+  .announcement-item {
+    padding: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  [data-theme="dark"] .announcement-create-panel,
+  [data-theme="dark"] .announcement-list-panel,
+  [data-theme="dark"] .announcement-item,
+  [data-theme="dark"] .announcement-empty,
+  [data-theme="dark"] .announcement-list-footer,
+  [data-theme="dark"] .announcement-time {
+    border-color: rgba(147, 197, 253, 0.18) !important;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.1), transparent 30%),
+      linear-gradient(145deg, rgba(7, 14, 26, 0.96), rgba(8, 30, 58, 0.9)) !important;
+  }
+
+  [data-theme="dark"] .announcement-create-panel .panel-heading h2,
+  [data-theme="dark"] .announcement-list-panel .panel-heading h2,
+  [data-theme="dark"] .announcement-content h3,
+  [data-theme="dark"] .announcement-content p,
+  [data-theme="dark"] .announcement-author,
+  [data-theme="dark"] .announcement-time,
+  [data-theme="dark"] .announcement-heading-note,
+  [data-theme="dark"] .announcement-list-footer span {
+    color: #ffffff !important;
+  }
+}

@@ -29,6 +29,17 @@
 @import './styles/27-manager.css';
 @import './styles/28-responsive-fluid.css';
 @import './styles/29-help.css';
+@import './styles/30-mobile-sidebar.css';
+@import './styles/31-mobile-upload.css';
+@import './styles/32-mobile-profile.css';
+@import './styles/33-mobile-dashboard.css';
+@import './styles/34-mobile-records.css';
+@import './styles/35-mobile-kpi.css';
+@import './styles/36-mobile-announcements.css';
+@import './styles/37-mobile-batches.css';
+@import './styles/38-mobile-guide.css';
+@import './styles/39-mobile-help.css';
+@import './styles/40-mobile-settings.css';
 
 /* Typography balance: keep strong weight only for primary titles and actions. */
 .panel-heading h2,

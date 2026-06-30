@@ -27,7 +27,7 @@ export default function Layout() {
               <Menu size={18} />
             </button>
             <div>
-              <p className="eyebrow">Datan</p>
+              <img className="topbar-logo" src="/favicon.svg" alt="Datan" />
               <h1>{panelTitle(t, user)}</h1>
             </div>
           </div>

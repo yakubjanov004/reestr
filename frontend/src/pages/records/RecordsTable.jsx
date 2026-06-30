@@ -54,30 +54,30 @@ export default function RecordsTable({ t, records, loading, onOpenDetail }) {
                   }
                 }}
               >
-                <td>{record.id}</td>
-                <td>{record.client_name}</td>
-                <td>
+                <td data-label="ID">{record.id}</td>
+                <td data-label={t.records.client}>{record.client_name}</td>
+                <td data-label={t.common.type}>
                   <span className={`source-pill ${record.source_type}`}>
                     {sourceLabel(record.source_type, t)}
                   </span>
                 </td>
-                <td>{record.assigned_region_name || "-"}</td>
-                <td>{record.assigned_branch_name || "-"}</td>
-                <td>{record.region}</td>
-                <td>{record.dealer}</td>
-                <td>{record.phone_number || record.internet_login}</td>
-                <td>{record.tariff_plan}</td>
-                <td>{record.status}</td>
-                <td>{record.identification_method}</td>
-                <td>{record.operator_full_name}</td>
-                <td>{amount(record.payment_amount)}</td>
-                <td>{formatDateTime(record.connection_date || record.contract_date)}</td>
-                <td>{record.modem_model}</td>
-                <td>{amount(record.modem_cost)}</td>
-                <td>{record.transfer_type}</td>
-                <td>{record.request_number}</td>
-                <td>{record.uploaded_by_username}</td>
-                <td>{formatDateTime(record.created_at)}</td>
+                <td data-label={t.common.region}>{record.assigned_region_name || "-"}</td>
+                <td data-label={t.common.branch}>{record.assigned_branch_name || "-"}</td>
+                <td data-label={t.records.region}>{record.region}</td>
+                <td data-label={t.records.dealer}>{record.dealer}</td>
+                <td data-label={t.records.phoneLogin}>{record.phone_number || record.internet_login}</td>
+                <td data-label={t.records.tariff}>{record.tariff_plan}</td>
+                <td data-label={t.common.status}>{record.status}</td>
+                <td data-label={t.records.identification}>{record.identification_method}</td>
+                <td data-label={t.records.excelOperator}>{record.operator_full_name}</td>
+                <td data-label={t.records.payment}>{amount(record.payment_amount)}</td>
+                <td data-label={t.records.connectionDate}>{formatDateTime(record.connection_date || record.contract_date)}</td>
+                <td data-label={t.records.modem}>{record.modem_model}</td>
+                <td data-label={t.records.modemCost}>{amount(record.modem_cost)}</td>
+                <td data-label={t.records.transfer}>{record.transfer_type}</td>
+                <td data-label={t.records.request}>{record.request_number}</td>
+                <td data-label={t.records.uploadedBy}>{record.uploaded_by_username}</td>
+                <td data-label={t.records.import}>{formatDateTime(record.created_at)}</td>
               </tr>
             ))}
           {!loading && records.length === 0 && (

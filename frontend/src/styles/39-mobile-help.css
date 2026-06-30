@@ -1,0 +1,362 @@
+/* Mobile help page: support cards, FAQ and guidelines optimized for phone screens. */
+
+@media (max-width: 768px) {
+  .help-page {
+    --help-page-gap: 10px;
+    --help-card-gap: 10px;
+    --help-panel-x: 14px;
+    --help-panel-y: 14px;
+    --help-hero-x: 18px;
+    --help-hero-y: 18px;
+    gap: var(--help-page-gap);
+  }
+
+  .help-page .help-hero-banner {
+    min-height: 0 !important;
+    border-radius: 18px;
+    padding: var(--help-hero-y) var(--help-hero-x) !important;
+    box-shadow: 0 12px 28px rgba(29, 78, 216, 0.14);
+  }
+
+  .help-page .help-hero-content {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 12px;
+    max-width: 100%;
+  }
+
+  .help-hero-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+  }
+
+  .help-hero-icon-wrapper svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .help-hero-kicker {
+    margin-bottom: 4px;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .help-page .help-hero-banner h1 {
+    max-width: 340px;
+    font-size: 23px !important;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  .help-page .help-hero-banner p {
+    max-width: 360px;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .help-page .help-hero-decoration {
+    width: 56%;
+    opacity: 0.42;
+  }
+
+  .help-contacts-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+
+  .help-contact-card {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 8px 12px;
+    border: 1px solid rgba(191, 219, 254, 0.78);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.94);
+    padding: 14px;
+    box-shadow: 0 12px 28px rgba(15, 35, 70, 0.06);
+  }
+
+  .help-contact-card:hover {
+    transform: none;
+    box-shadow: 0 12px 28px rgba(15, 35, 70, 0.06);
+  }
+
+  .help-contact-icon-wrap {
+    grid-row: 1 / span 2;
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+  }
+
+  .help-contact-icon-wrap svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .help-contact-card h3 {
+    font-size: 15px;
+    line-height: 1.22;
+    overflow-wrap: anywhere;
+  }
+
+  .help-contact-card p {
+    font-size: 12.5px;
+    line-height: 1.42;
+  }
+
+  .help-contact-footer {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 5px;
+    margin-top: 2px;
+    padding-top: 10px;
+  }
+
+  .help-contact-footer strong {
+    max-width: 100%;
+    font-size: 14px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .help-contact-footer small {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .help-faq-section,
+  .help-guidelines-section {
+    overflow: hidden;
+    border: 1px solid rgba(191, 219, 254, 0.78);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 12px 28px rgba(15, 35, 70, 0.06);
+  }
+
+  .help-faq-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 14px 16px 0;
+  }
+
+  .help-faq-header h2,
+  .help-guidelines-header h2 {
+    font-size: 18px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .help-faq-header p,
+  .help-guidelines-header p {
+    margin-top: 5px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .help-faq-header-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 8px;
+  }
+
+  .help-faq-controls {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  .help-faq-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .help-faq-tabs button {
+    min-height: 40px;
+    border-radius: 12px;
+    padding: 0 9px;
+    font-size: 12px;
+    line-height: 1.15;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .help-faq-search {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    min-height: 46px;
+    border-radius: 13px;
+    background: #ffffff;
+  }
+
+  .help-faq-search input {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .help-faq-list {
+    gap: 9px;
+    padding: 0 12px 12px;
+  }
+
+  .help-faq-item {
+    border-radius: 14px;
+    background: #ffffff;
+  }
+
+  .help-faq-trigger {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) 18px;
+    gap: 9px;
+    align-items: start;
+    min-height: 54px;
+    padding: 13px 12px;
+  }
+
+  .help-faq-icon,
+  .help-faq-chevron {
+    margin-top: 2px;
+  }
+
+  .help-faq-question {
+    font-size: 13.5px;
+    line-height: 1.38;
+    overflow-wrap: anywhere;
+  }
+
+  .help-faq-answer {
+    padding: 0 12px 13px 41px;
+  }
+
+  .help-faq-answer p {
+    font-size: 13px;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+
+  .help-faq-empty {
+    min-height: 150px;
+    padding: 24px 12px;
+  }
+
+  .help-guidelines-header {
+    padding: 14px 16px 0;
+  }
+
+  .help-guidelines-steps {
+    grid-template-columns: 1fr !important;
+    gap: 9px;
+    padding: 12px;
+  }
+
+  .help-guideline-step {
+    gap: 10px;
+    border-radius: 14px;
+    padding: 12px;
+    background: rgba(248, 251, 255, 0.88);
+  }
+
+  .help-guideline-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    font-size: 12px;
+  }
+
+  .help-guideline-step strong {
+    font-size: 13.5px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .help-guideline-step p {
+    margin-top: 4px;
+    font-size: 12.5px;
+    line-height: 1.48;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 430px) {
+  .help-page .help-hero-banner,
+  .help-faq-section,
+  .help-guidelines-section {
+    border-radius: 16px;
+  }
+
+  .help-page .help-hero-content {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .help-hero-icon-wrapper {
+    width: 40px;
+    height: 40px;
+  }
+
+  .help-page .help-hero-banner h1 {
+    font-size: 21px !important;
+  }
+
+  .help-page .help-hero-banner p {
+    font-size: 12.5px;
+  }
+
+  .help-contact-card {
+    grid-template-columns: 38px minmax(0, 1fr);
+    padding: 13px;
+  }
+
+  .help-contact-icon-wrap {
+    width: 38px;
+    height: 38px;
+  }
+
+  .help-faq-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .help-faq-header,
+  .help-guidelines-header {
+    padding-inline: 14px;
+  }
+
+  .help-faq-list,
+  .help-guidelines-steps {
+    padding-inline: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  [data-theme="dark"] .help-contact-card,
+  [data-theme="dark"] .help-faq-section,
+  [data-theme="dark"] .help-guidelines-section,
+  [data-theme="dark"] .help-faq-item,
+  [data-theme="dark"] .help-faq-search,
+  [data-theme="dark"] .help-guideline-step {
+    border-color: rgba(147, 197, 253, 0.18) !important;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.1), transparent 30%),
+      linear-gradient(145deg, rgba(7, 14, 26, 0.96), rgba(8, 30, 58, 0.9)) !important;
+  }
+
+  [data-theme="dark"] .help-contact-card h3,
+  [data-theme="dark"] .help-contact-card p,
+  [data-theme="dark"] .help-contact-footer strong,
+  [data-theme="dark"] .help-contact-footer small,
+  [data-theme="dark"] .help-faq-header h2,
+  [data-theme="dark"] .help-faq-header p,
+  [data-theme="dark"] .help-faq-question,
+  [data-theme="dark"] .help-faq-answer p,
+  [data-theme="dark"] .help-guidelines-header h2,
+  [data-theme="dark"] .help-guidelines-header p,
+  [data-theme="dark"] .help-guideline-step strong,
+  [data-theme="dark"] .help-guideline-step p {
+    color: #ffffff !important;
+  }
+}

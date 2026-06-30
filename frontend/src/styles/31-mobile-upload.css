@@ -1,0 +1,260 @@
+/* Mobile upload screen. Keeps the desktop upload layout untouched. */
+
+@media (max-width: 768px) {
+  .upload-page {
+    width: 100%;
+    min-height: auto !important;
+    padding: 18px 10px 22px !important;
+  }
+
+  .upload-shell {
+    display: grid;
+    max-width: 460px;
+    gap: 14px;
+  }
+
+  .upload-brief,
+  .upload-panel {
+    border-radius: 22px !important;
+    background: rgba(247, 251, 255, 0.92) !important;
+  }
+
+  .upload-brief {
+    min-height: 0;
+    gap: 14px;
+    padding: 26px 22px 22px !important;
+  }
+
+  .upload-brief h2 {
+    max-width: 330px;
+    font-size: 27px;
+    line-height: 1.13;
+  }
+
+  .upload-brief p {
+    max-width: 330px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .upload-step-list {
+    grid-template-columns: 1fr !important;
+    gap: 9px;
+  }
+
+  .upload-step {
+    min-height: 58px;
+    grid-template-columns: 30px minmax(0, 1fr) !important;
+    gap: 12px;
+    padding: 10px 12px !important;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .upload-step-index {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .upload-step strong {
+    font-size: 15px;
+    line-height: 1.2;
+  }
+
+  .upload-step small {
+    margin-top: 2px;
+    font-size: 12.5px;
+    line-height: 1.35;
+  }
+
+  .upload-note {
+    align-items: flex-start;
+    margin-top: 2px;
+    padding: 12px 14px;
+    border-radius: 13px;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .upload-note svg {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+  }
+
+  .upload-panel {
+    min-height: 0;
+    padding: 0 !important;
+  }
+
+  .upload-form {
+    gap: 14px;
+    padding: 26px 22px 22px !important;
+  }
+
+  .upload-source-block {
+    gap: 8px;
+    padding-bottom: 18px;
+    margin-bottom: 2px;
+  }
+
+  .upload-source-block .field-title {
+    font-size: 15px;
+    line-height: 1.2;
+  }
+
+  .upload-source-block .source-tabs {
+    min-height: 48px;
+    border-radius: 13px;
+    padding: 3px;
+    background: #eaf2fc;
+  }
+
+  .upload-source-block .source-tabs button {
+    min-height: 42px;
+    gap: 7px;
+    border-radius: 10px !important;
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .upload-source-block .source-tabs button svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .file-drop {
+    min-height: 154px !important;
+    grid-template-columns: 44px minmax(0, 1fr) !important;
+    justify-content: stretch;
+    gap: 13px !important;
+    padding: 20px 18px !important;
+    border-radius: 18px !important;
+    background: rgba(247, 251, 255, 0.88) !important;
+  }
+
+  .file-drop-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 14px;
+    background: #edf6ff;
+    color: var(--upload-blue);
+  }
+
+  .file-drop-icon svg {
+    width: 24px !important;
+    height: 24px !important;
+    stroke-width: 1.9;
+  }
+
+  .file-drop .file-info {
+    align-content: center;
+    gap: 5px;
+  }
+
+  .file-drop .file-info span {
+    max-width: 240px;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.23;
+    overflow-wrap: normal;
+  }
+
+  .file-drop .file-info small {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .upload-submit {
+    min-height: 58px;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 800 !important;
+  }
+
+  .upload-submit svg {
+    width: 23px;
+    height: 23px;
+  }
+}
+
+@media (max-width: 430px) {
+  .upload-page {
+    padding: 16px 8px 20px !important;
+  }
+
+  .upload-shell {
+    gap: 12px;
+  }
+
+  .upload-brief,
+  .upload-panel {
+    border-radius: 20px !important;
+  }
+
+  .upload-brief {
+    padding: 24px 20px 20px !important;
+  }
+
+  .upload-brief h2 {
+    font-size: 25px;
+  }
+
+  .upload-brief p {
+    font-size: 13.5px;
+  }
+
+  .upload-form {
+    padding: 24px 20px 20px !important;
+  }
+
+  .file-drop {
+    min-height: 150px !important;
+    padding: 18px 16px !important;
+  }
+
+  .file-drop .file-info span {
+    font-size: 16px;
+  }
+
+  .upload-submit {
+    min-height: 56px;
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 360px) {
+  .upload-brief,
+  .upload-form {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .upload-brief h2 {
+    font-size: 23px;
+  }
+
+  .upload-step {
+    grid-template-columns: 28px minmax(0, 1fr) !important;
+    gap: 10px;
+  }
+
+  .upload-step-index {
+    width: 28px;
+    height: 28px;
+  }
+
+  .file-drop {
+    grid-template-columns: 1fr !important;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .file-drop .file-info span,
+  .file-drop .file-info small {
+    max-width: 100%;
+  }
+}
