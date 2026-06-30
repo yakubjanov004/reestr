@@ -121,6 +121,10 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+SMS_LOGIN_MOCK = env_bool("SMS_LOGIN_MOCK", True)
+SMS_LOGIN_CODE_TTL_MINUTES = int(os.getenv("SMS_LOGIN_CODE_TTL_MINUTES", "10"))
+SMS_LOGIN_TRUST_HOURS = int(os.getenv("SMS_LOGIN_TRUST_HOURS", "24"))
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

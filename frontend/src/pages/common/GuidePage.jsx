@@ -14,7 +14,7 @@ import {
   Users
 } from "lucide-react";
 
-import { useAuth } from "../auth/AuthContext.jsx";
+import { useAuth } from "../../auth/AuthContext.jsx";
 import {
   ROLE_ADMIN,
   ROLE_MANAGER,
@@ -22,9 +22,9 @@ import {
   ROLE_SUPERVISOR,
   effectiveRole,
   roleLabel
-} from "../auth/roles.js";
-import { GUIDE_TRANSLATIONS } from "../localization/guide.js";
-import { useI18n } from "../localization/i18n.jsx";
+} from "../../auth/roles.js";
+import { GUIDE_TRANSLATIONS } from "../../localization/guide.js";
+import { useI18n } from "../../localization/i18n.jsx";
 
 /* ── Icon map ── */
 const STEP_ICONS = {

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { Building2, KeyRound, MapPin, Save, ShieldCheck, UserRound } from "lucide-react";
+import { Building2, KeyRound, MapPin, Phone, Save, ShieldCheck, UserRound } from "lucide-react";
 
-import api from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
-import { roleLongLabel } from "../auth/roles.js";
-import { useI18n } from "../localization/i18n.jsx";
+import api from "../../api/client.js";
+import { useAuth } from "../../auth/AuthContext.jsx";
+import { roleLongLabel } from "../../auth/roles.js";
+import { useI18n } from "../../localization/i18n.jsx";
 
 const emptyPasswordForm = {
   current_password: "",
@@ -50,6 +50,7 @@ export default function ProfilePage() {
   const displayName = user?.full_name || user?.username || "";
   const profileDetails = [
     { label: t.common.role, value: roleLongLabel(t, user), icon: ShieldCheck },
+    { label: t.common.phoneNumber, value: user?.phone_number || t.common.notEntered, icon: Phone },
     { label: t.common.region, value: user?.region?.name || t.common.notEntered, icon: MapPin },
     { label: t.common.branch, value: user?.branch?.name || t.common.notEntered, icon: Building2 }
   ];
@@ -147,6 +148,10 @@ export default function ProfilePage() {
               <label>
                 {t.common.login}
                 <input value={user?.username || ""} readOnly />
+              </label>
+              <label>
+                {t.common.phoneNumber}
+                <input value={user?.phone_number || ""} readOnly />
               </label>
               <label>
                 {t.common.firstName}

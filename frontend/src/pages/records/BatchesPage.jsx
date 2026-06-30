@@ -1,19 +1,19 @@
 ﻿import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-import api from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
+import api from "../../api/client.js";
+import { useAuth } from "../../auth/AuthContext.jsx";
 import {
   ROLE_ADMIN,
   ROLE_MANAGER,
   ROLE_OPERATOR,
   ROLE_SUPERVISOR,
   effectiveRole
-} from "../auth/roles.js";
-import SourceTypeTabs from "../components/SourceTypeTabs.jsx";
-import { useI18n } from "../localization/i18n.jsx";
-import { formatDateTime } from "../utils/format.js";
-import { sourceLabel } from "./records/recordUtils.js";
+} from "../../auth/roles.js";
+import SourceTypeTabs from "../../components/SourceTypeTabs.jsx";
+import { useI18n } from "../../localization/i18n.jsx";
+import { formatDateTime } from "../../utils/format.js";
+import { sourceLabel } from "./recordUtils.js";
 
 const PAGE_SIZE = 30;
 

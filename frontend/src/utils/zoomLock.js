@@ -6,7 +6,9 @@ function isZoomShortcut(event) {
 }
 
 function preventZoomEvent(event) {
-  event.preventDefault();
+  if (event.cancelable) {
+    event.preventDefault();
+  }
 }
 
 export function installZoomLock() {
@@ -33,7 +35,7 @@ export function installZoomLock() {
   document.addEventListener(
     "touchmove",
     (event) => {
-      if (event.touches.length > 1) {
+      if (event.touches.length > 1 && event.cancelable) {
         event.preventDefault();
       }
     },
@@ -45,7 +47,7 @@ export function installZoomLock() {
     "touchend",
     (event) => {
       const now = Date.now();
-      if (now - lastTouchEnd <= 300) {
+      if (now - lastTouchEnd <= 300 && event.cancelable) {
         event.preventDefault();
       }
       lastTouchEnd = now;

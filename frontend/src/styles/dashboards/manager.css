@@ -1,5 +1,5 @@
 /* ============================================================
-   27-manager.css — Manager Workspace Page
+   manager.css — Manager Workspace Page
    ============================================================ */
 
 /* ── Hero Banner ─────────────────────────────────────────────── */
@@ -161,7 +161,7 @@
   display: grid;
   grid-template-columns: 1fr 380px;
   gap: 20px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .mg-workspace-left-col,
@@ -169,6 +169,11 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.mg-workspace-left-col > .panel:last-child,
+.mg-workspace-right-col > .panel:last-child {
+  flex: 1;
 }
 
 .mg-workspace-panel {

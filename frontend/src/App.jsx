@@ -13,21 +13,21 @@ import {
   isOperator
 } from "./auth/roles.js";
 import Layout from "./components/Layout.jsx";
-import AnnouncementsPage from "./pages/AnnouncementsPage.jsx";
-import AuditLogsPage from "./pages/AuditLogsPage.jsx";
-import BatchesPage from "./pages/BatchesPage.jsx";
-import DashboardPage from "./pages/DashboardPage.jsx";
-import GuidePage from "./pages/GuidePage.jsx";
-import HelpPage from "./pages/HelpPage.jsx";
-import KpiPage from "./pages/KpiPage.jsx";
-import LoginPage from "./pages/LoginPage.jsx";
+import AnnouncementsPage from "./pages/operator/AnnouncementsPage.jsx";
+import AuditLogsPage from "./pages/records/AuditLogsPage.jsx";
+import BatchesPage from "./pages/records/BatchesPage.jsx";
+import DashboardPage from "./pages/dashboard/DashboardPage.jsx";
+import GuidePage from "./pages/common/GuidePage.jsx";
+import HelpPage from "./pages/common/HelpPage.jsx";
+import KpiPage from "./pages/operator/KpiPage.jsx";
+import LoginPage from "./pages/auth/LoginPage.jsx";
 import ManagerWorkspacePage from "./pages/management/ManagerWorkspacePage.jsx";
 import RoleWorkspacePage from "./pages/management/RoleWorkspacePage.jsx";
-import OperatorsPage from "./pages/OperatorsPage.jsx";
-import ProfilePage from "./pages/ProfilePage.jsx";
-import RecordsPage from "./pages/RecordsPage.jsx";
-import UploadPage from "./pages/UploadPage.jsx";
-import SettingsPage from "./pages/SettingsPage.jsx";
+import OperatorsPage from "./pages/management/OperatorsPage.jsx";
+import ProfilePage from "./pages/common/ProfilePage.jsx";
+import RecordsPage from "./pages/records/RecordsPage.jsx";
+import UploadPage from "./pages/operator/UploadPage.jsx";
+import SettingsPage from "./pages/common/SettingsPage.jsx";
 import SupervisorMonitoringPage from "./pages/supervisor/SupervisorMonitoringPage.jsx";
 import { useI18n } from "./localization/i18n.jsx";
 

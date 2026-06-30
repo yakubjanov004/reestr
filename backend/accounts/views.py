@@ -4,25 +4,39 @@ from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .audit import log_audit_event
-from .models import AuditLog, Branch, Region, User
+from .models import AuditLog, Branch, LoginTrustedDevice, Region, User
 from .permissions import CanManageUsers
 from .serializers import (
     AuditLogSerializer,
     BranchSerializer,
-    CustomTokenObtainPairSerializer,
     OperatorCreateUpdateSerializer,
     PasswordChangeSerializer,
     RegionSerializer,
     SelfProfileSerializer,
+    SmsLoginStartSerializer,
+    SmsLoginVerifySerializer,
     UserSerializer,
 )
 
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
+class SmsLoginStartView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        serializer = SmsLoginStartSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.save(), status=status.HTTP_200_OK)
+
+
+class SmsLoginVerifyView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        serializer = SmsLoginVerifySerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.save(), status=status.HTTP_200_OK)
 
 
 class MeView(RetrieveUpdateAPIView):
@@ -123,6 +137,8 @@ class OperatorViewSet(viewsets.ModelViewSet):
                 target=operator,
                 metadata={"is_active": operator.is_active},
             )
+            if not operator.is_active:
+                LoginTrustedDevice.objects.filter(user=operator).update(is_active=False)
         if password_changed:
             log_audit_event(
                 actor=self.request.user,

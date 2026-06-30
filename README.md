@@ -11,6 +11,7 @@ Datan - Django REST API va React/Vite frontenddan iborat Excel reestr import qil
 - Rollar: operator < supervisor < manager < admin ierarxiyasi bo'yicha sidebar va sahifalar ochiladi.
 - Dashboard: reestr, upload, operator va oxirgi import statistikasi.
 - Audit log: login, upload va foydalanuvchi boshqaruvi amallari bazaga yoziladi.
+- Xavfsiz login: telefon raqami va paroldan keyin 6 xonali SMS kod tasdiqlanadi; dev rejimda SMS kodi mock notification sifatida ko'rsatiladi.
 
 ## Texnologiyalar
 
@@ -66,7 +67,12 @@ POSTGRES_HOST=127.0.0.1
 POSTGRES_PORT=5432
 
 MANAGER_USERNAME=dilshod.rahimov
+MANAGER_PHONE_NUMBER=+998900000002
 MANAGER_PASSWORD=Dilshod2026!
+
+SMS_LOGIN_MOCK=True
+SMS_LOGIN_CODE_TTL_MINUTES=10
+SMS_LOGIN_TRUST_HOURS=24
 ```
 
 Database yaratish, migration va boshlang'ich test ma'lumotlarini kiritish:
@@ -143,7 +149,7 @@ npm run build
 
 `operator`:
 
-- login/parol bilan kiradi;
+- telefon raqami, parol va SMS kod bilan kiradi;
 - Excel fayl yuklaydi;
 - faqat o'z uploadlari va yozuvlarini ko'radi.
 - foydalanuvchi qo'sha olmaydi.
@@ -153,10 +159,10 @@ npm run build
 `python scripts\setup_initial_data.py` quyidagi test akkauntlarni yaratadi yoki yangilaydi:
 
 ```text
-operator:   azizbek.karimov / Azizbek2026! / Novza metro
-supervisor: dilshod.rahimov / Dilshod2026! / Toshkent shahri
-manager:    malika.abdullayeva / Malika2026! / Sergeli Mediapark
-admin:      sardor.yusupov / Sardor2026! / Toshkent shahri
+operator:   +998900000001 / Azizbek2026! / Novza metro
+supervisor: +998900000002 / Dilshod2026! / Toshkent shahri
+manager:    +998900000003 / Malika2026! / Sergeli Mediapark
+admin:      +998900000004 / Sardor2026! / Toshkent shahri
 ```
 
 ## Frontend sahifalar
@@ -176,7 +182,8 @@ admin:      sardor.yusupov / Sardor2026! / Toshkent shahri
 ## Asosiy API endpointlar
 
 ```text
-POST /api/auth/token/             # login
+POST /api/auth/token/             # telefon/parol, SMS challenge yoki trusted-device login
+POST /api/auth/token/verify/      # SMS kodni tasdiqlash
 POST /api/auth/token/refresh/     # token refresh
 GET  /api/users/me/               # joriy user
 GET  /api/records/stats/          # dashboard statistika

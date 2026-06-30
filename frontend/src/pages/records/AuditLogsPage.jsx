@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { Activity, Filter, ScrollText, ShieldCheck, UserRound } from "lucide-react";
 
-import api from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
-import { ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR, roleLabel } from "../auth/roles.js";
-import PageHero from "../components/PageHero.jsx";
-import { useI18n } from "../localization/i18n.jsx";
-import { formatDateTime } from "../utils/format.js";
+import api from "../../api/client.js";
+import { useAuth } from "../../auth/AuthContext.jsx";
+import { ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR, roleLabel } from "../../auth/roles.js";
+import PageHero from "../../components/PageHero.jsx";
+import { useI18n } from "../../localization/i18n.jsx";
+import { formatDateTime } from "../../utils/format.js";
 
 const actionKeys = [
   "login",
+  "login_sms_requested",
   "upload_created",
   "operator_created",
   "operator_updated",

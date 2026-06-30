@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import api, { setAuthToken } from "../api/client.js";
 
 const AuthContext = createContext(null);
+const TRUST_TOKEN_KEY = "sms_trust_token";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
@@ -35,13 +36,37 @@ export function AuthProvider({ children }) {
     localStorage.setItem("user", JSON.stringify(nextUser));
   }
 
-  async function login(username, password) {
-    const response = await api.post("/auth/token/", { username, password });
-    localStorage.setItem("access", response.data.access);
-    localStorage.setItem("refresh", response.data.refresh);
-    setAuthToken(response.data.access);
-    storeUser(response.data.user);
-    return response.data.user;
+  function storeSession(data) {
+    localStorage.setItem("access", data.access);
+    localStorage.setItem("refresh", data.refresh);
+    if (data.trusted_device_token) {
+      localStorage.setItem(TRUST_TOKEN_KEY, data.trusted_device_token);
+    }
+    setAuthToken(data.access);
+    storeUser(data.user);
+    return data.user;
+  }
+
+  async function login(phoneNumber, password) {
+    const trustedToken = localStorage.getItem(TRUST_TOKEN_KEY);
+    const response = await api.post("/auth/token/", {
+      phone_number: phoneNumber,
+      password,
+      trusted_device_token: trustedToken || undefined
+    });
+    if (response.data.requires_sms) {
+      return response.data;
+    }
+    const loggedInUser = storeSession(response.data);
+    return { requires_sms: false, user: loggedInUser };
+  }
+
+  async function verifySmsLogin(challengeToken, code) {
+    const response = await api.post("/auth/token/verify/", {
+      challenge_token: challengeToken,
+      code
+    });
+    return storeSession(response.data);
   }
 
   async function refreshUser() {
@@ -68,6 +93,7 @@ export function AuthProvider({ children }) {
       loading,
       isAuthenticated: Boolean(user),
       login,
+      verifySmsLogin,
       refreshUser,
       updateUser,
       logout

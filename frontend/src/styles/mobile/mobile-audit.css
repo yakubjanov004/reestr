@@ -1,0 +1,34 @@
+/* Audit Logs Mobile Patch */
+@media (max-width: 768px) {
+  .audit-page .audit-heading-title {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .audit-page .audit-heading-title h2 {
+    font-size: 1.125rem;
+  }
+  
+  .audit-page .panel-heading.split {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .audit-filter {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .audit-filter select {
+    width: 100%;
+  }
+  
+  .audit-pagination {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+}

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
 from django.db import models
+from django.utils import timezone
 
 
 class UserManager(DjangoUserManager):
@@ -50,6 +51,7 @@ class User(AbstractUser):
         ADMIN = "admin", "Admin"
 
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.OPERATOR)
+    phone_number = models.CharField(max_length=32, unique=True, null=True, blank=True)
     region = models.ForeignKey(
         Region,
         on_delete=models.SET_NULL,
@@ -122,6 +124,70 @@ class User(AbstractUser):
         if self.branch_id:
             return self.branch.region_id
         return self.region_id
+
+
+class LoginSmsChallenge(models.Model):
+    class DeliveryChannel(models.TextChoices):
+        MOCK = "mock", "Mock"
+        SMS = "sms", "SMS"
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="login_sms_challenges")
+    phone_number = models.CharField(max_length=32)
+    challenge_token = models.CharField(max_length=96, unique=True)
+    code_hash = models.CharField(max_length=128)
+    delivery_channel = models.CharField(
+        max_length=12,
+        choices=DeliveryChannel.choices,
+        default=DeliveryChannel.MOCK,
+    )
+    attempts = models.PositiveSmallIntegerField(default=0)
+    max_attempts = models.PositiveSmallIntegerField(default=5)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    verified_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at", "-id")
+        indexes = [
+            models.Index(fields=["user", "created_at"], name="accounts_sms_user_created_idx"),
+            models.Index(fields=["expires_at"], name="accounts_sms_expires_idx"),
+        ]
+
+    @property
+    def is_expired(self):
+        return timezone.now() >= self.expires_at
+
+    @property
+    def can_verify(self):
+        return self.verified_at is None and not self.is_expired and self.attempts < self.max_attempts
+
+    def __str__(self):
+        return f"{self.user_id} / {self.delivery_channel} / {self.created_at:%Y-%m-%d %H:%M}"
+
+
+class LoginTrustedDevice(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="login_trusted_devices")
+    token_hash = models.CharField(max_length=128, unique=True)
+    user_agent = models.CharField(max_length=255, blank=True)
+    last_ip = models.CharField(max_length=64, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_used_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        ordering = ("-last_used_at", "-id")
+        indexes = [
+            models.Index(fields=["user", "expires_at"], name="accounts_trusted_user_exp_idx"),
+            models.Index(fields=["expires_at"], name="accounts_trusted_exp_idx"),
+        ]
+
+    @property
+    def is_valid(self):
+        return self.is_active and timezone.now() < self.expires_at
+
+    def __str__(self):
+        return f"{self.user_id} trusted until {self.expires_at:%Y-%m-%d %H:%M}"
 
 
 class AuditLog(models.Model):

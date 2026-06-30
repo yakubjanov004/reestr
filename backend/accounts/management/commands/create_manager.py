@@ -3,6 +3,7 @@ import os
 from django.core.management.base import BaseCommand, CommandError
 
 from accounts.models import Region, User
+from accounts.sms_login import normalize_phone_number
 
 
 class Command(BaseCommand):
@@ -11,8 +12,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         username = os.getenv("MANAGER_USERNAME")
         password = os.getenv("MANAGER_PASSWORD")
-        if not username or not password:
-            raise CommandError("MANAGER_USERNAME and MANAGER_PASSWORD must be set in .env")
+        phone_number = normalize_phone_number(os.getenv("MANAGER_PHONE_NUMBER") or os.getenv("SUPERVISOR_PHONE_NUMBER"))
+        if not username or not password or not phone_number:
+            raise CommandError("MANAGER_USERNAME, MANAGER_PASSWORD and MANAGER_PHONE_NUMBER must be set in .env")
 
         user, created = User.objects.get_or_create(
             username=username,
@@ -27,6 +29,7 @@ class Command(BaseCommand):
         user.role = User.Role.SUPERVISOR
         user.is_staff = True
         user.email = os.getenv("MANAGER_EMAIL", user.email)
+        user.phone_number = phone_number
         user.first_name = os.getenv("MANAGER_FIRST_NAME", user.first_name)
         user.last_name = os.getenv("MANAGER_LAST_NAME", user.last_name)
         region_name = os.getenv("SUPERVISOR_REGION_NAME") or os.getenv("MANAGER_REGION_NAME")

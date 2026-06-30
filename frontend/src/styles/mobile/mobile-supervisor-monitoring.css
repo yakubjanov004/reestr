@@ -1,0 +1,72 @@
+/* Supervisor Monitoring Mobile Patch */
+@media (max-width: 768px) {
+  .sv-monitoring-hero-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .sv-monitoring-hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 12px;
+  }
+  
+  .sv-monitoring-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .sv-monitoring-search,
+  .sv-monitoring-select {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .sv-monitoring-search input,
+  .sv-monitoring-select select {
+    width: 100%;
+  }
+  
+  .sv-monitoring-clear {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .sv-monitoring-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .sv-daily-summary {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+  
+  .sv-daily-summary-main {
+    align-items: center;
+  }
+  
+  .sv-daily-summary-metrics {
+    width: 100%;
+    justify-content: space-around;
+  }
+  
+  .sv-monitoring-main-grid {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sv-operator-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .sv-operator-pagination {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

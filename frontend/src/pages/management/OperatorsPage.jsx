@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Building2, KeyRound, MapPin, ShieldCheck, UserPlus, Users } from "lucide-react";
 
-import api from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
+import api from "../../api/client.js";
+import { useAuth } from "../../auth/AuthContext.jsx";
 import {
   ROLE_ADMIN,
   ROLE_MANAGER,
@@ -11,15 +11,16 @@ import {
   creatableRolesFor,
   defaultCreatableRole,
   roleLabel
-} from "../auth/roles.js";
-import StatCard from "../components/StatCard.jsx";
-import { useI18n } from "../localization/i18n.jsx";
+} from "../../auth/roles.js";
+import StatCard from "../../components/StatCard.jsx";
+import { useI18n } from "../../localization/i18n.jsx";
 
 const PAGE_SIZE = 30;
 
 function createEmptyForm(user, role = defaultCreatableRole(user)) {
   return {
     username: "",
+    phone_number: "",
     password: "",
     first_name: "",
     last_name: "",
@@ -206,6 +207,7 @@ export default function OperatorsPage() {
               <thead>
                 <tr>
                   <th>Login</th>
+                  <th>{t.common.phoneNumber}</th>
                   <th>{t.common.role}</th>
                   <th>{t.common.fullName}</th>
                   <th>{t.common.region}</th>
@@ -218,6 +220,7 @@ export default function OperatorsPage() {
                 {operators.map((op) => (
                   <tr key={op.id} data-blocked={!op.is_active}>
                     <td style={{ fontWeight: 600 }}>{op.username}</td>
+                    <td>{op.phone_number || "-"}</td>
                     <td>
                       <span className={`badge badge-${op.role}`}>
                         {roleLabel(t, op.role)}
@@ -247,7 +250,7 @@ export default function OperatorsPage() {
                 ))}
                 {operators.length === 0 && (
                   <tr>
-                    <td colSpan="7" style={{ textAlign: "center", color: "var(--muted)", padding: "32px" }}>
+                    <td colSpan="8" style={{ textAlign: "center", color: "var(--muted)", padding: "32px" }}>
                       {t.operators.noUsers}
                     </td>
                   </tr>
@@ -385,6 +388,17 @@ export default function OperatorsPage() {
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   minLength={8}
+                  required
+                />
+              </label>
+              <label>
+                {t.common.phoneNumber}
+                <input
+                  type="tel"
+                  inputMode="tel"
+                  placeholder={t.operators.phonePlaceholder}
+                  value={form.phone_number}
+                  onChange={(e) => setForm({ ...form, phone_number: e.target.value })}
                   required
                 />
               </label>

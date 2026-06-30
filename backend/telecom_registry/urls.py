@@ -7,11 +7,12 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from accounts.views import (
     AuditLogListView,
-    CustomTokenObtainPairView,
     MeView,
     OperatorViewSet,
     OrganizationOptionsView,
     PasswordChangeView,
+    SmsLoginStartView,
+    SmsLoginVerifyView,
 )
 from records.views import (
     AnnouncementListCreateView,
@@ -28,7 +29,8 @@ router.register("operators", OperatorViewSet, basename="operators")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/auth/token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/auth/token/", SmsLoginStartView.as_view(), name="token_obtain_pair"),
+    path("api/auth/token/verify/", SmsLoginVerifyView.as_view(), name="token_verify_sms"),
     path("api/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/users/me/", MeView.as_view(), name="me"),
     path("api/users/me/password/", PasswordChangeView.as_view(), name="me_password_change"),

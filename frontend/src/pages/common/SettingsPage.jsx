@@ -1,7 +1,7 @@
 import { Languages, Monitor } from "lucide-react";
-import LanguageSwitcher from "../components/LanguageSwitcher.jsx";
-import ThemeSwitcher from "../components/ThemeSwitcher.jsx";
-import { useI18n } from "../localization/i18n.jsx";
+import LanguageSwitcher from "../../components/LanguageSwitcher.jsx";
+import ThemeSwitcher from "../../components/ThemeSwitcher.jsx";
+import { useI18n } from "../../localization/i18n.jsx";
 
 export default function SettingsPage() {
   const { t } = useI18n();

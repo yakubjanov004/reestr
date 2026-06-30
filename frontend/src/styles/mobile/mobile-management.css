@@ -1,0 +1,54 @@
+/* Management Mobile Patch */
+@media (max-width: 768px) {
+  .mg-workspace-stats-grid,
+  .workspace-summary-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .mg-workspace-main-grid,
+  .workspace-grid {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mg-workspace-left-col,
+  .mg-workspace-right-col {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mg-role-grid,
+  .workspace-role-grid,
+  .mg-today-grid,
+  .workspace-actions {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mg-workspace-hero-content,
+  .workspace-header-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .mg-top-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .mg-workspace-stats-grid,
+  .workspace-summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

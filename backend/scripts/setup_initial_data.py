@@ -61,6 +61,7 @@ LEGACY_SEED_ANNOUNCEMENTS = (
 INITIAL_USERS = (
     {
         "username": "azizbek.karimov",
+        "phone_number": "+998900000001",
         "password": "Azizbek2026!",
         "first_name": "Azizbek",
         "last_name": "Karimov",
@@ -72,6 +73,7 @@ INITIAL_USERS = (
     },
     {
         "username": "dilshod.rahimov",
+        "phone_number": "+998900000002",
         "password": "Dilshod2026!",
         "first_name": "Dilshod",
         "last_name": "Rahimov",
@@ -83,6 +85,7 @@ INITIAL_USERS = (
     },
     {
         "username": "malika.abdullayeva",
+        "phone_number": "+998900000003",
         "password": "Malika2026!",
         "first_name": "Malika",
         "last_name": "Abdullayeva",
@@ -94,6 +97,7 @@ INITIAL_USERS = (
     },
     {
         "username": "sardor.yusupov",
+        "phone_number": "+998900000004",
         "password": "Sardor2026!",
         "first_name": "Sardor",
         "last_name": "Yusupov",
@@ -106,6 +110,7 @@ INITIAL_USERS = (
     # ── Extra operators (Toshkent shahri) ───
     {
         "username": "jasur.toshmatov",
+        "phone_number": "+998900000005",
         "password": "Jasur2026!",
         "first_name": "Jasur",
         "last_name": "Toshmatov",
@@ -117,6 +122,7 @@ INITIAL_USERS = (
     },
     {
         "username": "nodira.alimova",
+        "phone_number": "+998900000006",
         "password": "Nodira2026!",
         "first_name": "Nodira",
         "last_name": "Alimova",
@@ -129,6 +135,7 @@ INITIAL_USERS = (
     # ── Toshkent viloyati supervisor & operators ───
     {
         "username": "baxtiyor.nazarov",
+        "phone_number": "+998900000007",
         "password": "Baxtiyor2026!",
         "first_name": "Baxtiyor",
         "last_name": "Nazarov",
@@ -140,6 +147,7 @@ INITIAL_USERS = (
     },
     {
         "username": "shahlo.karimova",
+        "phone_number": "+998900000008",
         "password": "Shahlo2026!",
         "first_name": "Shahlo",
         "last_name": "Karimova",
@@ -151,6 +159,7 @@ INITIAL_USERS = (
     },
     {
         "username": "otabek.ruziyev",
+        "phone_number": "+998900000009",
         "password": "Otabek2026!",
         "first_name": "Otabek",
         "last_name": "Ruziyev",
@@ -273,6 +282,7 @@ def ensure_user(User, regions_by_name, branches_by_name, item):
     region = regions_by_name.get(item["region"])
     branch = branches_by_name.get(item["branch"]) if item["branch"] else None
     user, created = User.objects.get_or_create(username=item["username"])
+    user.phone_number = item["phone_number"]
     user.email = ""
     user.first_name = item["first_name"]
     user.last_name = item["last_name"]
@@ -285,7 +295,7 @@ def ensure_user(User, regions_by_name, branches_by_name, item):
     user.set_password(item["password"])
     user.save()
     location = branch.name if branch else region.name
-    print_status("user", f"{user.get_full_name()} ({user.username}, {user.role}, {location})", created)
+    print_status("user", f"{user.get_full_name()} ({user.username}, {user.phone_number}, {user.role}, {location})", created)
     return user
 
 
@@ -535,7 +545,7 @@ def seed_initial_data():
     print("=" * 60)
     for item, user in zip(INITIAL_USERS, users):
         location = user.branch.name if user.branch else user.region.name
-        print(f"  {user.role:12s}: {user.username} / {item['password']} / {location}")
+        print(f"  {user.role:12s}: {item['phone_number']} / {item['password']} / {location} ({user.username})")
     print("=" * 60)
 
 

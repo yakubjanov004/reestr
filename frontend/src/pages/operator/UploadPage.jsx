@@ -10,10 +10,10 @@ import {
   UploadCloud
 } from "lucide-react";
 
-import api from "../api/client.js";
-import SourceTypeTabs from "../components/SourceTypeTabs.jsx";
-import { useI18n } from "../localization/i18n.jsx";
-import { formatDateTime } from "../utils/format.js";
+import api from "../../api/client.js";
+import SourceTypeTabs from "../../components/SourceTypeTabs.jsx";
+import { useI18n } from "../../localization/i18n.jsx";
+import { formatDateTime } from "../../utils/format.js";
 
 export default function UploadPage() {
   const { t, fmt } = useI18n();

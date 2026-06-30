@@ -68,6 +68,13 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
   function renderMobileLink(item) {
     const Icon = item.icon;
     const label = item.mobileLabel || item.label;
+    const mobileClasses = [
+      "mobile-nav-link",
+      `mobile-nav-link-${linkSlug(item)}`,
+      item.mobilePrimary ? "mobile-nav-link-primary" : "",
+      item.mobileTone ? `mobile-nav-link-tone-${item.mobileTone}` : ""
+    ].filter(Boolean).join(" ");
+
     return (
       <NavLink
         key={item.to}
@@ -75,7 +82,7 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
         end={item.to === "/"}
         title={item.label}
         onClick={onClose}
-        className={({ isActive }) => linkClass(item, isActive, `mobile-nav-link mobile-nav-link-${linkSlug(item)}`)}
+        className={({ isActive }) => linkClass(item, isActive, mobileClasses)}
       >
         <Icon size={19} strokeWidth={1.8} />
         <span className="mobile-nav-label">{label}</span>
@@ -119,54 +126,6 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
           </div>
         )}
       </nav>
-
-      <div className="sidebar-mobile-panel">
-        <button
-          className="mobile-profile-card"
-          type="button"
-          onClick={openProfile}
-          title={t.layout.profile}
-        >
-          <span className="mobile-profile-icon">
-            <UserRound size={19} strokeWidth={1.8} />
-          </span>
-          <span className="mobile-profile-copy">
-            <strong>{user?.full_name || user?.username}</strong>
-            <small>{roleLongLabel(t, user)}</small>
-          </span>
-        </button>
-
-        <div className="mobile-nav-sections">
-          {topLinks && topLinks.length > 0 && (
-            <div className="mobile-nav-section">
-              <div className="mobile-nav-grid">
-                {topLinks.map(renderMobileLink)}
-              </div>
-            </div>
-          )}
-
-          {visibleSections.map((section) => (
-            <section className={`mobile-nav-section mobile-nav-section-${section.key}`} key={section.key}>
-              <p className="mobile-nav-section-title">{section.title}</p>
-              <div className="mobile-nav-grid">
-                {section.links.map(renderMobileLink)}
-              </div>
-            </section>
-          ))}
-        </div>
-
-        <div className="mobile-sidebar-bottom">
-          {bottomLinks && bottomLinks.length > 0 && (
-            <div className="mobile-utility-grid">
-              {bottomLinks.map(renderMobileLink)}
-            </div>
-          )}
-          <button className="mobile-sidebar-logout" type="button" onClick={handleLogout} title={t.layout.logout}>
-            <LogOut size={19} strokeWidth={1.8} />
-            <span>{t.layout.logoutFull}</span>
-          </button>
-        </div>
-      </div>
 
       <div className="sidebar-footer sidebar-desktop-footer">
         <button

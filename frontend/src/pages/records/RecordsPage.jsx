@@ -1,17 +1,17 @@
-import { useAuth } from "../auth/AuthContext.jsx";
+import { useAuth } from "../../auth/AuthContext.jsx";
 import {
   ROLE_ADMIN,
   ROLE_MANAGER,
   ROLE_OPERATOR,
   ROLE_SUPERVISOR,
   effectiveRole
-} from "../auth/roles.js";
-import { useI18n } from "../localization/i18n.jsx";
-import RecordDetailModal from "./records/RecordDetailModal.jsx";
-import RecordsFilters from "./records/RecordsFilters.jsx";
-import RecordsPagination from "./records/RecordsPagination.jsx";
-import RecordsTable from "./records/RecordsTable.jsx";
-import { useRecordsData } from "./records/useRecordsData.js";
+} from "../../auth/roles.js";
+import { useI18n } from "../../localization/i18n.jsx";
+import RecordDetailModal from "./RecordDetailModal.jsx";
+import RecordsFilters from "./RecordsFilters.jsx";
+import RecordsPagination from "./RecordsPagination.jsx";
+import RecordsTable from "./RecordsTable.jsx";
+import { useRecordsData } from "./useRecordsData.js";
 
 function resolveRecordsCopy(t, role) {
   if (role === ROLE_ADMIN) {

@@ -1,9 +1,26 @@
+from datetime import timedelta
+
 from django.contrib.auth.password_validation import validate_password
+from django.conf import settings
+from django.utils import timezone
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .audit import log_audit_event
-from .models import AuditLog, Branch, Region, User
+from .models import AuditLog, Branch, LoginSmsChallenge, LoginTrustedDevice, Region, User
+from .sms_login import (
+    check_sms_code,
+    hash_sms_code,
+    hash_trusted_device_token,
+    make_sms_code,
+    make_trusted_device_token,
+    mask_phone_number,
+    normalize_phone_number,
+    request_ip,
+    request_user_agent,
+    seconds_until,
+    send_login_sms,
+)
 
 
 class RegionSerializer(serializers.ModelSerializer):
@@ -30,6 +47,17 @@ def role_label(role):
     return dict(User.Role.choices).get(role, role)
 
 
+def build_token_payload(user):
+    refresh = RefreshToken.for_user(user)
+    refresh["role"] = user.role
+    refresh["username"] = user.username
+    return {
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+        "user": UserSerializer(user).data,
+    }
+
+
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     region = RegionSerializer(read_only=True)
@@ -40,6 +68,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "username",
+            "phone_number",
             "email",
             "first_name",
             "last_name",
@@ -68,6 +97,7 @@ class SelfProfileSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "username",
+            "phone_number",
             "email",
             "first_name",
             "last_name",
@@ -83,6 +113,7 @@ class SelfProfileSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "id",
             "username",
+            "phone_number",
             "full_name",
             "role",
             "region",
@@ -118,6 +149,7 @@ class PasswordChangeSerializer(serializers.Serializer):
         user = self.context["request"].user
         user.set_password(self.validated_data["new_password"])
         user.save(update_fields=["password"])
+        LoginTrustedDevice.objects.filter(user=user).update(is_active=False)
         return user
 
 
@@ -156,6 +188,7 @@ class AuditLogSerializer(serializers.ModelSerializer):
 class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False, min_length=8)
     role = serializers.ChoiceField(choices=User.Role.choices, required=False)
+    phone_number = serializers.CharField(required=False, allow_blank=True)
     region_id = serializers.PrimaryKeyRelatedField(
         queryset=Region.objects.all(),
         source="region",
@@ -178,6 +211,7 @@ class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "username",
+            "phone_number",
             "password",
             "email",
             "first_name",
@@ -195,11 +229,24 @@ class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
         validate_password(value)
         return value
 
+    def validate_phone_number(self, value):
+        phone_number = normalize_phone_number(value)
+        if not phone_number:
+            return None
+        queryset = User.objects.filter(phone_number=phone_number)
+        if self.instance is not None:
+            queryset = queryset.exclude(pk=self.instance.pk)
+        if queryset.exists():
+            raise serializers.ValidationError("Bu telefon raqami boshqa foydalanuvchiga biriktirilgan.")
+        return phone_number
+
     def validate(self, attrs):
         request = self.context["request"]
         actor = request.user
         if self.instance is None and not attrs.get("password"):
-            raise serializers.ValidationError({"password": "Password is required."})
+            raise serializers.ValidationError({"password": "Parol majburiy."})
+        if self.instance is None and not attrs.get("phone_number"):
+            raise serializers.ValidationError({"phone_number": "Telefon raqami majburiy."})
 
         role_was_submitted = "role" in attrs
         location_was_submitted = any(
@@ -282,29 +329,171 @@ class OperatorCreateUpdateSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         if password:
             instance.set_password(password)
+            LoginTrustedDevice.objects.filter(user=instance).update(is_active=False)
         instance.save()
         return instance
 
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        token["role"] = user.role
-        token["username"] = user.username
-        return token
+def trusted_device_for_token(user, token):
+    if not token:
+        return None
+    token_hash = hash_trusted_device_token(token)
+    device = LoginTrustedDevice.objects.filter(user=user, token_hash=token_hash, is_active=True).first()
+    if not device or not device.is_valid:
+        return None
+    return device
+
+
+def create_trusted_device(user, request):
+    raw_token = make_trusted_device_token()
+    now = timezone.now()
+    device = LoginTrustedDevice.objects.create(
+        user=user,
+        token_hash=hash_trusted_device_token(raw_token),
+        user_agent=request_user_agent(request),
+        last_ip=request_ip(request),
+        expires_at=now + timedelta(hours=settings.SMS_LOGIN_TRUST_HOURS),
+    )
+    return raw_token, device
+
+
+def login_metadata(request, method):
+    return {
+        "method": method,
+        "ip": request_ip(request),
+        "user_agent": request_user_agent(request)[:200],
+    }
+
+
+class SmsLoginStartSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, trim_whitespace=False)
+    trusted_device_token = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
+    default_error_messages = {
+        "invalid_credentials": "Telefon raqami yoki parol noto'g'ri.",
+    }
 
     def validate(self, attrs):
-        data = super().validate(attrs)
-        data["user"] = UserSerializer(self.user).data
-        request = self.context.get("request")
-        log_audit_event(
-            actor=self.user,
-            action="login",
-            target=self.user,
-            metadata={
-                "ip": request.META.get("REMOTE_ADDR", "") if request else "",
-                "user_agent": request.META.get("HTTP_USER_AGENT", "")[:200] if request else "",
-            },
+        phone_number = normalize_phone_number(attrs.get("phone_number"))
+        password = attrs.get("password") or ""
+        user = (
+            User.objects.select_related("region", "branch", "branch__region")
+            .filter(phone_number=phone_number, is_active=True)
+            .first()
+            if phone_number
+            else None
         )
-        return data
+        if not user or not user.check_password(password):
+            raise serializers.ValidationError({"detail": self.error_messages["invalid_credentials"]})
+        attrs["phone_number"] = phone_number
+        attrs["user"] = user
+        return attrs
+
+    def save(self, **kwargs):
+        request = self.context["request"]
+        user = self.validated_data["user"]
+        trusted_device = trusted_device_for_token(user, self.validated_data.get("trusted_device_token"))
+
+        if trusted_device:
+            now = timezone.now()
+            trusted_device.last_used_at = now
+            trusted_device.last_ip = request_ip(request)
+            trusted_device.user_agent = request_user_agent(request)
+            trusted_device.save(update_fields=["last_used_at", "last_ip", "user_agent"])
+            log_audit_event(
+                actor=user,
+                action="login",
+                target=user,
+                metadata=login_metadata(request, "trusted_device"),
+            )
+            payload = build_token_payload(user)
+            payload.update(
+                {
+                    "requires_sms": False,
+                    "trusted_device_expires_at": trusted_device.expires_at,
+                }
+            )
+            return payload
+
+        code = make_sms_code()
+        expires_at = timezone.now() + timedelta(minutes=settings.SMS_LOGIN_CODE_TTL_MINUTES)
+        delivery = send_login_sms(user.phone_number, code)
+        challenge = LoginSmsChallenge.objects.create(
+            user=user,
+            phone_number=user.phone_number,
+            challenge_token=make_trusted_device_token(),
+            code_hash=hash_sms_code(code),
+            delivery_channel=delivery["provider"],
+            expires_at=expires_at,
+        )
+        log_audit_event(
+            actor=user,
+            action="login_sms_requested",
+            target=user,
+            metadata={"method": delivery["provider"], "expires_in_seconds": seconds_until(expires_at)},
+        )
+        payload = {
+            "requires_sms": True,
+            "challenge_token": challenge.challenge_token,
+            "phone_number": mask_phone_number(user.phone_number),
+            "expires_in_seconds": seconds_until(expires_at),
+        }
+        if delivery.get("mock_code"):
+            payload["mock_code"] = delivery["mock_code"]
+        return payload
+
+
+class SmsLoginVerifySerializer(serializers.Serializer):
+    challenge_token = serializers.CharField(write_only=True)
+    code = serializers.RegexField(regex=r"^\d{6}$", write_only=True, error_messages={"invalid": "SMS kod 6 ta raqamdan iborat bo'lishi kerak."})
+
+    def validate(self, attrs):
+        challenge = (
+            LoginSmsChallenge.objects.select_related("user", "user__region", "user__branch", "user__branch__region")
+            .filter(challenge_token=attrs.get("challenge_token"))
+            .first()
+        )
+        if not challenge:
+            raise serializers.ValidationError({"detail": "SMS tasdiqlash sessiyasi topilmadi."})
+        if challenge.verified_at is not None:
+            raise serializers.ValidationError({"detail": "Bu SMS kod allaqachon ishlatilgan."})
+        if challenge.is_expired:
+            raise serializers.ValidationError({"detail": "SMS kod muddati tugagan. Qayta kod oling."})
+        if challenge.attempts >= challenge.max_attempts:
+            raise serializers.ValidationError({"detail": "Urinishlar soni tugagan. Qayta kod oling."})
+        if not challenge.user.is_active:
+            raise serializers.ValidationError({"detail": "Foydalanuvchi bloklangan."})
+        if not check_sms_code(attrs["code"], challenge.code_hash):
+            challenge.attempts += 1
+            challenge.save(update_fields=["attempts"])
+            raise serializers.ValidationError({"detail": "SMS kod noto'g'ri."})
+        attrs["challenge"] = challenge
+        attrs["user"] = challenge.user
+        return attrs
+
+    def save(self, **kwargs):
+        request = self.context["request"]
+        challenge = self.validated_data["challenge"]
+        user = self.validated_data["user"]
+        now = timezone.now()
+        challenge.verified_at = now
+        challenge.save(update_fields=["verified_at"])
+
+        trusted_token, trusted_device = create_trusted_device(user, request)
+        log_audit_event(
+            actor=user,
+            action="login",
+            target=user,
+            metadata=login_metadata(request, "sms_code"),
+        )
+        payload = build_token_payload(user)
+        payload.update(
+            {
+                "requires_sms": False,
+                "trusted_device_token": trusted_token,
+                "trusted_device_expires_at": trusted_device.expires_at,
+            }
+        )
+        return payload
+

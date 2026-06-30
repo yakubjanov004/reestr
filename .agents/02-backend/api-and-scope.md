@@ -2,7 +2,8 @@
 
 ## Endpointlar
 
-- `POST /api/auth/token/` - login.
+- `POST /api/auth/token/` - telefon/parol bilan SMS loginni boshlash yoki 24 soatlik trusted device bo'lsa token olish.
+- `POST /api/auth/token/verify/` - SMS kodni tasdiqlab JWT token olish.
 - `POST /api/auth/token/refresh/` - token refresh.
 - `GET /api/users/me/` - joriy user.
 - `PATCH /api/users/me/` - self profile update.

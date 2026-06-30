@@ -38,6 +38,7 @@ export function buildSidebarSections(t, user) {
           to: "/upload",
           label: t.layout.nav.upload,
           mobileLabel: t.layout.nav.uploadShort,
+          mobilePrimary: true,
           icon: LayoutGrid,
           roles: [ROLE_OPERATOR]
         }
@@ -53,6 +54,7 @@ export function buildSidebarSections(t, user) {
           to: "/dashboard",
           label: t.layout.nav.dashboard,
           mobileLabel: t.layout.nav.dashboard,
+          mobileTone: "overview",
           icon: ChartNoAxesColumn,
           roles: [ROLE_OPERATOR]
         },
@@ -103,6 +105,7 @@ export function buildSidebarSections(t, user) {
           to: "/dashboard",
           label: t.layout.nav.dashboard,
           mobileLabel: t.layout.nav.dashboard,
+          mobileTone: "overview",
           icon: ChartNoAxesColumn,
           roles: [ROLE_SUPERVISOR]
         },
@@ -110,6 +113,7 @@ export function buildSidebarSections(t, user) {
           to: "/supervisor-monitoring",
           label: t.layout.nav.monitoring,
           mobileLabel: t.layout.nav.monitoringShort,
+          mobilePrimary: true,
           icon: Activity,
           roles: [ROLE_SUPERVISOR]
         },
@@ -117,6 +121,7 @@ export function buildSidebarSections(t, user) {
           to: "/operators",
           label: t.layout.nav.operators,
           mobileLabel: t.layout.nav.operatorsShort,
+          mobileTone: "users",
           icon: Users,
           roles: [ROLE_SUPERVISOR]
         },
@@ -167,6 +172,7 @@ export function buildSidebarSections(t, user) {
           to: "/dashboard",
           label: t.layout.nav.dashboard,
           mobileLabel: t.layout.nav.dashboard,
+          mobileTone: "overview",
           icon: ChartNoAxesColumn,
           roles: [ROLE_MANAGER]
         },
@@ -174,6 +180,7 @@ export function buildSidebarSections(t, user) {
           to: "/manager",
           label: t.layout.nav.managerWorkspace,
           mobileLabel: t.layout.nav.managerWorkspaceShort,
+          mobilePrimary: true,
           icon: Building2,
           roles: [ROLE_MANAGER]
         },
@@ -181,6 +188,7 @@ export function buildSidebarSections(t, user) {
           to: "/operators",
           label: t.layout.nav.operators,
           mobileLabel: t.layout.nav.operatorsShort,
+          mobileTone: "users",
           icon: Users,
           roles: [ROLE_MANAGER]
         },
@@ -238,6 +246,7 @@ export function buildSidebarSections(t, user) {
           to: "/dashboard",
           label: t.layout.nav.dashboard,
           mobileLabel: t.layout.nav.dashboard,
+          mobileTone: "overview",
           icon: ChartNoAxesColumn,
           roles: [ROLE_ADMIN]
         },
@@ -245,6 +254,7 @@ export function buildSidebarSections(t, user) {
           to: "/admin-panel",
           label: t.layout.nav.adminWorkspace,
           mobileLabel: t.layout.nav.adminWorkspaceShort,
+          mobilePrimary: true,
           icon: ShieldCheck,
           roles: [ROLE_ADMIN]
         },
@@ -252,6 +262,7 @@ export function buildSidebarSections(t, user) {
           to: "/operators",
           label: t.layout.nav.operators,
           mobileLabel: t.layout.nav.operatorsShort,
+          mobileTone: "users",
           icon: Users,
           roles: [ROLE_ADMIN]
         },

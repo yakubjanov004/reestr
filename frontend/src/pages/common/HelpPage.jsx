@@ -12,16 +12,16 @@ import {
   ShieldCheck
 } from "lucide-react";
 
-import { useAuth } from "../auth/AuthContext.jsx";
+import { useAuth } from "../../auth/AuthContext.jsx";
 import {
   ROLE_ADMIN,
   ROLE_MANAGER,
   ROLE_OPERATOR,
   ROLE_SUPERVISOR,
   effectiveRole
-} from "../auth/roles.js";
-import { HELP_TRANSLATIONS } from "../localization/help.js";
-import { useI18n } from "../localization/i18n.jsx";
+} from "../../auth/roles.js";
+import { HELP_TRANSLATIONS } from "../../localization/help.js";
+import { useI18n } from "../../localization/i18n.jsx";
 
 /* ── Contact card icons by key ── */
 const CONTACT_ICONS = {

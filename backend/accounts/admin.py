@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import AuditLog, Branch, Region, User
+from .models import AuditLog, Branch, LoginSmsChallenge, LoginTrustedDevice, Region, User
 
 
 @admin.register(Region)
@@ -20,13 +20,29 @@ class BranchAdmin(admin.ModelAdmin):
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
-        ("Datan", {"fields": ("role", "region", "branch", "created_by")}),
+        ("Datan", {"fields": ("phone_number", "role", "region", "branch", "created_by")}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
-        ("Datan", {"fields": ("role", "region", "branch", "created_by")}),
+        ("Datan", {"fields": ("phone_number", "role", "region", "branch", "created_by")}),
     )
-    list_display = ("username", "email", "first_name", "last_name", "role", "region", "branch", "is_active")
+    list_display = ("username", "phone_number", "email", "first_name", "last_name", "role", "region", "branch", "is_active")
     list_filter = ("role", "region", "branch", "is_active", "is_staff")
+
+
+@admin.register(LoginSmsChallenge)
+class LoginSmsChallengeAdmin(admin.ModelAdmin):
+    list_display = ("user", "phone_number", "delivery_channel", "attempts", "created_at", "expires_at", "verified_at")
+    list_filter = ("delivery_channel", "created_at", "verified_at")
+    search_fields = ("user__username", "phone_number")
+    readonly_fields = ("user", "phone_number", "challenge_token", "code_hash", "delivery_channel", "attempts", "max_attempts", "created_at", "expires_at", "verified_at")
+
+
+@admin.register(LoginTrustedDevice)
+class LoginTrustedDeviceAdmin(admin.ModelAdmin):
+    list_display = ("user", "is_active", "last_ip", "created_at", "last_used_at", "expires_at")
+    list_filter = ("is_active", "created_at", "expires_at")
+    search_fields = ("user__username", "last_ip")
+    readonly_fields = ("user", "token_hash", "user_agent", "last_ip", "created_at", "last_used_at", "expires_at")
 
 
 @admin.register(AuditLog)

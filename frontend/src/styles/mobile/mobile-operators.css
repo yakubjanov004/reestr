@@ -1,0 +1,38 @@
+/* Operators Mobile Patch */
+@media (max-width: 768px) {
+  .operators-grid {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 24px;
+  }
+  
+  .operators-sidebar {
+    width: 100%;
+  }
+  
+  .operators-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .operator-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .operator-form label {
+    width: 100%;
+  }
+  
+  .operators-pagination {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .operators-stats {
+    grid-template-columns: 1fr;
+  }
+}

@@ -26,9 +26,8 @@ export default function Layout() {
             >
               <Menu size={18} />
             </button>
-            <div>
-              <img className="topbar-logo" src="/favicon.svg" alt="Datan" />
-              <h1>{panelTitle(t, user)}</h1>
+            <div className="topbar-brand">
+              <img className="topbar-logo-full" src="/logo.svg" alt="Datan" />
             </div>
           </div>
           <div className="user-chip">

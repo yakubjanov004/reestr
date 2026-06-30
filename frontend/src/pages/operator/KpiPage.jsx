@@ -21,11 +21,11 @@ import {
   YAxis
 } from "recharts";
 
-import { useAuth } from "../auth/AuthContext.jsx";
-import { canManageUsers, ROLE_MANAGER, ROLE_ADMIN, ROLE_SUPERVISOR } from "../auth/roles.js";
-import { useI18n } from "../localization/i18n.jsx";
-import { createDashboardModel } from "./dashboard/dashboardModel.js";
-import { useDashboardData } from "./dashboard/useDashboardData.js";
+import { useAuth } from "../../auth/AuthContext.jsx";
+import { canManageUsers, ROLE_MANAGER, ROLE_ADMIN, ROLE_SUPERVISOR } from "../../auth/roles.js";
+import { useI18n } from "../../localization/i18n.jsx";
+import { createDashboardModel } from "../dashboard/dashboardModel.js";
+import { useDashboardData } from "../dashboard/useDashboardData.js";
 
 const numberFormatter = new Intl.NumberFormat("de-DE");
 const moneyFormatter = new Intl.NumberFormat("de-DE", {
