@@ -14,12 +14,12 @@ export default function OperatorListPanel({ t, operators }) {
     }}>
       <div className="panel-heading split" style={{ padding: '20px 24px 16px', borderBottom: '1px solid #f1f5f9' }}>
         <div>
-          <p className="panel-kicker" style={{ color: 'var(--primary)', fontWeight: '700', letterSpacing: '0.05em', marginBottom: '2px', fontSize: '11px' }}>Jamoa</p>
-          <h2 style={{ fontSize: '16px', fontWeight: '800', color: 'var(--ink)' }}>Operatorlar reytingi va statistikasi</h2>
+          <p className="panel-kicker" style={{ color: 'var(--primary)', fontWeight: '700', letterSpacing: '0.05em', marginBottom: '2px', fontSize: '11px' }}>{t.dashboard.team}</p>
+          <h2 style={{ fontSize: '16px', fontWeight: '800', color: 'var(--ink)' }}>{t.dashboard.operatorRatingStats}</h2>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--primary-light)', padding: '6px 12px', borderRadius: '8px', color: 'var(--primary)' }}>
           <Users size={14} strokeWidth={2.5} />
-          <span style={{ fontWeight: '700', fontSize: '12px' }}>{operators.length} xodim</span>
+          <span style={{ fontWeight: '700', fontSize: '12px' }}>{operators.length} {t.dashboard.employeeWord}</span>
         </div>
       </div>
       
@@ -27,10 +27,10 @@ export default function OperatorListPanel({ t, operators }) {
         <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 4px' }}>
           <thead>
             <tr>
-              <th style={{ padding: '12px 16px', color: '#8a95a8', fontWeight: '600', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Operator</th>
-              <th style={{ padding: '12px 16px', textAlign: 'center', color: '#8a95a8', fontWeight: '600', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Holati</th>
-              <th style={{ padding: '12px 16px', textAlign: 'right', color: '#8a95a8', fontWeight: '600', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Yuklashlar</th>
-              <th style={{ padding: '12px 16px', textAlign: 'right', color: '#8a95a8', fontWeight: '600', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Kiritilgan (dona)</th>
+              <th style={{ padding: '12px 16px', color: '#8a95a8', fontWeight: '600', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t.common.operator}</th>
+              <th style={{ padding: '12px 16px', textAlign: 'center', color: '#8a95a8', fontWeight: '600', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t.common.status}</th>
+              <th style={{ padding: '12px 16px', textAlign: 'right', color: '#8a95a8', fontWeight: '600', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t.dashboard.uploads}</th>
+              <th style={{ padding: '12px 16px', textAlign: 'right', color: '#8a95a8', fontWeight: '600', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t.dashboard.enteredCount}</th>
             </tr>
           </thead>
           <tbody>
@@ -64,7 +64,7 @@ export default function OperatorListPanel({ t, operators }) {
                     color: op.is_active ? '#0284c7' : '#94a3b8'
                   }}>
                     {op.is_active && <Activity size={12} strokeWidth={3} />}
-                    {op.is_active ? 'Faol' : 'Nofaol'}
+                    {op.is_active ? t.common.active : t.monitoring.inactive}
                   </span>
                 </td>
                 <td style={{ padding: '10px 16px', background: '#f8fafc', textAlign: 'right' }}>

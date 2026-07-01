@@ -30,7 +30,7 @@
 @import './styles/layout/responsive-fluid.css';
 @import './styles/pages/help.css';
 @import './styles/mobile/mobile-sidebar.css';
-@import './styles/mobile/mobile-upload.css';
+/* @import './styles/mobile/mobile-upload.css'; */
 @import './styles/mobile/mobile-profile.css';
 @import './styles/mobile/mobile-dashboard.css';
 @import './styles/mobile/mobile-records.css';

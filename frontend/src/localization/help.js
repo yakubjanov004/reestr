@@ -39,6 +39,8 @@ export const HELP_TRANSLATIONS = {
     faq: {
       title: "Tez-tez so'raladigan savollar",
       description: "Sizning rolingiz bo'yicha eng ko'p beriladigan savollar va javoblar.",
+      searchPlaceholder: "Savol qidiring...",
+      empty: "Savol topilmadi",
 
       operator: {
         label: "Operator savollari",
@@ -72,12 +74,12 @@ export const HELP_TRANSLATIONS = {
       },
 
       supervisor: {
-        label: "Supervisor savollari",
+        label: "Supervayzer savollari",
         items: [
           {
             question: "Operator yarata olmayapman — sabab nima?",
             answer:
-              "Supervisor faqat o'z hududidagi filialga operator yarata oladi. Agar siz boshqa hududdagi filialga biriktirmoqchi bo'lsangiz, ruxsat berilmaydi. Shuningdek, login allaqachon band bo'lmasligi kerak."
+              "Supervayzer faqat o'z hududidagi filialga operator yarata oladi. Agar siz boshqa hududdagi filialga biriktirmoqchi bo'lsangiz, ruxsat berilmaydi. Shuningdek, login allaqachon band bo'lmasligi kerak."
           },
           {
             question: "Monitoring sahifasida operator ko'rinmayapti",
@@ -87,7 +89,7 @@ export const HELP_TRANSLATIONS = {
           {
             question: "Boshqa hududning operatorini ko'rib bo'ladimi?",
             answer:
-              "Yo'q. Supervisor faqat o'z hududidagi operator va yozuvlarni ko'radi. Bu xavfsizlik siyosati — har bir supervisor faqat o'z zonasi uchun javobgardir."
+              "Yo'q. Supervayzer faqat o'z hududidagi operator va yozuvlarni ko'radi. Bu xavfsizlik siyosati — har bir supervayzer faqat o'z hududi uchun javobgardir."
           },
           {
             question: "Operatorning parolini qanday yangilash mumkin?",
@@ -98,22 +100,22 @@ export const HELP_TRANSLATIONS = {
       },
 
       manager: {
-        label: "Manager savollari",
+        label: "Menejer savollari",
         items: [
           {
-            question: "Supervisor yaratganim filialga birikkanmi?",
+            question: "Supervayzer yaratganim filialga birikkanmi?",
             answer:
-              "Supervisor hududga biriktiriladi, filialga emas. Supervisor yaratganingizda hududni to'g'ri tanlashingiz kerak — keyin u shu hududdagi barcha filiallarga kirishga ega bo'ladi."
+              "Supervayzer hududga biriktiriladi, filialga emas. Supervayzer yaratganingizda hududni to'g'ri tanlashingiz kerak — keyin u shu hududdagi barcha filiallarga kirishga ega bo'ladi."
           },
           {
             question: "Barcha hududlar statistikasini qayerdan ko'raman?",
             answer:
-              "Manager paneli (/manager) sahifasida barcha hududlar, filiallar, operator va supervisor sonlari, bugungi faollik va top operatorlar ko'rsatiladi. Dashboard da esa grafik ko'rinishida statistika bor."
+              "Menejer paneli (/manager) sahifasida barcha hududlar, filiallar, operator va supervayzer sonlari, bugungi faollik va eng faol operatorlar ko'rsatiladi. Boshqaruv panelida esa grafik ko'rinishida statistika bor."
           },
           {
-            question: "Manager boshqa manager yarata oladimi?",
+            question: "Menejer boshqa menejer yarata oladimi?",
             answer:
-              "Yo'q. Manager faqat supervisor va operator yarata oladi. Yangi manager yaratish faqat admin huquqi bilan mumkin."
+              "Yo'q. Menejer faqat supervayzer va operator yarata oladi. Yangi menejer yaratish faqat administrator huquqi bilan mumkin."
           },
           {
             question: "Operator monitoring'da nima ko'raman?",
@@ -124,22 +126,22 @@ export const HELP_TRANSLATIONS = {
       },
 
       admin: {
-        label: "Admin savollari",
+        label: "Administrator savollari",
         items: [
           {
-            question: "Manager yaratish qanday ishlaydi?",
+            question: "Menejer yaratish qanday ishlaydi?",
             answer:
-              "Admin foydalanuvchilar sahifasida 'Yangi foydalanuvchi' tugmasini bosib manager yaratadi. Manager yaratilgach, u o'zi supervisor va operatorlarni boshqaradi."
+              "Administrator foydalanuvchilar sahifasida 'Yangi foydalanuvchi' tugmasini bosib menejer yaratadi. Menejer yaratilgach, u o'zi supervayzer va operatorlarni boshqaradi."
           },
           {
             question: "Tizimda nechta foydalanuvchi bor — qayerdan ko'raman?",
             answer:
-              "Admin paneli (/admin-panel) sahifasida barcha rollar bo'yicha foydalanuvchilar soni ko'rsatiladi: admin, manager, supervisor va operator."
+              "Administrator paneli (/admin-panel) sahifasida barcha rollar bo'yicha foydalanuvchilar soni ko'rsatiladi: administrator, menejer, supervayzer va operator."
           },
           {
-            question: "Admin barcha yozuvlarni ko'ra oladimi?",
+            question: "Administrator barcha yozuvlarni ko'ra oladimi?",
             answer:
-              "Ha, admin Dashboard va statistika sahifalarida barcha hududlar bo'yicha umumiy ma'lumotlarni ko'radi. Biroq detal reestr va batchlar admin sidebar da yo'q — chunki admin umumiy nazorat bilan shug'ullanadi."
+              "Ha, administrator boshqaruv paneli va statistika sahifalarida barcha hududlar bo'yicha umumiy ma'lumotlarni ko'radi. Biroq detal reestr va yuklashlar administrator yon panelida yo'q — chunki administrator umumiy nazorat bilan shug'ullanadi."
           }
         ]
       }
@@ -201,6 +203,8 @@ export const HELP_TRANSLATIONS = {
     faq: {
       title: "Часто задаваемые вопросы",
       description: "Наиболее частые вопросы и ответы для вашей роли.",
+      searchPlaceholder: "Поиск вопроса...",
+      empty: "Вопрос не найден",
 
       operator: {
         label: "Вопросы оператора",
@@ -270,7 +274,7 @@ export const HELP_TRANSLATIONS = {
           {
             question: "Где посмотреть статистику по всем регионам?",
             answer:
-              "На странице панели менеджера (/manager) отображаются все регионы, филиалы, количество операторов и супервайзеров, сегодняшняя активность и топ операторов. На Dashboard — графики статистики."
+              "На странице панели менеджера (/manager) отображаются все регионы, филиалы, количество операторов и супервайзеров, сегодняшняя активность и лучшие операторы. На панели управления есть статистика в виде графиков."
           },
           {
             question: "Может ли менеджер создать другого менеджера?",
@@ -296,12 +300,12 @@ export const HELP_TRANSLATIONS = {
           {
             question: "Где посмотреть количество пользователей?",
             answer:
-              "На странице панели администратора (/admin-panel) отображается количество пользователей по ролям: админ, менеджер, супервайзер и оператор."
+              "На странице панели администратора (/admin-panel) отображается количество пользователей по ролям: администратор, менеджер, супервайзер и оператор."
           },
           {
-            question: "Может ли админ видеть все записи?",
+            question: "Может ли администратор видеть все записи?",
             answer:
-              "Да, администратор видит общую информацию по всем регионам на Dashboard и статистических страницах. Однако детальный реестр и батчи отсутствуют в сайдбаре — администратор занимается общим контролем."
+              "Да, администратор видит общую информацию по всем регионам на панели управления и статистических страницах. Однако детальный реестр и загрузки отсутствуют в боковой панели — администратор занимается общим контролем."
           }
         ]
       }
@@ -363,6 +367,8 @@ export const HELP_TRANSLATIONS = {
     faq: {
       title: "Тез-тез сўраладиган саволлар",
       description: "Сизнинг ролингиз бўйича энг кўп бериладиган саволлар ва жавоблар.",
+      searchPlaceholder: "Савол қидиринг...",
+      empty: "Савол топилмади",
 
       operator: {
         label: "Оператор саволлари",
@@ -432,12 +438,12 @@ export const HELP_TRANSLATIONS = {
           {
             question: "Барча ҳудудлар статистикасини қаердан кўраман?",
             answer:
-              "Менежер панели (/manager) саҳифасида барча ҳудудлар, филиаллар, оператор ва супервайзер сонлари, бугунги фаоллик ва топ операторлар кўрсатилади. Dashboard да эса график кўринишида статистика бор."
+              "Менежер панели (/manager) саҳифасида барча ҳудудлар, филиаллар, оператор ва супервайзер сонлари, бугунги фаоллик ва энг фаол операторлар кўрсатилади. Бошқарув панелида эса график кўринишида статистика бор."
           },
           {
             question: "Менежер бошқа менежер ярата оладими?",
             answer:
-              "Йўқ. Менежер фақат супервайзер ва оператор ярата олади. Янги менежер яратиш фақат админ ҳуқуқи билан мумкин."
+              "Йўқ. Менежер фақат супервайзер ва оператор ярата олади. Янги менежер яратиш фақат администратор ҳуқуқи билан мумкин."
           },
           {
             question: "Оператор мониторингда нима кўраман?",
@@ -448,22 +454,22 @@ export const HELP_TRANSLATIONS = {
       },
 
       admin: {
-        label: "Админ саволлари",
+        label: "Администратор саволлари",
         items: [
           {
             question: "Менежер яратиш қандай ишлайди?",
             answer:
-              "Админ фойдаланувчилар саҳифасида 'Янги фойдаланувчи' тугмасини босиб менежер яратади. Менежер яратилгач, у ўзи супервайзер ва операторларни бошқаради."
+              "Администратор фойдаланувчилар саҳифасида 'Янги фойдаланувчи' тугмасини босиб менежер яратади. Менежер яратилгач, у ўзи супервайзер ва операторларни бошқаради."
           },
           {
             question: "Тизимда нечта фойдаланувчи бор — қаердан кўраман?",
             answer:
-              "Админ панели (/admin-panel) саҳифасида барча роллар бўйича фойдаланувчилар сони кўрсатилади: админ, менежер, супервайзер ва оператор."
+              "Администратор панели (/admin-panel) саҳифасида барча роллар бўйича фойдаланувчилар сони кўрсатилади: администратор, менежер, супервайзер ва оператор."
           },
           {
-            question: "Админ барча ёзувларни кўра оладими?",
+            question: "Администратор барча ёзувларни кўра оладими?",
             answer:
-              "Ҳа, админ Dashboard ва статистика саҳифаларида барча ҳудудлар бўйича умумий маълумотларни кўради. Бироқ детал реестр ва батчлар админ сайдбарда йўқ — чунки админ умумий назорат билан шуғулланади."
+              "Ҳа, администратор бошқарув панели ва статистика саҳифаларида барча ҳудудлар бўйича умумий маълумотларни кўради. Бироқ детал реестр ва юклашлар администратор ён панелида йўқ — чунки администратор умумий назорат билан шуғулланади."
           }
         ]
       }

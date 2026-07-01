@@ -32,8 +32,8 @@ function fmt(value) {
   return numberFormatter.format(Number(value || 0));
 }
 
-function fmtMoney(value) {
-  return `${moneyFormatter.format(Number(value || 0))} so'm`;
+function fmtMoney(value, currency = "so'm") {
+  return `${moneyFormatter.format(Number(value || 0))} ${currency}`;
 }
 
 function normalizeList(data) {
@@ -45,6 +45,7 @@ function normalizeList(data) {
 export default function ManagerWorkspacePage() {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const money = (value) => fmtMoney(value, t.kpi.currency);
 
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
@@ -196,8 +197,8 @@ export default function ManagerWorkspacePage() {
         <div className="mg-stat-card mg-stat-teal">
           <div className="mg-stat-icon"><TrendingUp size={20} /></div>
           <div className="mg-stat-body">
-            <span className="mg-stat-value">{fmtMoney(totalRevenue)}</span>
-            <span className="mg-stat-label">Jami tushum</span>
+            <span className="mg-stat-value">{money(totalRevenue)}</span>
+            <span className="mg-stat-label">{t.managerWorkspace.totalRevenue}</span>
           </div>
         </div>
       </div>
@@ -272,28 +273,28 @@ export default function ManagerWorkspacePage() {
           {/* ── Today activity ── */}
           <section className="panel mg-workspace-panel">
             <div className="panel-heading">
-              <h2>{t.monitoring?.todayActivity || "Bugungi faollik"}</h2>
+              <h2>{t.monitoring.todayActivity}</h2>
             </div>
             <div className="mg-today-grid">
               <div className="mg-today-card mg-today-success">
                 <CheckCircle2 size={18} />
                 <div>
                   <strong>{uploadedTodayCount}</strong>
-                  <span>{t.monitoring?.uploadedToday || "Bugun yuklagan"}</span>
+                  <span>{t.monitoring.uploadedToday}</span>
                 </div>
               </div>
               <div className="mg-today-card mg-today-warning">
                 <ShieldCheck size={18} />
                 <div>
                   <strong>{missingTodayCount}</strong>
-                  <span>{t.monitoring?.missingToday || "Bugun yuklamagan"}</span>
+                  <span>{t.monitoring.missingToday}</span>
                 </div>
               </div>
               <div className="mg-today-card mg-today-info">
                 <Database size={18} />
                 <div>
                   <strong>{fmt(totalTodayRecords)}</strong>
-                  <span>{t.monitoring?.todayImports || "Bugun import"}</span>
+                  <span>{t.monitoring.todayImports}</span>
                 </div>
               </div>
             </div>
@@ -303,7 +304,7 @@ export default function ManagerWorkspacePage() {
               onClick={() => navigate("/supervisor-monitoring")}
             >
               <Activity size={15} />
-              <span>{t.layout.nav.monitoring || "Operator monitoring"}</span>
+              <span>{t.layout.nav.monitoring}</span>
               <ArrowUpRight size={15} />
             </button>
           </section>
@@ -311,8 +312,8 @@ export default function ManagerWorkspacePage() {
           {/* ── Top operators ── */}
           <section className="panel mg-workspace-panel">
             <div className="panel-heading">
-              <h2>Top operatorlar</h2>
-              <span className="panel-badge secondary">30 kun</span>
+              <h2>{t.managerWorkspace.topOperators}</h2>
+              <span className="panel-badge secondary">{t.dashboard.last30}</span>
             </div>
             <div className="mg-top-operators">
               {topOperators.map((op, index) => (
@@ -323,9 +324,9 @@ export default function ManagerWorkspacePage() {
                   </div>
                   <div className="mg-top-identity">
                     <strong>{op.full_name || op.username}</strong>
-                    <small>{fmt(op.records_count)} yozuv</small>
+                    <small>{fmt(op.records_count)} {t.common.recordsWord}</small>
                   </div>
-                  <span className="mg-top-revenue">{fmtMoney(op.total_revenue)}</span>
+                  <span className="mg-top-revenue">{money(op.total_revenue)}</span>
                 </div>
               ))}
               {topOperators.length === 0 && (

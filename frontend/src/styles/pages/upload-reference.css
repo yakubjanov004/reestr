@@ -339,6 +339,12 @@
   }
 }
 
+@media (max-width: 768px) {
+  .upload-brief {
+    display: none !important;
+  }
+}
+
 @media (max-width: 700px) {
   .upload-page {
     padding: 18px 12px;
@@ -364,7 +370,24 @@
   }
 
   .file-drop {
-    grid-template-columns: 34px minmax(0, 1fr);
+    grid-template-columns: 56px minmax(0, 1fr);
+    justify-items: stretch;
     justify-content: stretch;
+    text-align: left;
+    gap: 14px;
+    min-height: 150px;
+    padding: 22px 18px;
+  }
+
+  .file-drop-icon {
+    width: 56px;
+    height: 56px;
+    justify-self: center;
+  }
+
+  .file-drop-icon svg {
+    width: 46px;
+    height: 46px;
+    stroke-width: 1.35;
   }
 }

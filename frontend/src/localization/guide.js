@@ -12,11 +12,11 @@ export const GUIDE_TRANSLATIONS = {
     },
     tabs: {
       operator: "Operator uchun",
-      supervisor: "Supervisor uchun",
-      manager: "Manager uchun",
-      admin: "Admin uchun"
+      supervisor: "Supervayzer uchun",
+      manager: "Menejer uchun",
+      admin: "Administrator uchun"
     },
-    roleNote: "Supervisor bo'limidagi amallar faqat supervisor huquqi bor foydalanuvchilarda ochiladi.",
+    roleNote: "Supervayzer bo'limidagi amallar faqat supervayzer huquqi bor foydalanuvchilarda ochiladi.",
     whatSystemDoes: {
       title: "Sayt nima ish qiladi?",
       items: [
@@ -72,16 +72,16 @@ export const GUIDE_TRANSLATIONS = {
         ]
       },
       supervisor: {
-        title: "Supervisor qo'llanmasi",
+        title: "Supervayzer qo'llanmasi",
         intro:
-          "Supervisor o'z hududidagi operatorlar ish jarayonini kuzatadi, operator yaratadi, audit loglarni ko'radi va statistikani nazorat qiladi.",
-        checklistTitle: "Supervisor ketma-ketligi",
+          "Supervayzer o'z hududidagi operatorlar ish jarayonini kuzatadi, operator yaratadi, audit jurnalini ko'radi va statistikani nazorat qiladi.",
+        checklistTitle: "Supervayzer ketma-ketligi",
         checklist: [
-          "Dashboard orqali umumiy import holatini va operator faolligini tekshiring.",
+          "Boshqaruv paneli orqali umumiy import holatini va operator faolligini tekshiring.",
           "Faqat o'zingizga biriktirilgan hududdagi operatorlar ro'yxatini nazorat qiling.",
           "Foydalanuvchilar sahifasida operator yarating va hududingizdagi filialga biriktiring.",
           "Kerak bo'lsa foydalanuvchini bloklang, aktivlang yoki parolini yangilang.",
-          "Audit log orqali o'z hududingizdagi operatorlarning login, upload va foydalanuvchi amallarini tekshiring.",
+          "Audit jurnali orqali o'z hududingizdagi operatorlarning login, yuklash va foydalanuvchi amallarini tekshiring.",
           "Yuklashlar tarixi va reestr sahifalarida import tafsilotlarini tekshiring."
         ],
         steps: [
@@ -89,19 +89,19 @@ export const GUIDE_TRANSLATIONS = {
             icon: "dashboard",
             title: "1. Statistikani kuzatish",
             text:
-              "Dashboard umumiy reestr soni, yuklashlar, oxirgi 30 kun importi va operator reytingini ko'rsatadi.",
+              "Boshqaruv paneli umumiy reestr soni, yuklashlar, oxirgi 30 kun importi va operator reytingini ko'rsatadi.",
             screen: "dashboard"
           },
           {
             icon: "users",
             title: "2. Foydalanuvchilarni boshqarish",
             text:
-              "Yangi operator yarating va faqat o'zingizga biriktirilgan hududdagi filialga biriktiring. Supervisor boshqa supervisor yoki manager yarata olmaydi.",
+              "Yangi operator yarating va faqat o'zingizga biriktirilgan hududdagi filialga biriktiring. Supervayzer boshqa supervayzer yoki menejer yarata olmaydi.",
             screen: "users"
           },
           {
             icon: "audit",
-            title: "3. Audit loglarni tekshirish",
+            title: "3. Audit jurnalini tekshirish",
             text:
               "Kim tizimga kirgani, kim fayl yuklagani va foydalanuvchi bo'yicha qanday amal bajarilgani auditda ko'rinadi.",
             screen: "audit"
@@ -116,38 +116,38 @@ export const GUIDE_TRANSLATIONS = {
         ]
       },
       manager: {
-        title: "Manager qo'llanmasi",
+        title: "Menejer qo'llanmasi",
         intro:
-          "Manager barcha hududlar bo'yicha supervisor va operatorlarni boshqaradi, lekin manager yoki admin yarata olmaydi.",
-        checklistTitle: "Manager ketma-ketligi",
+          "Menejer barcha hududlar bo'yicha supervayzer va operatorlarni boshqaradi, lekin menejer yoki administrator yarata olmaydi.",
+        checklistTitle: "Menejer ketma-ketligi",
         checklist: [
-          "Manager panelida hududlar, filiallar va past rollar bo'yicha umumiy holatni ko'ring.",
-          "Dashboardda barcha hududlar bo'yicha import, operator faolligi va yuklash trendlarini kuzating.",
-          "Foydalanuvchilar sahifasida supervisor yoki operator yarating.",
-          "Supervisorni hududga, operatorni esa filialga to'g'ri biriktiring.",
+          "Menejer panelida hududlar, filiallar va past rollar bo'yicha umumiy holatni ko'ring.",
+          "Boshqaruv panelida barcha hududlar bo'yicha import, operator faolligi va yuklash trendlarini kuzating.",
+          "Foydalanuvchilar sahifasida supervayzer yoki operator yarating.",
+          "Supervayzerni hududga, operatorni esa filialga to'g'ri biriktiring.",
           "Auditda faqat o'zingizdan past rollar bo'yicha amallarni tekshiring.",
           "Reestr va yuklashlar tarixida barcha hududlar bo'yicha import tafsilotlarini nazorat qiling."
         ],
         steps: [
           {
             icon: "dashboard",
-            title: "1. Manager panelini kuzatish",
+            title: "1. Menejer panelini kuzatish",
             text:
-              "Manager paneli barcha hududlar, filiallar, supervisorlar va operatorlar bo'yicha umumiy nazorat oynasidir.",
+              "Menejer paneli barcha hududlar, filiallar, supervayzerlar va operatorlar bo'yicha umumiy nazorat oynasidir.",
             screen: "dashboard"
           },
           {
             icon: "users",
-            title: "2. Supervisor yoki operator yaratish",
+            title: "2. Supervayzer yoki operator yaratish",
             text:
-              "Manager supervisor va operator yaratadi. Manager manager yarata olmaydi, admin huquqlariga kirmaydi.",
+              "Menejer supervayzer va operator yaratadi. Menejer menejer yarata olmaydi, administrator huquqlariga kirmaydi.",
             screen: "users"
           },
           {
             icon: "audit",
             title: "3. Past rollar auditini ko'rish",
             text:
-              "Auditda supervisor va operatorlar bajargan amallar ko'rinadi. Manager o'zidan yuqori yoki teng rolni boshqarmaydi.",
+              "Auditda supervayzer va operatorlar bajargan amallar ko'rinadi. Menejer o'zidan yuqori yoki teng rolni boshqarmaydi.",
             screen: "audit"
           },
           {
@@ -160,38 +160,38 @@ export const GUIDE_TRANSLATIONS = {
         ]
       },
       admin: {
-        title: "Admin qo'llanmasi",
+        title: "Administrator qo'llanmasi",
         intro:
-          "Admin tizimdagi barcha foydalanuvchilarni ko'radi, manager yaratadi va umumiy audit nazoratini olib boradi.",
-        checklistTitle: "Admin ketma-ketligi",
+          "Administrator tizimdagi barcha foydalanuvchilarni ko'radi, menejer yaratadi va umumiy audit nazoratini olib boradi.",
+        checklistTitle: "Administrator ketma-ketligi",
         checklist: [
-          "Admin panelida tizimdagi umumiy foydalanuvchilar va rollar holatini ko'ring.",
-          "Foydalanuvchilar sahifasida yangi manager yarating.",
-          "Manager, supervisor va operatorlar ro'yxatini umumiy nazorat qiling.",
+          "Administrator panelida tizimdagi umumiy foydalanuvchilar va rollar holatini ko'ring.",
+          "Foydalanuvchilar sahifasida yangi menejer yarating.",
+          "Menejer, supervayzer va operatorlar ro'yxatini umumiy nazorat qiling.",
           "Auditda barcha rollar bo'yicha muhim amallarni tekshiring.",
           "Reestr va yuklashlar tarixida umumiy import holatini kuzating.",
-          "Manager yaratishdan tashqari past rollar boshqaruvini manager va supervisor vakolatlariga qoldiring."
+          "Menejer yaratishdan tashqari past rollar boshqaruvini menejer va supervayzer vakolatlariga qoldiring."
         ],
         steps: [
           {
             icon: "dashboard",
-            title: "1. Admin panelini kuzatish",
+            title: "1. Administrator panelini kuzatish",
             text:
-              "Admin paneli managerlar, past rollar, umumiy reestr va tizim nazorati uchun yuqori darajadagi oynadir.",
+              "Administrator paneli menejerlar, past rollar, umumiy reestr va tizim nazorati uchun yuqori darajadagi oynadir.",
             screen: "dashboard"
           },
           {
             icon: "users",
-            title: "2. Manager yaratish",
+            title: "2. Menejer yaratish",
             text:
-              "Admin foydalanuvchilar sahifasida manager yaratadi. Managerlar keyin supervisor va operatorlarni boshqaradi.",
+              "Administrator foydalanuvchilar sahifasida menejer yaratadi. Menejerlar keyin supervayzer va operatorlarni boshqaradi.",
             screen: "users"
           },
           {
             icon: "audit",
             title: "3. To'liq auditni tekshirish",
             text:
-              "Admin auditda manager, supervisor va operatorlar bajargan asosiy amallarni to'liq ko'radi.",
+              "Administrator auditda menejer, supervayzer va operatorlar bajargan asosiy amallarni to'liq ko'radi.",
             screen: "audit"
           },
           {
@@ -224,7 +224,11 @@ export const GUIDE_TRANSLATIONS = {
       records: {
         title: "Reestr yozuvlari",
         search: "Mijoz, telefon, login...",
-        columns: ["Mijoz", "Tur", "Region", "Status", "Import"]
+        columns: ["Mijoz", "Tur", "Region", "Status", "Import"],
+        rows: [
+          ["Abd***", "Mobil", "Toshkent", "Tayyor", "23.06"],
+          ["Kar***", "Internet", "Samarqand", "Tayyor", "23.06"]
+        ]
       },
       privacy: {
         title: "Maxfiylik qoidalari",
@@ -233,7 +237,7 @@ export const GUIDE_TRANSLATIONS = {
         white: "Asl qiymat"
       },
       dashboard: {
-        title: "Dashboard",
+        title: "Boshqaruv paneli",
         cards: ["Jami reestr", "Yuklashlar", "Operatorlar", "30 kun"]
       },
       users: {
@@ -242,12 +246,20 @@ export const GUIDE_TRANSLATIONS = {
         table: "Operatorlar ro'yxati"
       },
       audit: {
-        title: "Audit log",
-        columns: ["Sana", "Foydalanuvchi", "Amal", "Tafsilot"]
+        title: "Audit jurnali",
+        columns: ["Sana", "Foydalanuvchi", "Amal", "Tafsilot"],
+        rows: [
+          ["23.06", "Administrator", "Import", "Tayyor"],
+          ["23.06", "Operator", "Login", "IP"]
+        ]
       },
       batches: {
         title: "Yuklashlar tarixi",
-        columns: ["Fayl", "Operator", "Import", "Muammo"]
+        columns: ["Fayl", "Operator", "Import", "Muammo"],
+        rows: [
+          ["reestr.xlsx", "Operator", "124", "0"],
+          ["internet.xlsx", "Supervayzer", "98", "1"]
+        ]
       }
     }
   },
@@ -264,11 +276,11 @@ export const GUIDE_TRANSLATIONS = {
     },
     tabs: {
       operator: "Оператор учун",
-      supervisor: "Супервизор учун",
+      supervisor: "Супервайзер учун",
       manager: "Менежер учун",
-      admin: "Админ учун"
+      admin: "Администратор учун"
     },
-    roleNote: "Супервизор бўлимидаги амаллар фақат supervisor ҳуқуқи бор фойдаланувчиларда очилади.",
+    roleNote: "Супервайзер бўлимидаги амаллар фақат супервайзер ҳуқуқи бор фойдаланувчиларда очилади.",
     whatSystemDoes: {
       title: "Сайт нима иш қилади?",
       items: [
@@ -324,16 +336,16 @@ export const GUIDE_TRANSLATIONS = {
         ]
       },
       supervisor: {
-        title: "Супервизор қўлланмаси",
+        title: "Супервайзер қўлланмаси",
         intro:
-          "Супервизор ўзига бириктирилган ҳудуддаги операторлар иш жараёнини кузатади, оператор яратади, audit logларни кўради ва статистикани назорат қилади.",
-        checklistTitle: "Супервизор кетма-кетлиги",
+          "Супервайзер ўзига бириктирилган ҳудуддаги операторлар иш жараёнини кузатади, оператор яратади, аудит журналини кўради ва статистикани назорат қилади.",
+        checklistTitle: "Супервайзер кетма-кетлиги",
         checklist: [
-          "Dashboard орқали умумий импорт ҳолатини ва оператор фаоллигини текширинг.",
+          "Бошқарув панели орқали умумий импорт ҳолатини ва оператор фаоллигини текширинг.",
           "Фақат ўзингизга бириктирилган ҳудуддаги операторлар рўйхатини назорат қилинг.",
           "Фойдаланувчилар саҳифасида оператор яратинг ва ҳудудингиздаги филиалга бириктиринг.",
           "Керак бўлса фойдаланувчини блокланг, активланг ёки паролини янгиланг.",
-          "Audit log орқали ўз ҳудудингиздаги операторларнинг login, upload ва фойдаланувчи амалларини текширинг.",
+          "Аудит журнали орқали ўз ҳудудингиздаги операторларнинг логин, юклаш ва фойдаланувчи амалларини текширинг.",
           "Юклашлар тарихи ва реестр саҳифаларида импорт тафсилотларини текширинг."
         ],
         steps: [
@@ -341,19 +353,19 @@ export const GUIDE_TRANSLATIONS = {
             icon: "dashboard",
             title: "1. Статистикани кузатиш",
             text:
-              "Dashboard умумий реестр сони, юклашлар, охирги 30 кун импорти ва оператор рейтингини кўрсатади.",
+              "Бошқарув панели умумий реестр сони, юклашлар, охирги 30 кун импорти ва оператор рейтингини кўрсатади.",
             screen: "dashboard"
           },
           {
             icon: "users",
             title: "2. Фойдаланувчиларни бошқариш",
             text:
-              "Янги оператор яратинг ва фақат ўзингизга бириктирилган ҳудуддаги филиалга бириктиринг. Супервизор бошқа супервизор ёки менежер ярата олмайди.",
+              "Янги оператор яратинг ва фақат ўзингизга бириктирилган ҳудуддаги филиалга бириктиринг. Супервайзер бошқа супервайзер ёки менежер ярата олмайди.",
             screen: "users"
           },
           {
             icon: "audit",
-            title: "3. Audit logларни текшириш",
+            title: "3. Аудит журналини текшириш",
             text:
               "Ким тизимга киргани, ким файл юклагани ва фойдаланувчи бўйича қандай амал бажарилгани auditда кўринади.",
             screen: "audit"
@@ -370,13 +382,13 @@ export const GUIDE_TRANSLATIONS = {
       manager: {
         title: "Менежер қўлланмаси",
         intro:
-          "Менежер барча ҳудудлар бўйича супервизор ва операторларни бошқаради, лекин менежер ёки админ ярата олмайди.",
+          "Менежер барча ҳудудлар бўйича супервайзер ва операторларни бошқаради, лекин менежер ёки администратор ярата олмайди.",
         checklistTitle: "Менежер кетма-кетлиги",
         checklist: [
           "Менежер панелида ҳудудлар, филиаллар ва паст роллар бўйича умумий ҳолатни кўринг.",
-          "Dashboardда барча ҳудудлар бўйича импорт, оператор фаоллиги ва юклаш trendларини кузатинг.",
-          "Фойдаланувчилар саҳифасида супервизор ёки оператор яратинг.",
-          "Супервизорни ҳудудга, операторни эса филиалга тўғри бириктиринг.",
+          "Бошқарув панелида барча ҳудудлар бўйича импорт, оператор фаоллиги ва юклаш трендларини кузатинг.",
+          "Фойдаланувчилар саҳифасида супервайзер ёки оператор яратинг.",
+          "Супервайзерни ҳудудга, операторни эса филиалга тўғри бириктиринг.",
           "Auditда фақат ўзингиздан паст роллар бўйича амалларни текширинг.",
           "Реестр ва юклашлар тарихида барча ҳудудлар бўйича импорт тафсилотларини назорат қилинг."
         ],
@@ -385,21 +397,21 @@ export const GUIDE_TRANSLATIONS = {
             icon: "dashboard",
             title: "1. Менежер панелини кузатиш",
             text:
-              "Менежер панели барча ҳудудлар, филиаллар, супервизорлар ва операторлар бўйича умумий назорат ойнасидир.",
+              "Менежер панели барча ҳудудлар, филиаллар, супервайзерлар ва операторлар бўйича умумий назорат ойнасидир.",
             screen: "dashboard"
           },
           {
             icon: "users",
-            title: "2. Супервизор ёки оператор яратиш",
+            title: "2. Супервайзер ёки оператор яратиш",
             text:
-              "Менежер супервизор ва оператор яратади. Менежер менежер ярата олмайди, админ ҳуқуқларига кирмайди.",
+              "Менежер супервайзер ва оператор яратади. Менежер менежер ярата олмайди, администратор ҳуқуқларига кирмайди.",
             screen: "users"
           },
           {
             icon: "audit",
             title: "3. Паст роллар auditини кўриш",
             text:
-              "Auditда супервизор ва операторлар бажарган амаллар кўринади. Менежер ўзидан юқори ёки тенг ролни бошқармайди.",
+              "Аудитда супервайзер ва операторлар бажарган амаллар кўринади. Менежер ўзидан юқори ёки тенг ролни бошқармайди.",
             screen: "audit"
           },
           {
@@ -412,38 +424,38 @@ export const GUIDE_TRANSLATIONS = {
         ]
       },
       admin: {
-        title: "Админ қўлланмаси",
+        title: "Администратор қўлланмаси",
         intro:
-          "Админ тизимдаги барча фойдаланувчиларни кўради, менежер яратади ва умумий audit назоратини олиб боради.",
-        checklistTitle: "Админ кетма-кетлиги",
+          "Администратор тизимдаги барча фойдаланувчиларни кўради, менежер яратади ва умумий аудит назоратини олиб боради.",
+        checklistTitle: "Администратор кетма-кетлиги",
         checklist: [
-          "Админ панелида тизимдаги умумий фойдаланувчилар ва роллар ҳолатини кўринг.",
+          "Администратор панелида тизимдаги умумий фойдаланувчилар ва роллар ҳолатини кўринг.",
           "Фойдаланувчилар саҳифасида янги менежер яратинг.",
-          "Менежер, супервизор ва операторлар рўйхатини умумий назорат қилинг.",
-          "Auditда барча роллар бўйича муҳим амалларни текширинг.",
+          "Менежер, супервайзер ва операторлар рўйхатини умумий назорат қилинг.",
+          "Аудитда барча роллар бўйича муҳим амалларни текширинг.",
           "Реестр ва юклашлар тарихида умумий импорт ҳолатини кузатинг.",
-          "Менежер яратишдан ташқари паст роллар бошқарувини менежер ва супервизор ваколатларига қолдиринг."
+          "Менежер яратишдан ташқари паст роллар бошқарувини менежер ва супервайзер ваколатларига қолдиринг."
         ],
         steps: [
           {
             icon: "dashboard",
-            title: "1. Админ панелини кузатиш",
+            title: "1. Администратор панелини кузатиш",
             text:
-              "Админ панели менежерлар, паст роллар, умумий реестр ва тизим назорати учун юқори даражадаги ойнадир.",
+              "Администратор панели менежерлар, паст роллар, умумий реестр ва тизим назорати учун юқори даражадаги ойнадир.",
             screen: "dashboard"
           },
           {
             icon: "users",
             title: "2. Менежер яратиш",
             text:
-              "Админ фойдаланувчилар саҳифасида менежер яратади. Менежерлар кейин супервизор ва операторларни бошқаради.",
+              "Администратор фойдаланувчилар саҳифасида менежер яратади. Менежерлар кейин супервайзер ва операторларни бошқаради.",
             screen: "users"
           },
           {
             icon: "audit",
             title: "3. Тўлиқ auditни текшириш",
             text:
-              "Админ auditда менежер, супервизор ва операторлар бажарган асосий амалларни тўлиқ кўради.",
+              "Администратор аудитда менежер, супервайзер ва операторлар бажарган асосий амалларни тўлиқ кўради.",
             screen: "audit"
           },
           {
@@ -476,7 +488,11 @@ export const GUIDE_TRANSLATIONS = {
       records: {
         title: "Реестр ёзувлари",
         search: "Мижоз, телефон, логин...",
-        columns: ["Мижоз", "Тур", "Регион", "Статус", "Импорт"]
+        columns: ["Мижоз", "Тур", "Регион", "Статус", "Импорт"],
+        rows: [
+          ["Абд***", "Мобил", "Тошкент", "Тайёр", "23.06"],
+          ["Кар***", "Интернет", "Самарқанд", "Тайёр", "23.06"]
+        ]
       },
       privacy: {
         title: "Махфийлик қоидалари",
@@ -485,7 +501,7 @@ export const GUIDE_TRANSLATIONS = {
         white: "Асл қиймат"
       },
       dashboard: {
-        title: "Dashboard",
+        title: "Бошқарув панели",
         cards: ["Жами реестр", "Юклашлар", "Операторлар", "30 кун"]
       },
       users: {
@@ -494,12 +510,20 @@ export const GUIDE_TRANSLATIONS = {
         table: "Операторлар рўйхати"
       },
       audit: {
-        title: "Audit log",
-        columns: ["Сана", "Фойдаланувчи", "Амал", "Тафсилот"]
+        title: "Аудит журнали",
+        columns: ["Сана", "Фойдаланувчи", "Амал", "Тафсилот"],
+        rows: [
+          ["23.06", "Администратор", "Импорт", "Тайёр"],
+          ["23.06", "Оператор", "Логин", "IP"]
+        ]
       },
       batches: {
         title: "Юклашлар тарихи",
-        columns: ["Файл", "Оператор", "Импорт", "Муаммо"]
+        columns: ["Файл", "Оператор", "Импорт", "Муаммо"],
+        rows: [
+          ["reestr.xlsx", "Оператор", "124", "0"],
+          ["internet.xlsx", "Супервайзер", "98", "1"]
+        ]
       }
     }
   },
@@ -518,7 +542,7 @@ export const GUIDE_TRANSLATIONS = {
       operator: "Для оператора",
       supervisor: "Для супервизора",
       manager: "Для менеджера",
-      admin: "Для админа"
+      admin: "Для администратора"
     },
     roleNote: "Действия из раздела супервизора доступны только пользователям с правами supervisor.",
     whatSystemDoes: {
@@ -578,14 +602,14 @@ export const GUIDE_TRANSLATIONS = {
       supervisor: {
         title: "Инструкция супервизора",
         intro:
-          "Супервизор контролирует операторов в своем регионе, создает операторов, просматривает audit log и следит за статистикой.",
+          "Супервизор контролирует операторов в своем регионе, создает операторов, просматривает журнал аудита и следит за статистикой.",
         checklistTitle: "Последовательность супервизора",
         checklist: [
-          "Проверьте общий импорт и активность операторов на Dashboard.",
+          "Проверьте общий импорт и активность операторов на панели управления.",
           "Контролируйте только операторов из закрепленного за вами региона.",
           "Создавайте операторов на странице пользователей и привязывайте их к филиалам своего региона.",
           "При необходимости блокируйте, активируйте пользователя или обновляйте пароль.",
-          "Проверяйте входы, загрузки и действия операторов своего региона через Audit log.",
+          "Проверяйте входы, загрузки и действия операторов своего региона через журнал аудита.",
           "Смотрите детали импорта в истории загрузок и реестре."
         ],
         steps: [
@@ -593,7 +617,7 @@ export const GUIDE_TRANSLATIONS = {
             icon: "dashboard",
             title: "1. Контроль статистики",
             text:
-              "Dashboard показывает общее число записей, загрузки, импорт за последние 30 дней и рейтинг операторов.",
+              "Панель управления показывает общее число записей, загрузки, импорт за последние 30 дней и рейтинг операторов.",
             screen: "dashboard"
           },
           {
@@ -605,9 +629,9 @@ export const GUIDE_TRANSLATIONS = {
           },
           {
             icon: "audit",
-            title: "3. Проверка Audit log",
+            title: "3. Проверка журнала аудита",
             text:
-              "В audit видно, кто вошел в систему, кто загрузил файл и какие действия были выполнены по пользователям.",
+              "В аудите видно, кто вошел в систему, кто загрузил файл и какие действия были выполнены по пользователям.",
             screen: "audit"
           },
           {
@@ -622,11 +646,11 @@ export const GUIDE_TRANSLATIONS = {
       manager: {
         title: "Инструкция менеджера",
         intro:
-          "Менеджер управляет супервизорами и операторами по всем регионам, но не создает менеджеров или админов.",
+          "Менеджер управляет супервизорами и операторами по всем регионам, но не создает менеджеров или администраторов.",
         checklistTitle: "Последовательность менеджера",
         checklist: [
           "В панели менеджера смотрите общее состояние по регионам, филиалам и нижним ролям.",
-          "На Dashboard контролируйте импорт, активность операторов и тренды загрузок по всем регионам.",
+          "На панели управления контролируйте импорт, активность операторов и тренды загрузок по всем регионам.",
           "На странице пользователей создавайте супервизоров или операторов.",
           "Привязывайте супервизора к региону, а оператора к филиалу.",
           "В Audit проверяйте действия только нижних ролей.",
@@ -644,14 +668,14 @@ export const GUIDE_TRANSLATIONS = {
             icon: "users",
             title: "2. Создание супервизора или оператора",
             text:
-              "Менеджер создает супервизоров и операторов. Менеджер не создает менеджеров и не получает права админа.",
+              "Менеджер создает супервизоров и операторов. Менеджер не создает менеджеров и не получает права администратора.",
             screen: "users"
           },
           {
             icon: "audit",
             title: "3. Просмотр аудита нижних ролей",
             text:
-              "В Audit видны действия супервизоров и операторов. Менеджер не управляет равными или более высокими ролями.",
+              "В аудите видны действия супервизоров и операторов. Менеджер не управляет равными или более высокими ролями.",
             screen: "audit"
           },
           {
@@ -664,38 +688,38 @@ export const GUIDE_TRANSLATIONS = {
         ]
       },
       admin: {
-        title: "Инструкция админа",
+        title: "Инструкция администратора",
         intro:
-          "Админ видит всех пользователей, создает менеджеров и контролирует общий audit системы.",
-        checklistTitle: "Последовательность админа",
+          "Администратор видит всех пользователей, создает менеджеров и контролирует общий аудит системы.",
+        checklistTitle: "Последовательность администратора",
         checklist: [
-          "В панели админа смотрите общее состояние пользователей и ролей.",
+          "В панели администратора смотрите общее состояние пользователей и ролей.",
           "На странице пользователей создавайте нового менеджера.",
           "Контролируйте общий список менеджеров, супервизоров и операторов.",
-          "В Audit проверяйте важные действия по всем ролям.",
+          "В аудите проверяйте важные действия по всем ролям.",
           "В реестре и истории загрузок следите за общим состоянием импорта.",
           "Управление нижними ролями после создания менеджера оставляйте полномочиям менеджера и супервизора."
         ],
         steps: [
           {
             icon: "dashboard",
-            title: "1. Контроль панели админа",
+            title: "1. Контроль панели администратора",
             text:
-              "Панель админа предназначена для верхнего уровня контроля менеджеров, нижних ролей, реестра и системы.",
+              "Панель администратора предназначена для верхнего уровня контроля менеджеров, нижних ролей, реестра и системы.",
             screen: "dashboard"
           },
           {
             icon: "users",
             title: "2. Создание менеджера",
             text:
-              "Админ создает менеджеров на странице пользователей. После этого менеджеры управляют супервизорами и операторами.",
+              "Администратор создает менеджеров на странице пользователей. После этого менеджеры управляют супервизорами и операторами.",
             screen: "users"
           },
           {
             icon: "audit",
-            title: "3. Проверка полного Audit",
+            title: "3. Проверка полного аудита",
             text:
-              "Админ видит основные действия менеджеров, супервизоров и операторов в полном audit log.",
+              "Администратор видит основные действия менеджеров, супервизоров и операторов в полном журнале аудита.",
             screen: "audit"
           },
           {
@@ -728,7 +752,11 @@ export const GUIDE_TRANSLATIONS = {
       records: {
         title: "Записи реестра",
         search: "Клиент, телефон, логин...",
-        columns: ["Клиент", "Тип", "Регион", "Статус", "Импорт"]
+        columns: ["Клиент", "Тип", "Регион", "Статус", "Импорт"],
+        rows: [
+          ["Абд***", "Мобильный", "Ташкент", "Готово", "23.06"],
+          ["Кар***", "Интернет", "Самарканд", "Готово", "23.06"]
+        ]
       },
       privacy: {
         title: "Правила приватности",
@@ -737,7 +765,7 @@ export const GUIDE_TRANSLATIONS = {
         white: "Исходное значение"
       },
       dashboard: {
-        title: "Dashboard",
+        title: "Панель управления",
         cards: ["Всего", "Загрузки", "Операторы", "30 дней"]
       },
       users: {
@@ -746,12 +774,20 @@ export const GUIDE_TRANSLATIONS = {
         table: "Список операторов"
       },
       audit: {
-        title: "Audit log",
-        columns: ["Дата", "Пользователь", "Действие", "Детали"]
+        title: "Журнал аудита",
+        columns: ["Дата", "Пользователь", "Действие", "Детали"],
+        rows: [
+          ["23.06", "Администратор", "Импорт", "Готово"],
+          ["23.06", "Оператор", "Вход", "IP"]
+        ]
       },
       batches: {
         title: "История загрузок",
-        columns: ["Файл", "Оператор", "Импорт", "Проблема"]
+        columns: ["Файл", "Оператор", "Импорт", "Проблема"],
+        rows: [
+          ["reestr.xlsx", "Оператор", "124", "0"],
+          ["internet.xlsx", "Супервизор", "98", "1"]
+        ]
       }
     }
   }

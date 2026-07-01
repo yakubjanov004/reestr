@@ -140,7 +140,7 @@ export default function UploadPage() {
           <form className="upload-form" onSubmit={handleSubmit}>
             <div className="form-block upload-source-block">
               <div className="source-block-header">
-                <span className="field-title">REESTR TURI</span>
+                <span className="field-title">{t.source.registryType}</span>
               </div>
               <SourceTypeTabs value={sourceType} onChange={setSourceType} />
             </div>
@@ -154,11 +154,11 @@ export default function UploadPage() {
                 <UploadCloud size={80} />
               </span>
               <div className="file-info">
-                <span>{file ? file.name : "Excel faylini shu yerga tashlang yoki bosing"}</span>
+                <span>{file ? file.name : t.upload.chooseFile}</span>
                 <small>
                   {file
                     ? `${(file.size / 1024).toFixed(1)} KB`
-                    : "Ruxsat etilgan formatlar: .xlsx, .xlsm"}
+                    : t.upload.allowedFormats}
                 </small>
               </div>
               <input

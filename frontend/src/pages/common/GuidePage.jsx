@@ -119,8 +119,11 @@ function ScreenshotMock({ type, copy }) {
           <div>
             {s.columns.map((column) => <span key={column}>{column}</span>)}
           </div>
-          <div><span>Abd***</span><span>Mobil</span><span>Toshkent</span><span>OK</span><span>23.06</span></div>
-          <div><span>Kar***</span><span>Internet</span><span>Samarqand</span><span>OK</span><span>23.06</span></div>
+          {s.rows.map((row) => (
+            <div key={row.join("-")}>
+              {row.map((cell) => <span key={cell}>{cell}</span>)}
+            </div>
+          ))}
         </div>
       </MiniBrowser>
     );
@@ -175,8 +178,11 @@ function ScreenshotMock({ type, copy }) {
           <div>
             {s.columns.map((column) => <span key={column}>{column}</span>)}
           </div>
-          <div><span>23.06</span><span>admin</span><span>Import</span><span>OK</span></div>
-          <div><span>23.06</span><span>operator</span><span>Login</span><span>IP</span></div>
+          {s.rows.map((row) => (
+            <div key={row.join("-")}>
+              {row.map((cell) => <span key={cell}>{cell}</span>)}
+            </div>
+          ))}
         </div>
       </MiniBrowser>
     );
@@ -222,7 +228,7 @@ export default function GuidePage() {
             <small>{copy.stats.steps}</small>
           </div>
           <div className="guide-hero-stat">
-            <strong>UZ/RU</strong>
+            <strong>3</strong>
             <small>{copy.stats.language}</small>
           </div>
         </div>
@@ -237,7 +243,7 @@ export default function GuidePage() {
         <div className="guide-checklist-head">
           <div>
             <h2>{guide.checklistTitle}</h2>
-            <p>{copy.description || "Tizimdan foydalanish bo'yicha ketma-ket qadamlar."}</p>
+            <p>{copy.description}</p>
           </div>
           <ListChecks size={20} className="guide-checklist-icon" />
         </div>

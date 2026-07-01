@@ -174,7 +174,7 @@ export default function HelpPage() {
             <Search size={15} />
             <input
               type="text"
-              placeholder="Savol qidiring..."
+              placeholder={copy.faq.searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -190,7 +190,7 @@ export default function HelpPage() {
           ) : (
             <div className="help-faq-empty">
               <HelpCircle size={32} />
-              <p>Savol topilmadi</p>
+              <p>{copy.faq.empty}</p>
             </div>
           )}
         </div>

@@ -48,74 +48,21 @@ const numberFormatter = new Intl.NumberFormat("de-DE");
 const moneyFormatter = new Intl.NumberFormat("de-DE", {
   maximumFractionDigits: 0
 });
-const UZBEK_MONTHS = [
-  "yanvar",
-  "fevral",
-  "mart",
-  "aprel",
-  "may",
-  "iyun",
-  "iyul",
-  "avgust",
-  "sentabr",
-  "oktabr",
-  "noyabr",
-  "dekabr"
-];
-
-const UZBEK_SHORT_MONTHS = [
-  "yan",
-  "fev",
-  "mar",
-  "apr",
-  "may",
-  "iyun",
-  "iyul",
-  "avg",
-  "sen",
-  "okt",
-  "noy",
-  "dek"
-];
-
-const DASHBOARD_COPY = {
-  [ROLE_OPERATOR]: {
-    title: "Mening statistikam",
-    intro: "Faqat siz yuklagan reestrlar, import holati va oxirgi faollik ko'rsatiladi.",
-    scope: "Faqat o'zim"
-  },
-  [ROLE_SUPERVISOR]: {
-    title: "Hudud operatorlari statistikasi",
-    intro: "Sizga biriktirilgan hududdagi operatorlar importi, yuklashlari va faolligi ko'rsatiladi.",
-    scope: "O'z hududim"
-  },
-  [ROLE_MANAGER]: {
-    title: "Hududlar bo'yicha statistika",
-    intro: "Barcha hududlar, filiallar, supervisor va operatorlar bo'yicha umumiy natijalarni kuzating.",
-    scope: "Barcha hududlar"
-  },
-  [ROLE_ADMIN]: {
-    title: "Umumiy tizim statistikasi",
-    intro: "Manager, supervisor va operatorlar ishlayotgan barcha hududlar bo'yicha nazorat oynasi.",
-    scope: "Admin ko'rinishi"
-  }
-};
-
 const sourceColors = {
   mobile: "#2f6eea",
   internet: "#10b981",
   unknown: "#f59e0b"
 };
 
-function dashboardCopyFor(role) {
-  return DASHBOARD_COPY[role] || DASHBOARD_COPY[ROLE_OPERATOR];
+function dashboardCopyFor(t, role) {
+  return t.dashboard.roleCopy?.[role] || t.dashboard.roleCopy?.[ROLE_OPERATOR];
 }
 
-function dashboardHeroFor(role, copy) {
+function dashboardHeroFor(t, role, copy) {
   if (role === ROLE_ADMIN) {
     return {
-      title: "Barcha ko'rsatkichlar bitta joyda",
-      intro: "Tizimdagi umumiy holat, operatorlar faoliyati, yuklanmalar soni va savdo ko'rsatkichlarini real vaqt rejimida kuzatib boring."
+      title: t.dashboard.adminHeroTitle,
+      intro: t.dashboard.adminHeroIntro
     };
   }
 
@@ -129,8 +76,8 @@ function formatNumber(value) {
   return numberFormatter.format(Number(value || 0));
 }
 
-function formatMoney(value) {
-  return `${moneyFormatter.format(Number(value || 0))} so'm`;
+function formatMoney(value, currency = "so'm") {
+  return `${moneyFormatter.format(Number(value || 0))} ${currency}`;
 }
 
 function formatCompact(value) {
@@ -148,19 +95,22 @@ function dateKey(date) {
   return `${year}-${month}-${day}`;
 }
 
-function formatShortDate(value) {
+function formatShortDate(value, t) {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
   const day = String(date.getDate()).padStart(2, "0");
-  return `${day} ${UZBEK_SHORT_MONTHS[date.getMonth()]}`;
+  return `${day} ${t.dashboard.shortMonths[date.getMonth()]}`;
 }
 
-function formatDashboardMonthLabel(date = new Date()) {
-  return `${date.getFullYear()} yil ${UZBEK_MONTHS[date.getMonth()]} holatiga`;
+function formatDashboardMonthLabel(t, fmt, date = new Date()) {
+  return fmt(t.dashboard.monthState, {
+    year: date.getFullYear(),
+    month: t.dashboard.months[date.getMonth()]
+  });
 }
 
-function buildRecentSeries(series, days) {
+function buildRecentSeries(series, days, t) {
   const normalized = (series || [])
     .map((item) => ({
       key: String(item.date || "").slice(0, 10),
@@ -176,16 +126,16 @@ function buildRecentSeries(series, days) {
     const key = dateKey(date);
     return {
       key,
-      label: formatShortDate(key),
+      label: formatShortDate(key, t),
       count: counts.get(key) || 0
     };
   });
 }
 
 function sourceLabel(t, sourceType) {
-  if (sourceType === "mobile") return t.source?.mobile || "Mobil raqam";
-  if (sourceType === "internet") return t.source?.internet || "Internet ulanish";
-  return "Noma'lum";
+  if (sourceType === "mobile") return t.source.mobile;
+  if (sourceType === "internet") return t.source.internet;
+  return t.dashboard.unknown;
 }
 
 function branchLabel(branch) {
@@ -193,12 +143,12 @@ function branchLabel(branch) {
 }
 
 export default function DashboardPage() {
-  const { t } = useI18n();
+  const { t, fmt } = useI18n();
   const { user } = useAuth();
   const navigate = useNavigate();
   const activeRole = effectiveRole(user);
-  const copy = dashboardCopyFor(activeRole);
-  const hero = dashboardHeroFor(activeRole, copy);
+  const copy = dashboardCopyFor(t, activeRole);
+  const hero = dashboardHeroFor(t, activeRole, copy);
   const hasManagementAccess = canManageUsers(user);
 
   const [selectedOperatorId, setSelectedOperatorId] = useState("");
@@ -247,8 +197,9 @@ export default function DashboardPage() {
   const totalOperators = Number(safeStats.total_operators || 0);
   const totalRevenue = Number(kpi.total_amount || safeStats.total_revenue || 0);
   const successRate = Number(model.importSuccessRate || 0);
-  const recentSeries = buildRecentSeries(model.daySeries || model.heatmapSeries, 14);
-  const dotSeries = buildRecentSeries(model.daySeries || model.heatmapSeries, 30);
+  const money = (value) => formatMoney(value, t.kpi.currency);
+  const recentSeries = buildRecentSeries(model.daySeries || model.heatmapSeries, 14, t);
+  const dotSeries = buildRecentSeries(model.daySeries || model.heatmapSeries, 30, t);
   const maxDotCount = Math.max(...dotSeries.map((item) => item.count), 1);
   const dotAxisLabels = [1, 0.75, 0.5, 0.25, 0].map((ratio) => (
     formatNumber(Math.round(maxDotCount * ratio))
@@ -284,19 +235,19 @@ export default function DashboardPage() {
     revenue: item.count * avgRevenuePerRecord
   }));
   const weeklyChartData = insightTrend.map((item) => ({
-    name: new Date(item.key).toLocaleDateString("en-US", { weekday: "short" }),
+    name: t.dashboard.shortWeekdays[new Date(item.key).getDay()],
     records: item.count
   }));
   const maxWeeklyIndex = weeklyChartData.reduce((maxIdx, current, idx, arr) => 
     current.records > arr[maxIdx].records ? idx : maxIdx, 0
   );
   
-  const currentMonthYear = formatDashboardMonthLabel();
+  const currentMonthYear = formatDashboardMonthLabel(t, fmt);
 
   const qualitySegments = [
-    { label: "Import", value: model.totalImportedRows, color: "#2f6eea" },
-    { label: "Dublikat", value: model.totalDuplicateRows, color: "#93c5fd" },
-    { label: "O'tkazilgan", value: model.totalSkippedRows, color: "#e5e7eb" }
+    { label: t.dashboard.imported, value: model.totalImportedRows, color: "#2f6eea" },
+    { label: t.upload.duplicate, value: model.totalDuplicateRows, color: "#93c5fd" },
+    { label: t.upload.skipped, value: model.totalSkippedRows, color: "#e5e7eb" }
   ];
   const rankingRows = model.operatorRanking?.slice(0, 4) || [];
 
@@ -319,12 +270,12 @@ export default function DashboardPage() {
           <div className="stats-toolbar">
             <div className="stats-filter-row">
               <label>
-                <span>Operator</span>
+                <span>{t.common.operator}</span>
                 <select
                   value={selectedOperatorId}
                   onChange={(event) => setSelectedOperatorId(event.target.value)}
                 >
-                  <option value="">{activeRole === ROLE_SUPERVISOR ? "Hudud operatorlari" : "Barcha operatorlar"}</option>
+                  <option value="">{activeRole === ROLE_SUPERVISOR ? t.dashboard.regionOperators : t.monitoring.allOperators}</option>
                   {(model.operators || []).map((operator) => (
                     <option key={operator.id} value={operator.id}>
                       {operator.full_name || operator.username}
@@ -383,7 +334,7 @@ export default function DashboardPage() {
             <div className="stats-stacked-col">
               <section className="panel stats-revenue-card v2-card-blue">
                 <div className="stats-card-top">
-                  <span>Jami reestr</span>
+                  <span>{t.dashboard.totalRecords}</span>
                   <ArrowUpRight size={17} onClick={() => navigate("/records")} style={{ cursor: "pointer" }} />
                 </div>
                 <strong>{formatNumber(totalRecords)}</strong>
@@ -393,7 +344,7 @@ export default function DashboardPage() {
 
               <section className="panel stats-revenue-card v2-card-white">
                 <div className="stats-card-top">
-                  <span>Shu oy kiritilgan</span>
+                  <span>{t.dashboard.enteredThisMonth}</span>
                   <ArrowUpRight 
                     size={17} 
                     onClick={() => {
@@ -414,13 +365,13 @@ export default function DashboardPage() {
             <section className="panel v2-chart-card">
               <div className="stats-panel-head">
                 <div>
-                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>FAOLLIK / TUSHUM</small>
-                  <h2 style={{ margin: 0 }}>Oxirgi 14 kunlik dinamika</h2>
+                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>{t.dashboard.activityRevenue}</small>
+                  <h2 style={{ margin: 0 }}>{t.dashboard.last14Dynamics}</h2>
                 </div>
                 <button className="stats-panel-more" onClick={() => navigate("/kpi")}><ArrowUpRight size={17} /></button>
               </div>
               <div className="v2-card-value">
-                <strong>{formatMoney(totalRevenue)}</strong>
+                <strong>{money(totalRevenue)}</strong>
               </div>
               <div className="v2-area-chart">
                 <ResponsiveContainer width="100%" height="100%">
@@ -477,7 +428,7 @@ export default function DashboardPage() {
                       <span className={`trend-badge ${isPos ? 'positive' : 'negative'}`}>
                         {isPos ? '+' : ''}{percent.toFixed(1).replace('.', ',')}%
                       </span>
-                      <span>O'tgan oyga nisbatan</span>
+                      <span>{t.dashboard.comparedToLastMonth}</span>
                     </>
                   );
                 })()}
@@ -487,8 +438,8 @@ export default function DashboardPage() {
             <section className="panel v2-chart-card">
               <div className="stats-panel-head">
                 <div>
-                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>YANGI REESTRLAR</small>
-                  <h2 style={{ margin: 0 }}>Hafta kunlari bo'yicha</h2>
+                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>{t.dashboard.newRecords}</small>
+                  <h2 style={{ margin: 0 }}>{t.dashboard.byWeekdays}</h2>
                 </div>
                 <div className="stats-head-actions">
                   <button className="stats-panel-more" onClick={() => navigate("/records")}><ArrowUpRight size={17} /></button>
@@ -536,15 +487,15 @@ export default function DashboardPage() {
             <section className="panel v2-chart-card v2-scatter-card">
               <div className="stats-panel-head">
                 <div>
-                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>KIRITISH TEZLIGI</small>
-                  <h2 style={{ margin: 0 }}>Oxirgi 30 kunlik dinamika</h2>
+                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>{t.dashboard.entrySpeed}</small>
+                  <h2 style={{ margin: 0 }}>{t.dashboard.last30Dynamics}</h2>
                 </div>
                 <div className="stats-head-actions">
                   <button className="stats-panel-more" onClick={() => navigate("/records")}><ArrowUpRight size={17} /></button>
                 </div>
               </div>
               <div className="v2-scatter-legend">
-                <span><i style={{ background: '#2563eb' }}></i> Kiritilgan reestrlar</span>
+                <span><i style={{ background: '#2563eb' }}></i> {t.dashboard.enteredRecords}</span>
               </div>
               <div className="v2-scatter-chart">
                 <div className="v2-dot-grid-wrapper">
@@ -576,7 +527,7 @@ export default function DashboardPage() {
                             <div className="v2-dot-tooltip">
                               <div className="tooltip-item">
                                 <i style={{ background: '#2563eb' }}></i>
-                                <span>Kiritilgan:</span>
+                                <span>{t.dashboard.entered}:</span>
                                 <strong>{item.count}</strong>
                               </div>
                             </div>
@@ -592,8 +543,8 @@ export default function DashboardPage() {
             <section className="panel v2-chart-card v2-gauge-card">
               <div className="stats-panel-head">
                 <div>
-                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>MANBALAR / KATEGORIYA</small>
-                  <h2 style={{ margin: 0 }}>Mobil va Internet ulanish</h2>
+                  <small style={{ fontSize: '13px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>{t.kpi.sourcesCategory}</small>
+                  <h2 style={{ margin: 0 }}>{t.dashboard.mobileAndInternet}</h2>
                 </div>
                 <button className="stats-panel-more" onClick={() => navigate("/records")}><ArrowUpRight size={17} /></button>
               </div>
@@ -628,7 +579,7 @@ export default function DashboardPage() {
                 </svg>
                 <div className="v2-radial-value" style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
                   <strong style={{ fontSize: '36px', fontWeight: '700', color: '#0f172a', letterSpacing: '-1px', lineHeight: '1' }}>{formatNumber(totalRecords)}</strong>
-                  <small style={{ display: 'block', color: '#64748b', fontSize: '15px', marginTop: '6px' }}>Jami qatorlar</small>
+                  <small style={{ display: 'block', color: '#64748b', fontSize: '15px', marginTop: '6px' }}>{t.dashboard.totalRows}</small>
                 </div>
               </div>
 
@@ -656,7 +607,12 @@ export default function DashboardPage() {
                       <span className={`trend-badge ${isPos ? 'positive' : 'negative'}`}>
                         {isPos ? '+' : ''}{percent.toFixed(1).replace('.', ',')}%
                       </span>
-                      <span>O'tgan oyga nisbatan {formatNumber(diff)} yozuv {isPos ? "ko'p" : "kam"}</span>
+                      <span>
+                        {fmt(t.dashboard.recordsComparedToLastMonth, {
+                          count: formatNumber(diff),
+                          direction: isPos ? t.dashboard.more : t.dashboard.less
+                        })}
+                      </span>
                     </>
                   );
                 })()}

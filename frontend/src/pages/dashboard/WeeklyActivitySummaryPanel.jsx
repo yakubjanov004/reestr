@@ -1,4 +1,5 @@
 import { Activity, Database, MapPin, UploadCloud, UserRound } from "lucide-react";
+import { useI18n } from "../../localization/i18n.jsx";
 
 const numberFormat = new Intl.NumberFormat("uz-UZ");
 
@@ -7,32 +8,33 @@ function formatNumber(value) {
 }
 
 export default function WeeklyActivitySummaryPanel({ stats, model, isOperatorView = false }) {
+  const { t, fmt } = useI18n();
   const topPerson = model.topOperator?.full_name || model.topOperator?.username || "-";
   const topArea = model.topRegion?.region || model.organizationRegionSummary?.[0]?.region || "-";
 
   const items = [
     {
-      label: "7 kunlik reestr",
+      label: t.weeklySummary.records7,
       value: formatNumber(stats.records_last_7),
-      meta: `30 kun: ${formatNumber(stats.records_last_30)}`,
+      meta: fmt(t.weeklySummary.days30Meta, { count: formatNumber(stats.records_last_30) }),
       icon: Database
     },
     {
-      label: "7 kunlik yuklash",
+      label: t.weeklySummary.uploads7,
       value: formatNumber(stats.uploads_last_7),
-      meta: `Shu oy: ${formatNumber(stats.uploads_this_month)}`,
+      meta: fmt(t.weeklySummary.thisMonthMeta, { count: formatNumber(stats.uploads_this_month) }),
       icon: UploadCloud
     },
     {
-      label: isOperatorView ? "Hudud" : "Top operator",
+      label: isOperatorView ? t.common.region : t.dashboard.topOperator,
       value: isOperatorView ? topArea : topPerson,
-      meta: isOperatorView ? "Sizga tegishli scope" : "Oxirgi 30 kun bo'yicha",
+      meta: isOperatorView ? t.weeklySummary.assignedScope : t.weeklySummary.last30Scope,
       icon: isOperatorView ? MapPin : UserRound
     },
     {
-      label: "Import sifati",
+      label: t.weeklySummary.importQuality,
       value: `${model.importSuccessRate || 0}%`,
-      meta: `Import: ${formatNumber(model.totalImportedRows)}`,
+      meta: fmt(t.weeklySummary.importMeta, { count: formatNumber(model.totalImportedRows) }),
       icon: Activity
     }
   ];
@@ -41,8 +43,8 @@ export default function WeeklyActivitySummaryPanel({ stats, model, isOperatorVie
     <section className="panel dashboard-panel weekly-summary-panel">
       <div className="panel-heading split">
         <div>
-          <p className="panel-kicker">Haftalik xulosa</p>
-          <h2>Oxirgi 7 kun ko'rsatkichlari</h2>
+          <p className="panel-kicker">{t.weeklySummary.kicker}</p>
+          <h2>{t.weeklySummary.title}</h2>
         </div>
       </div>
 

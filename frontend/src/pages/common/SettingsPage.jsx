@@ -15,8 +15,8 @@ export default function SettingsPage() {
               <Languages size={18} />
             </span>
             <div>
-              <h2>{t.login.languagePickerLabel}</h2>
-              <p>Interfeys matnlari uchun kerakli tilni tanlang.</p>
+              <h2>{t.settings.languageTitle}</h2>
+              <p>{t.settings.languageDescription}</p>
             </div>
           </div>
           <div className="settings-card-body">
@@ -30,8 +30,8 @@ export default function SettingsPage() {
               <Monitor size={18} />
             </span>
             <div>
-              <h2>Tizim ko'rinishi</h2>
-              <p>Ishlash muhitiga mos yorug' yoki qorong'i rejimni tanlang.</p>
+              <h2>{t.settings.themeTitle}</h2>
+              <p>{t.settings.themeDescription}</p>
             </div>
           </div>
           <div className="settings-card-body">

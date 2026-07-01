@@ -25,28 +25,28 @@ export default function DashboardTopStats({ t, stats, model }) {
     {
       label: t.dashboard.uploads,
       value: formatNumber(stats.total_uploads),
-      meta: `Shu oy: ${formatNumber(stats.uploads_this_month)} • 30 kun: ${formatNumber(stats.uploads_last_30)}`,
+      meta: `${t.dashboard.thisMonth}: ${formatNumber(stats.uploads_this_month)} • ${t.dashboard.last30}: ${formatNumber(stats.uploads_last_30)}`,
       icon: UploadCloud,
       tone: "cyan"
     },
     {
       label: t.common.operators,
       value: formatNumber(stats.active_operators),
-      meta: `Jami: ${formatNumber(stats.total_operators)}`,
+      meta: `${t.common.total}: ${formatNumber(stats.total_operators)}`,
       icon: Users,
       tone: "violet"
     },
     {
-      label: "Import sifati",
+      label: t.weeklySummary.importQuality,
       value: `${model.importSuccessRate}%`,
-      meta: `Import: ${formatNumber(model.totalImportedRows)} • Dublikat: ${formatNumber(model.totalDuplicateRows)} • O'tkazilgan: ${formatNumber(model.totalSkippedRows)}`,
+      meta: `${t.dashboard.imported}: ${formatNumber(model.totalImportedRows)} • ${t.upload.duplicate}: ${formatNumber(model.totalDuplicateRows)} • ${t.upload.skipped}: ${formatNumber(model.totalSkippedRows)}`,
       icon: CheckCircle2,
       tone: "amber"
     },
     {
-      label: "Fayldagi qatorlar",
+      label: t.dashboard.fileRows,
       value: formatNumber(model.totalRowsInFiles),
-      meta: `Qayta ishlangan: ${formatNumber(model.processedRows)}`,
+      meta: `${t.dashboard.processedRows}: ${formatNumber(model.processedRows)}`,
       icon: Activity,
       tone: "slate"
     }

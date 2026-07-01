@@ -6,8 +6,8 @@ export default function SourceTypeTabs({ value, onChange, includeAll = false }) 
   const { t } = useI18n();
   const allOptions = [
     { value: "", label: t.source.all, icon: Layers },
-    { value: "mobile", label: t.source.mobile, icon: Smartphone },
-    { value: "internet", label: t.source.internet, icon: Wifi }
+    { value: "mobile", label: t.source.mobileShort, icon: Smartphone },
+    { value: "internet", label: t.source.internetShort, icon: Wifi }
   ];
   const uploadOptions = allOptions.slice(1);
   const options = includeAll ? allOptions : uploadOptions;

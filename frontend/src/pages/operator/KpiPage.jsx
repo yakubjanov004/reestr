@@ -36,8 +36,8 @@ function formatNumber(value) {
   return numberFormatter.format(Number(value || 0));
 }
 
-function formatMoney(value) {
-  return `${moneyFormatter.format(Number(value || 0))} so'm`;
+function formatMoney(value, currency = "so'm") {
+  return `${moneyFormatter.format(Number(value || 0))} ${currency}`;
 }
 
 function formatCompact(value) {
@@ -134,6 +134,7 @@ export default function KpiPage() {
   const { user } = useAuth();
   const hasManagementAccess = canManageUsers(user);
   const { stats, loading } = useDashboardData();
+  const money = (value) => formatMoney(value, t.kpi.currency);
 
   if (loading && !stats) {
     return (
@@ -171,26 +172,26 @@ export default function KpiPage() {
 
   const cards = [
     {
-      label: "Bugungi",
-      value: formatMoney(todayAmount),
+      label: t.kpi.today,
+      value: money(todayAmount),
       icon: Wallet,
       tone: "blue"
     },
     {
-      label: "7 kunlik",
-      value: formatMoney(weeklyAmount),
+      label: t.kpi.last7,
+      value: money(weeklyAmount),
       icon: TrendingUp,
       tone: "green"
     },
     {
-      label: "Shu oy",
-      value: formatMoney(monthAmount),
+      label: t.kpi.thisMonth,
+      value: money(monthAmount),
       icon: CalendarDays,
       tone: "violet"
     },
     {
-      label: "Jami",
-      value: formatMoney(totalAmount),
+      label: t.common.total,
+      value: money(totalAmount),
       icon: Landmark,
       tone: "amber"
     }
@@ -219,28 +220,28 @@ export default function KpiPage() {
     value: sourceTotal > 0 ? item.amount : item.records
   }));
   const importRows = [
-    { label: "Reestr", value: totalRecords, note: "Jami yozuv" },
-    { label: "Yuklash", value: totalUploads, note: "Excel importlar" },
-    { label: "Import", value: model.totalImportedRows, note: "Qabul qilingan qator" },
-    { label: "Dublikat", value: model.totalDuplicateRows, note: "Takroriy qator" }
+    { label: t.dashboard.registry, value: totalRecords, note: t.kpi.totalRecordsNote },
+    { label: t.dashboard.upload, value: totalUploads, note: t.kpi.excelImportsNote },
+    { label: t.dashboard.imported, value: model.totalImportedRows, note: t.kpi.acceptedRowsNote },
+    { label: t.upload.duplicate, value: model.totalDuplicateRows, note: t.kpi.duplicateRowsNote }
   ];
 
   return (
     <section className="page-stack operator-page operator-kpi-page">
       <div className="kpi-top-grid">
         <section className="panel kpi-primary-panel">
-          <small style={{ fontSize: '16px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '8px', display: 'block' }}>BARCHA DAVR UCHUN</small>
-          <h2 style={{ margin: 0 }}>Umumiy savdo</h2>
-          <span className="kpi-primary-value">{formatMoney(totalAmount)}</span>
+          <small style={{ fontSize: '16px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '8px', display: 'block' }}>{t.kpi.allPeriod}</small>
+          <h2 style={{ margin: 0 }}>{t.kpi.totalSales}</h2>
+          <span className="kpi-primary-value">{money(totalAmount)}</span>
         </section>
 
         <section className="panel kpi-chart-panel kpi-activity-panel">
           <div className="panel-heading">
             <div>
-              <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>FAOLLIK / REESTRLAR</small>
-              <h2 style={{ margin: 0 }}>Oxirgi 7 kunlik yozuvlar</h2>
+              <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>{t.kpi.activityRegistry}</small>
+              <h2 style={{ margin: 0 }}>{t.kpi.last7Records}</h2>
             </div>
-            <span className="panel-badge secondary">{formatNumber(weeklyRecords)} yozuv</span>
+            <span className="panel-badge secondary">{formatNumber(weeklyRecords)} {t.common.recordsWord}</span>
           </div>
           <div className="kpi-chart-body">
               <ResponsiveContainer width="100%" height="100%">
@@ -256,7 +257,7 @@ export default function KpiPage() {
                   <YAxis tick={{ fill: "#8a95a8", fontSize: 11 }} tickLine={false} axisLine={false} allowDecimals={false} />
                   <Tooltip
                     contentStyle={{ border: 0, borderRadius: 12, boxShadow: "0 10px 24px rgba(15, 35, 70, 0.10)" }}
-                    formatter={(value) => [`${formatNumber(value)} ta`, "Reestr"]}
+                    formatter={(value) => [`${formatNumber(value)} ${t.common.itemSuffix}`, t.dashboard.registry]}
                   />
                   <Area
                     type="monotone"
@@ -274,8 +275,8 @@ export default function KpiPage() {
         <section className="panel kpi-source-mix-panel">
           <div className="panel-heading kpi-source-heading">
             <div>
-              <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>MANBALAR / KATEGORIYA</small>
-              <h2 style={{ margin: 0 }}>Tushumlarning manba ulushi</h2>
+              <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>{t.kpi.sourcesCategory}</small>
+              <h2 style={{ margin: 0 }}>{t.kpi.revenueBySource}</h2>
             </div>
             <div className="source-heading-icon">
               <BarChart2 size={20} />
@@ -312,7 +313,7 @@ export default function KpiPage() {
                     <Tooltip
                       contentStyle={{ border: 0, borderRadius: 12, boxShadow: "0 10px 24px rgba(15, 35, 70, 0.10)" }}
                       formatter={(value, name, entry) => [
-                        sourceTotal > 0 ? formatMoney(entry.payload.amount) : `${formatNumber(value)} ta`,
+                        sourceTotal > 0 ? money(entry.payload.amount) : `${formatNumber(value)} ${t.common.itemSuffix}`,
                         name
                       ]}
                     />
@@ -321,7 +322,7 @@ export default function KpiPage() {
               )}
               <div className="kpi-donut-center">
                 <span>{formatCompact(sourceTotal || sourceRecordTotal)}</span>
-                <small>{sourceTotal > 0 ? "so'm" : "yozuv"}</small>
+                <small>{sourceTotal > 0 ? t.kpi.currency : t.common.recordsWord}</small>
               </div>
             </div>
             <div className="kpi-source-legend">
@@ -336,7 +337,7 @@ export default function KpiPage() {
                     <span style={{ background: item.style.css }} />
                     <div>
                       <small>{item.name}</small>
-                      <span className="kpi-source-amount">{formatMoney(item.amount)}</span>
+                      <span className="kpi-source-amount">{money(item.amount)}</span>
                     </div>
                     <span className="kpi-source-share">{share}%</span>
                   </div>
@@ -364,8 +365,8 @@ export default function KpiPage() {
       <section className="panel kpi-chart-panel">
         <div className="panel-heading">
           <div>
-            <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>MOLIYAVIY DINAMIKA</small>
-            <h2 style={{ margin: 0 }}>Oxirgi 30 kunlik savdo grafigi</h2>
+            <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>{t.kpi.financialDynamics}</small>
+            <h2 style={{ margin: 0 }}>{t.kpi.last30SalesChart}</h2>
           </div>
           <Activity size={20} />
         </div>
@@ -384,7 +385,7 @@ export default function KpiPage() {
                 <YAxis tick={{ fill: "#8a95a8", fontSize: 11 }} tickFormatter={(val) => formatCompact(val)} tickLine={false} axisLine={false} />
                 <Tooltip
                   contentStyle={{ border: 0, borderRadius: 12, boxShadow: "0 10px 24px rgba(15, 35, 70, 0.10)" }}
-                  formatter={(value) => [formatMoney(value), "Savdo"]}
+                  formatter={(value) => [money(value), t.kpi.sales]}
                 />
                 <Area
                   type="monotone"
@@ -405,9 +406,9 @@ export default function KpiPage() {
             <section className="panel operator-kpi-panel github-style-panel">
               <div className="stats-panel-head">
                 <div>
-                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>HUDUDIY KO'RSATKICHLAR</small>
-                  <h2 style={{ margin: 0 }}>Filiallar kesimida KPI</h2>
-                  <p>Barcha filiallar bo'yicha umumiy savdo va yozuvlar ko'rsatkichlari</p>
+                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>{t.kpi.regionalMetrics}</small>
+                  <h2 style={{ margin: 0 }}>{t.kpi.branchKpiTitle}</h2>
+                  <p>{t.kpi.branchKpiDescription}</p>
                 </div>
                 <Users size={20} />
               </div>
@@ -419,14 +420,14 @@ export default function KpiPage() {
                     <div key={idx} className="operator-source-list" style={{ padding: "16px", border: "1px solid var(--line)", borderRadius: "12px", background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
                       <div className="operator-progress-head">
                         <span style={{ fontWeight: 600, color: 'var(--ink)' }}>{branch.branch}</span>
-                        <span className="operator-progress-value" style={{ color: 'var(--blue)', fontWeight: 700 }}>{formatMoney(branchRevenue)}</span>
+                        <span className="operator-progress-value" style={{ color: 'var(--blue)', fontWeight: 700 }}>{money(branchRevenue)}</span>
                       </div>
                       <div className="operator-progress-track">
                         <span style={{ width: `${Math.min(100, Math.max(0, share))}%`, background: 'var(--blue)' }} />
                       </div>
                       <div className="operator-kpi-split" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--muted)', marginTop: '12px' }}>
-                        <span>Hudud: {branch.region}</span>
-                        <span>Yozuvlar: {formatNumber(branch.records)}</span>
+                        <span>{t.common.region}: {branch.region}</span>
+                        <span>{t.common.recordsWord}: {formatNumber(branch.records)}</span>
                       </div>
                     </div>
                   );
@@ -439,9 +440,9 @@ export default function KpiPage() {
             <section className="panel operator-kpi-panel github-style-panel">
               <div className="stats-panel-head">
                 <div>
-                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>XODIMLAR NATIJADORLIGI</small>
-                  <h2 style={{ margin: 0 }}>Operatorlar kesimida KPI</h2>
-                  <p>Sizga biriktirilgan operatorlarning savdo va yozuvlar ko'rsatkichlari</p>
+                  <small style={{ fontSize: '11px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', display: 'block' }}>{t.kpi.staffPerformance}</small>
+                  <h2 style={{ margin: 0 }}>{t.kpi.operatorKpiTitle}</h2>
+                  <p>{t.kpi.operatorKpiDescription}</p>
                 </div>
                 <Users size={20} />
               </div>
@@ -453,14 +454,14 @@ export default function KpiPage() {
                     <div key={operator.id} className="operator-source-list" style={{ padding: "16px", border: "1px solid var(--line)", borderRadius: "12px", background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
                       <div className="operator-progress-head">
                         <span style={{ fontWeight: 600, color: 'var(--ink)' }}>{operator.full_name || operator.username}</span>
-                        <span className="operator-progress-value" style={{ color: 'var(--green)', fontWeight: 700 }}>{formatMoney(operatorRevenue)}</span>
+                        <span className="operator-progress-value" style={{ color: 'var(--green)', fontWeight: 700 }}>{money(operatorRevenue)}</span>
                       </div>
                       <div className="operator-progress-track">
                         <span style={{ width: `${Math.min(100, Math.max(0, share))}%`, background: 'var(--green)' }} />
                       </div>
                       <div className="operator-kpi-split" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--muted)', marginTop: '12px' }}>
-                        <span>Yozuvlar: {formatNumber(operator.records_count)}</span>
-                        <span>Yuklashlar: {formatNumber(operator.uploads_count)}</span>
+                        <span>{t.common.recordsWord}: {formatNumber(operator.records_count)}</span>
+                        <span>{t.dashboard.uploads}: {formatNumber(operator.uploads_count)}</span>
                       </div>
                     </div>
                   );

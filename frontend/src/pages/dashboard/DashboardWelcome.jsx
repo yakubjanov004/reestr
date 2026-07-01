@@ -5,7 +5,7 @@ export default function DashboardWelcome({ t, user, title, intro, scopeLabel }) 
         <h2 className="dashboard-welcome">
           {title || t.dashboard.introTitle},{" "}
           <span className="dashboard-welcome-name">
-            {user?.full_name || user?.username || "User"}
+            {user?.full_name || user?.username || t.common.user}
           </span>
         </h2>
         <p className="dashboard-intro">{intro || t.dashboard.intro}</p>

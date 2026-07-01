@@ -49,7 +49,7 @@ export default function TrendPanel({ t, stats, daySeries }) {
               <Tooltip 
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 8px 24px rgba(21, 32, 55, 0.08)' }}
                 itemStyle={{ color: 'var(--primary)', fontWeight: 'bold' }}
-                formatter={(value) => [value.toLocaleString(), 'Yozuvlar']}
+                formatter={(value) => [value.toLocaleString(), t.dashboard.recordsTooltip]}
                 labelStyle={{ color: 'var(--ink)', fontWeight: '600', marginBottom: '4px' }}
               />
               <Area 

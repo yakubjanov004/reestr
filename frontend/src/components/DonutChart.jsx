@@ -1,6 +1,8 @@
 import React from 'react';
+import { useI18n } from "../localization/i18n.jsx";
 
 export default function DonutChart({ data }) {
+  const { t } = useI18n();
   // data = [{ label: 'Mobile', value: 100, color: 'var(--blue)' }, ...]
   const total = data.reduce((acc, item) => acc + item.value, 0);
 
@@ -12,7 +14,7 @@ export default function DonutChart({ data }) {
         </svg>
         <div className="donut-center">
           <strong>0</strong>
-          <span>Total</span>
+          <span>{t.common.total}</span>
         </div>
       </div>
     );
@@ -51,7 +53,7 @@ export default function DonutChart({ data }) {
       </svg>
       <div className="donut-center">
         <strong>{total}</strong>
-        <span>Jami</span>
+        <span>{t.common.total}</span>
       </div>
       <div className="donut-legend">
         {data.map((item, idx) => (

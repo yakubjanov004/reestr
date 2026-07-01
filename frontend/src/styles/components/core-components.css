@@ -382,6 +382,27 @@
   color: var(--ink);
   background: var(--blue-hover);
 }
+.source-tabs button.active[data-value=""] {
+  background: var(--brand-gradient);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 12px var(--blue-glow);
+}
+
+.source-tabs button.active[data-value="mobile"] {
+  background: var(--brand-gradient);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 12px var(--blue-glow);
+}
+
+.source-tabs button.active[data-value="internet"] {
+  background: var(--brand-gradient);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 12px var(--blue-glow);
+}
+
 .source-tabs button.active {
   background: var(--blue-soft);
   color: var(--blue-deep);

@@ -14,18 +14,10 @@ import {
   effectiveRole,
   hasRoleAtLeast
 } from "../../auth/roles.js";
+import { useI18n } from "../../localization/i18n.jsx";
 import { formatDateTime } from "../../utils/format.js";
 
-const targetLabels = {
-  all: "Hammaga",
-  supervisor: "Supervisorlarga",
-  operator: "Operatorlarga"
-};
-
-const managerTargetOptions = [
-  { value: "all", label: "Hammaga" },
-  { value: "supervisor", label: "Faqat supervisorlarga" }
-];
+const managerTargetValues = ["all", "supervisor"];
 
 function formatApiError(data, fallback) {
   if (!data) return fallback;
@@ -34,13 +26,14 @@ function formatApiError(data, fallback) {
   return fallback;
 }
 
-function announcementLocation(item) {
+function announcementLocation(item, t) {
   const parts = [item.assigned_region_name, item.assigned_branch_name].filter(Boolean);
-  return parts.length ? parts.join(" / ") : "Umumiy";
+  return parts.length ? parts.join(" / ") : t.announcements.general;
 }
 
 export default function AnnouncementsPage() {
   const { user } = useAuth();
+  const { t, fmt } = useI18n();
   const activeRole = effectiveRole(user) || ROLE_OPERATOR;
   const canCreate = hasRoleAtLeast(user, ROLE_SUPERVISOR);
   const [announcements, setAnnouncements] = useState([]);
@@ -75,7 +68,7 @@ export default function AnnouncementsPage() {
       setForm({ title: "", body: "", target: "all" });
       loadAnnouncements();
     } catch (err) {
-      setError(formatApiError(err.response?.data, "E'lon yaratishda xatolik bor."));
+      setError(formatApiError(err.response?.data, t.announcements.createError));
     } finally {
       setSaving(false);
     }
@@ -85,8 +78,8 @@ export default function AnnouncementsPage() {
     <section className="page-stack operator-page operator-announcements-page">
       <div className="help-hero-banner" style={{ minHeight: "200px", marginBottom: "20px", background: "radial-gradient(circle at 90% 14%, rgba(255, 255, 255, 0.15), transparent 40%), var(--brand-gradient)" }}>
         <div className="help-hero-content">
-          <h1>So'nggi yangiliklar va bildirishnomalar</h1>
-          <p>Tizimdagi so'nggi o'zgarishlar, qo'shilgan yangi imkoniyatlar va muhim xabarlardan doim xabardor bo'ling.</p>
+          <h1>{t.announcements.heroTitle}</h1>
+          <p>{t.announcements.heroDescription}</p>
         </div>
         <div className="help-hero-decoration">
           <div className="circle circle-1"></div>
@@ -100,18 +93,18 @@ export default function AnnouncementsPage() {
           <section className="panel announcement-create-panel">
             <div className="panel-heading">
               <div>
-                <span className="panel-kicker">Yangi xabar</span>
-                <h2>E'lon yozish</h2>
+                <span className="panel-kicker">{t.announcements.newMessage}</span>
+                <h2>{t.announcements.writeTitle}</h2>
               </div>
               <MessageSquarePlus size={20} />
             </div>
             <form className="announcement-form" onSubmit={handleSubmit}>
               <label>
-                Sarlavha
+                {t.announcements.titleLabel}
                 <input
                   value={form.title}
                   onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
-                  placeholder="Masalan: Bugungi reestr nazorati"
+                  placeholder={t.announcements.titlePlaceholder}
                   maxLength={180}
                   required
                 />
@@ -120,18 +113,18 @@ export default function AnnouncementsPage() {
               {activeRole === ROLE_SUPERVISOR ? (
                 <div className="announcement-fixed-target">
                   <UserCheck size={18} />
-                  <span>Supervisor e'loni faqat o'z hududidagi operatorlarga boradi.</span>
+                  <span>{t.announcements.supervisorTargetNote}</span>
                 </div>
               ) : (
                 <label>
-                  Kimga yuboriladi
+                  {t.announcements.targetLabel}
                   <select
                     value={form.target}
                     onChange={(event) => setForm((current) => ({ ...current, target: event.target.value }))}
                   >
-                    {managerTargetOptions.map((option) => (
-                      <option value={option.value} key={option.value}>
-                        {option.label}
+                    {managerTargetValues.map((value) => (
+                      <option value={value} key={value}>
+                        {t.announcements.managerTargetOptions[value]}
                       </option>
                     ))}
                   </select>
@@ -139,11 +132,11 @@ export default function AnnouncementsPage() {
               )}
 
               <label>
-                Xabar matni
+                {t.announcements.bodyLabel}
                 <textarea
                   value={form.body}
                   onChange={(event) => setForm((current) => ({ ...current, body: event.target.value }))}
-                  placeholder="E'lon matnini kiriting"
+                  placeholder={t.announcements.bodyPlaceholder}
                   rows={6}
                   required
                 />
@@ -152,7 +145,7 @@ export default function AnnouncementsPage() {
               {error && <div className="form-message error">{error}</div>}
               <button className="primary-button announcement-submit" type="submit" disabled={saving}>
                 <Send size={17} />
-                <span>{saving ? "Yuborilmoqda..." : "E'lon yuborish"}</span>
+                <span>{saving ? t.announcements.sending : t.announcements.send}</span>
               </button>
             </form>
           </section>
@@ -161,12 +154,14 @@ export default function AnnouncementsPage() {
         <section className="panel announcement-list-panel">
           <div className="panel-heading">
             <div>
-              <h2>{canCreate ? "Yuborilgan va ko'rinadigan e'lonlar" : "Menga kelgan e'lonlar"}</h2>
+              <h2>{canCreate ? t.announcements.visibleTitle : t.announcements.inboxTitle}</h2>
               <small className="announcement-heading-note">
-                Kimdan kelgani, qachon yuborilgani va kimga tegishli ekani shu yerda ko'rinadi.
+                {t.announcements.listNote}
               </small>
             </div>
-            <span className="panel-badge secondary">{announcements.length} ta e'lon</span>
+            <span className="panel-badge secondary">
+              {fmt(t.announcements.countLabel, { count: announcements.length })}
+            </span>
           </div>
           <div className="announcement-list">
             {loading && (
@@ -181,16 +176,18 @@ export default function AnnouncementsPage() {
               </div>
             )}
             {!loading && announcements.length === 0 && (
-              <div className="announcement-empty">Hozircha e'lon yo'q.</div>
+              <div className="announcement-empty">{t.announcements.empty}</div>
             )}
             {!loading && announcements.map((item) => (
               <article className="announcement-item" key={item.id}>
                 <div className="announcement-item-head">
                   <div className="announcement-badges">
-                    <span className={`announcement-target ${item.target}`}>{targetLabels[item.target] || item.target}</span>
+                    <span className={`announcement-target ${item.target}`}>
+                      {t.announcements.targetLabels[item.target] || item.target}
+                    </span>
                     <span className="announcement-author">
-                      Kimdan: {item.created_by_name || "-"} 
-                      {announcementLocation(item) !== "Umumiy" ? ` (${announcementLocation(item)})` : ""}
+                      {t.announcements.from}: {item.created_by_name || "-"}
+                      {announcementLocation(item, t) !== t.announcements.general ? ` (${announcementLocation(item, t)})` : ""}
                     </span>
                   </div>
                   <span className="announcement-time">
@@ -206,7 +203,7 @@ export default function AnnouncementsPage() {
             ))}
           </div>
           <div className="announcement-list-footer">
-            <span>Jami: {announcements.length} ta e'lon</span>
+            <span>{fmt(t.announcements.totalLabel, { count: announcements.length })}</span>
           </div>
         </section>
       </div>

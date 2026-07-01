@@ -206,7 +206,7 @@ export default function OperatorsPage() {
             <table>
               <thead>
                 <tr>
-                  <th>Login</th>
+                  <th>{t.common.login}</th>
                   <th>{t.common.phoneNumber}</th>
                   <th>{t.common.role}</th>
                   <th>{t.common.fullName}</th>

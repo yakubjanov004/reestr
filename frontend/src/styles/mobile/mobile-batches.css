@@ -33,21 +33,26 @@
   }
 
   .batches-table-panel .source-tabs {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: nowrap;
     width: 100%;
     min-height: 46px;
     border-radius: 13px;
     padding: 3px;
     background: #edf4fd;
+    gap: 4px;
   }
 
   .batches-table-panel .source-tabs button {
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
     min-height: 40px;
     gap: 6px;
     border-radius: 10px;
-    padding: 0 8px;
-    font-size: 12px;
+    padding: 0 4px;
+    font-size: 12.5px;
+    justify-content: center;
   }
 
   .batches-table-panel .source-tabs button svg {
@@ -57,34 +62,34 @@
 
   .batches-advanced-filters {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 9px;
+    gap: 8px;
     margin-bottom: 10px;
-    padding: 14px;
+    padding: 12px;
     border: 1px solid rgba(191, 219, 254, 0.74);
-    border-radius: 18px;
+    border-radius: 14px;
     background: rgba(248, 251, 255, 0.88);
     box-shadow: 0 10px 24px rgba(15, 35, 70, 0.05);
   }
 
   .batches-advanced-filters label {
     min-width: 0;
-    gap: 6px;
-    font-size: 10.5px;
+    gap: 4px;
+    font-size: 10px;
     letter-spacing: 0.03em;
   }
 
   .batches-advanced-filters input,
   .batches-advanced-filters select {
-    min-height: 44px;
-    border-radius: 12px;
-    padding-inline: 12px;
-    font-size: 14px;
+    min-height: 38px;
+    border-radius: 10px;
+    padding-inline: 10px;
+    font-size: 13.5px;
   }
 
   .batches-clear-filter {
     grid-column: 1 / -1;
-    min-height: 44px;
-    border-radius: 12px;
+    min-height: 38px;
+    border-radius: 10px;
     font-size: 13px;
   }
 
@@ -271,8 +276,8 @@
   .batches-filter-heading,
   .batches-advanced-filters,
   .batches-pagination {
-    border-radius: 16px;
-    padding: 12px;
+    border-radius: 12px;
+    padding: 10px;
   }
 
   .batches-advanced-filters {

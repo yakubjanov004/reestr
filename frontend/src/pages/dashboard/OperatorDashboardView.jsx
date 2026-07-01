@@ -56,7 +56,7 @@ const StackedDotsBar = (props) => {
 };
 
 export default function OperatorDashboardView({ stats, model }) {
-  const { t } = useI18n();
+  const { t, fmt } = useI18n();
 
   const sourceRows = model.sourceSummary.length ? model.sourceSummary : [
     { sourceType: "mobile", records: 0, imported_this_month: 0 },
@@ -76,10 +76,10 @@ export default function OperatorDashboardView({ stats, model }) {
     bgCount: item.count * 0.7 + (Math.random() * 5 + 5)
   }));
   const recordsLast7 = Number(stats.records_last_7 || 0);
-  const trendPercent = stats.imported_this_month > 0 ? "+Faol" : "Passiv";
+  const trendPercent = stats.imported_this_month > 0 ? t.operatorDashboard.activeTrend : t.operatorDashboard.passiveTrend;
 
   const weeklyData = (stats.records_by_day_30 || []).slice(-7).map(item => ({
-    name: ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Juma', 'Shan'][new Date(item.date).getDay()],
+    name: t.dashboard.shortWeekdays[new Date(item.date).getDay()],
     amount: item.amount || 0,
     count: item.count || 0
   }));
@@ -98,7 +98,7 @@ export default function OperatorDashboardView({ stats, model }) {
   const totalSlices = 30;
   const blueSlices = Math.round((mobilePercent / 100) * totalSlices);
   const gaugeData = Array.from({ length: totalSlices }).map((_, i) => ({
-    name: i < blueSlices ? "Mobil" : "Internet",
+    name: i < blueSlices ? t.source.mobileShort : t.source.internetShort,
     value: 1,
     fill: i < blueSlices ? "#2563eb" : "#e2e8f0"
   }));
@@ -111,9 +111,9 @@ export default function OperatorDashboardView({ stats, model }) {
         <div className="od-left-stack">
           <div className="od-card od-card-blue" style={{ padding: 0 }}>
             <div style={{ position: 'relative', zIndex: 1, padding: '24px' }}>
-              <h3>Mobil reestr</h3>
+              <h3>{t.operatorDashboard.mobileRegistry}</h3>
               <div className="od-value">{formatNumber(mobileCount)}</div>
-              <div className="od-sub">Shu oyda: {formatNumber(mobileMonth)} ta kiritildi</div>
+              <div className="od-sub">{fmt(t.operatorDashboard.enteredThisMonth, { count: formatNumber(mobileMonth) })}</div>
               <button className="od-icon-btn">
                 <ArrowUpRight size={18} strokeWidth={2.5} />
               </button>
@@ -122,9 +122,9 @@ export default function OperatorDashboardView({ stats, model }) {
           </div>
           <div className="od-card od-card-white" style={{ padding: 0 }}>
             <div style={{ position: 'relative', zIndex: 1, padding: '24px' }}>
-              <h3>Internet reestr</h3>
+              <h3>{t.operatorDashboard.internetRegistry}</h3>
               <div className="od-value">{formatNumber(internetCount)}</div>
-              <div className="od-sub">Shu oyda: {formatNumber(internetMonth)} ta kiritildi</div>
+              <div className="od-sub">{fmt(t.operatorDashboard.enteredThisMonth, { count: formatNumber(internetMonth) })}</div>
               <button className="od-icon-btn">
                 <ArrowUpRight size={18} strokeWidth={2.5} />
               </button>
@@ -135,7 +135,7 @@ export default function OperatorDashboardView({ stats, model }) {
 
         <div className="od-card od-activity-card">
           <div className="od-card-header">
-            <h3>Oxirgi 7 kunlik faollik</h3>
+            <h3>{t.operatorDashboard.last7Activity}</h3>
             <div className="od-action-btn" style={{border: '1px solid #e2e8f0', width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <MoreHorizontal size={16} color="#64748b" />
             </div>
@@ -151,15 +151,15 @@ export default function OperatorDashboardView({ stats, model }) {
           </div>
           <div style={{ marginTop: 12, display: 'flex', alignItems: 'center' }}>
             <span className="od-activity-badge">{trendPercent}</span>
-            <span style={{fontSize: 12, color: '#64748b', fontWeight: 600}}>Oylik reytingga nisbatan</span>
+            <span style={{fontSize: 12, color: '#64748b', fontWeight: 600}}>{t.operatorDashboard.comparedToMonthlyRating}</span>
           </div>
         </div>
 
         <div className="od-card od-revenue-card">
           <div className="od-card-header">
-            <h3>Haftalik daromad (Summa)</h3>
+            <h3>{t.operatorDashboard.weeklyRevenue}</h3>
             <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
-              <button className="od-export-btn">Oxirgi 7 kun <span>⌄</span></button>
+              <button className="od-export-btn">{t.dashboard.last7} <span>⌄</span></button>
               <div className="od-action-btn" style={{border: '1px solid #e2e8f0', width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 0}}>
                 <MoreHorizontal size={16} color="#64748b" />
               </div>
@@ -194,19 +194,19 @@ export default function OperatorDashboardView({ stats, model }) {
         <div className="od-card od-dynamics-card">
           <div className="od-card-header">
             <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
-              <h3 style={{fontSize: 22}}>Oylik yuklamalar dinamikasi</h3>
+              <h3 style={{fontSize: 22}}>{t.operatorDashboard.monthlyUploadDynamics}</h3>
             </div>
             <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
-              <button className="od-export-btn">Joriy oy <span>⌄</span></button>
-              <button className="od-export-btn">Xulosa <span>⌄</span></button>
+              <button className="od-export-btn">{t.dashboard.currentMonth} <span>⌄</span></button>
+              <button className="od-export-btn">{t.dashboard.summary} <span>⌄</span></button>
               <div className="od-action-btn" style={{border: '1px solid #e2e8f0', width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 0}}>
                 <MoreHorizontal size={16} color="#64748b" />
               </div>
             </div>
           </div>
           <div style={{display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12}}>
-            <span className="od-legend-item"><div className="od-legend-dot" style={{background: '#6366f1'}}></div> Yuklamalar</span>
-            <span className="od-legend-item"><div className="od-legend-dot" style={{background: '#e2e8f0'}}></div> Miqdor</span>
+            <span className="od-legend-item"><div className="od-legend-dot" style={{background: '#6366f1'}}></div> {t.dashboard.uploads}</span>
+            <span className="od-legend-item"><div className="od-legend-dot" style={{background: '#e2e8f0'}}></div> {t.operatorDashboard.amount}</span>
           </div>
           <div className="od-dynamics-chart">
             <ResponsiveContainer width="100%" height="100%">
@@ -223,7 +223,7 @@ export default function OperatorDashboardView({ stats, model }) {
 
         <div className="od-card od-source-card">
           <div className="od-card-header">
-            <h3 style={{fontSize: 22}}>Manbalar ulushi</h3>
+            <h3 style={{fontSize: 22}}>{t.operatorDashboard.sourceShare}</h3>
             <div className="od-action-btn" style={{border: '1px solid #e2e8f0', width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <ArrowUpRight size={16} color="#64748b" />
             </div>
@@ -231,7 +231,7 @@ export default function OperatorDashboardView({ stats, model }) {
           <div className="od-source-chart" style={{marginTop: 30}}>
             <div className="od-donut-center">
               <strong>{formatNumber(totalRecords)}</strong>
-              <span>Jami yozuvlar</span>
+              <span>{t.operatorDashboard.totalRecords}</span>
             </div>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -256,12 +256,12 @@ export default function OperatorDashboardView({ stats, model }) {
             </ResponsiveContainer>
           </div>
           <div className="od-donut-footer" style={{marginTop: 10}}>
-            <span className="od-legend-item"><div className="od-legend-dot" style={{background: '#2563eb'}}></div> Mobil</span>
-            <span className="od-legend-item"><div className="od-legend-dot" style={{background: '#e2e8f0'}}></div> Internet</span>
+            <span className="od-legend-item"><div className="od-legend-dot" style={{background: '#2563eb'}}></div> {t.source.mobileShort}</span>
+            <span className="od-legend-item"><div className="od-legend-dot" style={{background: '#e2e8f0'}}></div> {t.source.internetShort}</span>
           </div>
           <div className="od-bottom-note">
             <span className="od-badge-green">+{mobilePercent}%</span>
-            <span>Jami yozuvlarning {mobilePercent}% qismi mobil raqam orqali</span>
+            <span>{fmt(t.operatorDashboard.mobileShareNote, { percent: mobilePercent })}</span>
           </div>
         </div>
 

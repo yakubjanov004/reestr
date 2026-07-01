@@ -15,7 +15,7 @@ export default function ThemeSwitcher() {
         aria-pressed={theme === "light"}
       >
         <Sun size={16} style={{ marginRight: 8, display: "inline-block" }} />
-        {t.common?.lightMode || "Yorug' (Light)"}
+        {t.theme.light}
       </button>
       <button
         type="button"
@@ -24,7 +24,7 @@ export default function ThemeSwitcher() {
         aria-pressed={theme === "dark"}
       >
         <Moon size={16} style={{ marginRight: 8, display: "inline-block" }} />
-        {t.common?.darkMode || "Qorong'i (Dark)"}
+        {t.theme.dark}
       </button>
     </div>
   );
